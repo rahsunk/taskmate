@@ -1,13 +1,8 @@
-[@concept-design-overview](../../background/concept-design-overview.md)
-
-[@concept-specifications](../../background/concept-specifications.md)
-
-[@implementing-concepts](../../background/implementing-concepts.md)
-
-[@ScheduleGenerator](ScheduleGenerator.md)
-
-# implement: ScheduleGenerator
-
+---
+timestamp: 'Fri Oct 17 2025 13:54:35 GMT-0400 (Eastern Daylight Time)'
+parent: '[[../20251017_135435.040dd667.md]]'
+content_id: 95b88f1b9cb9b6c501ae7ca92a9a72749c40558bebabd0bf4353f078967b07ed
+---
 
 # response:
 
@@ -21,7 +16,13 @@ import { freshID } from "../../utils/database.ts"; // Adjust path as necessary f
 // Declare collection prefix, use concept name
 const PREFIX = "ScheduleGenerator" + ".";
 
-// Generic types of this concept
+/**
+ * Type aliases for the generic parameters.
+ * User, Schedule, Event, Task are IDs, typically referencing entities
+ * managed by other concepts or internally generated.
+ * Time, RepeatTime, Date, Percent are specific data types, interpreted here
+ * as strings or numbers for practical implementation.
+ */
 type User = ID;
 type Schedule = ID;
 type Event = ID;
@@ -119,7 +120,7 @@ export default class ScheduleGeneratorConcept {
         owner: owner,
         events: [], // Initially empty list of event references
         tasks: [], // Initially empty list of task references
-        timestamp: 0, // Initial version for a new schedule configuration
+        timestamp: 0, // Initial version for a new schedule
       };
 
       await this.schedules.insertOne(newSchedule);
@@ -443,8 +444,8 @@ export default class ScheduleGeneratorConcept {
    * @action generateSchedule
    * @requires schedule exists
    * @effects Creates a new schedule document for the schedule's owner, incorporating all current events
-   *          and tasks. It increments the *input schedule's* timestamp to track the version of the last
-   *          generated output, and assigns this new timestamp to the newly generated schedule.
+   *          and tasks. It increments the schedule's timestamp to indicate a new version.
+   *          The actual scheduling optimization logic is a placeholder.
    * @param {Object} { schedule: targetScheduleId } - The ID of the schedule to generate from.
    * @returns {Promise<{ newSchedule: Schedule } | { error: string }>} The ID of the newly generated schedule document or an error.
    */
@@ -458,15 +459,6 @@ export default class ScheduleGeneratorConcept {
       if (!existingSchedule) {
         return { error: `Schedule with ID '${targetScheduleId}' not found.` };
       }
-
-      // Increment the timestamp of the *existing* configuration schedule
-      // This ensures that subsequent calls to generateSchedule from the same base schedule
-      // will produce output schedules with progressively higher timestamps.
-      const newTimestamp = existingSchedule.timestamp + 1;
-      await this.schedules.updateOne(
-        { _id: targetScheduleId },
-        { $set: { timestamp: newTimestamp } },
-      );
 
       const eventsData = await this.events.find({
         schedulePointer: targetScheduleId,
@@ -483,25 +475,24 @@ export default class ScheduleGeneratorConcept {
       // Example: A very simple (non-optimal) logic or impossibility condition
       if (eventsData.length > 5 && tasksData.length > 5) {
         // Arbitrary condition to simulate an "impossible" scheduling scenario
-        // In a real scenario, this might need more robust handling, potentially reverting the timestamp increment.
         return { error: "Too many events and tasks; a feasible schedule cannot be generated at this time." };
       }
       // --- End of scheduling algorithm placeholder ---
 
-      // Create a new version of the schedule document with the *now incremented* timestamp
-      const newGeneratedScheduleId = freshID();
-      const newGeneratedScheduleDoc: ScheduleDoc = {
-        _id: newGeneratedScheduleId,
-        owner: existingSchedule.owner, // Still referencing the owner from the initial schedule
+      // Create a new version of the schedule document with an incremented timestamp
+      const newScheduleId = freshID();
+      const newScheduleDoc: ScheduleDoc = {
+        _id: newScheduleId,
+        owner: existingSchedule.owner,
         // References to the current set of events and tasks linked to the original schedule
         events: eventsData.map((e) => e._id),
         tasks: tasksData.map((t) => t._id),
-        timestamp: newTimestamp, // Use the updated timestamp from the configuration schedule
+        timestamp: existingSchedule.timestamp + 1, // Increment schedule version
       };
 
-      await this.schedules.insertOne(newGeneratedScheduleDoc);
+      await this.schedules.insertOne(newScheduleDoc);
 
-      return { newSchedule: newGeneratedScheduleId };
+      return { newSchedule: newScheduleId };
     } catch (e: any) {
       console.error("Error generating schedule:", e);
       return { error: `Failed to generate schedule: ${e.message}` };
