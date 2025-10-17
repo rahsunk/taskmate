@@ -1,0 +1,1 @@
+![@20251017_042125.fad84856](../../../context/design/concepts/ScheduleGenerator/ScheduleGenerator.md/20251017_042125.fad84856.md)

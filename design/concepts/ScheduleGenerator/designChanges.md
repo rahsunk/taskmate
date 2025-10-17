@@ -1,0 +1,4 @@
+- Fixed `editTask` so that its postcondition refers to modifying `oldTask` in the set of `Tasks` in `schedule`.
+- Added `initializeSchedule` so that a user can create a `Schedule`
+- Modified `Event` and `Task` states to have a `name` of type `String`, which `addEvent`, `editEvent`, `addTask`, `editTask`
+- `generateSchedule` is no longer a system action, can now be invoked manually. 
