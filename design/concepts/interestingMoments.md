@@ -13,3 +13,8 @@
 - LLM-modified concept specified to use JSON for the `contextData` in `sendNotification`
 	- [concept.11d649f7](../../context/design/concepts/Notification/implementation.md/steps/concept.11d649f7.md)
 	- When I first implemented this concept using the LLM, the LLM suggested I update the concept so that the spec more accurately reflects its outputted implementation. Most of these changes were trivial, but I found the change of `contextData` from `String` to `JSON` to be smart, since I was unsure of how the `sendNotification` action could be implemented. Despite this, I decided to use a generic parameter type `Data` in the concept spec so that it could be represented by more data structures in the implementation.
+
+## ItemSharing
+- LLM-modified concept suggested using an object of properties of the `Item` for `requestChange`
+	- [concept.907fea5c](../../context/design/concepts/ItemSharing/ItemSharing.md/steps/concept.907fea5c.md)
+	- When I suggested modifying my original `EventSharing` concept to make it more generic to separate concerns with `ScheduleGenerator`, I found the LLM's returned spec which specified using an object of properties to mutate the properties of the specified `Item` to be a clever way to propose changes to a generic `Item`.
