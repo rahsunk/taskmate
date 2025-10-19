@@ -1,3 +1,12 @@
+---
+timestamp: 'Sun Oct 19 2025 19:15:08 GMT-0400 (Eastern Daylight Time)'
+parent: '[[../20251019_191508.8aff0ede.md]]'
+content_id: 94fcfb23e996ab2424ab4f570fb50b8757ca7fb5fd065d35c6fff58a715c5fc8
+---
+
+# test: ScheduleGenerator
+
+```typescript
 import { assert, assertEquals, assertNotEquals } from "jsr:@std/assert";
 
 import { testDb } from "../../utils/database.ts"; // Assuming testDb is correctly located
@@ -1227,3 +1236,4 @@ Deno.test("ScheduleGeneratorConcept - Query Actions", async (t) => {
 
   await client.close();
 });
+```
