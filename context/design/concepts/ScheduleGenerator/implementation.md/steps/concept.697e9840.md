@@ -1,16 +1,8 @@
-[@concept.97c9fea3](../../../context/design/concepts/ScheduleGenerator/ScheduleGenerator.md/steps/concept.97c9fea3.md)
-
-[@concept-rubric](../../background/detailed/concept-rubric.md)
-
-[@concept-state](../../background/detailed/concept-state.md)
-
-[@concept-design-brief](../../background/concept-design-brief.md)
-
-[@concept-design-overview](../../background/concept-design-overview.md)
-
-[@concept-refactoring](../../background/concept-refactoring.md)
-
-[@concept-specifications](../../background/concept-specifications.md)
+---
+timestamp: 'Sun Oct 19 2025 13:36:25 GMT-0400 (Eastern Daylight Time)'
+parent: '[[../20251019_133625.9cf5fd25.md]]'
+content_id: 697e9840dcc8861356a0001cfcdde22fb20bebfb131e3822a1384fb157352f89
+---
 
 # concept: ScheduleGenerator (Updated Specification)
 

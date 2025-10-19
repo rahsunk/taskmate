@@ -1,18 +1,10 @@
-[@concept.97c9fea3](../../../context/design/concepts/ScheduleGenerator/ScheduleGenerator.md/steps/concept.97c9fea3.md)
+---
+timestamp: 'Sun Oct 19 2025 13:23:57 GMT-0400 (Eastern Daylight Time)'
+parent: '[[../20251019_132357.e10f2c58.md]]'
+content_id: 772656e3db1d7e225400d9c0b0cf1e9534d40236ccdcb76a2127045e60b14672
+---
 
-[@concept-rubric](../../background/detailed/concept-rubric.md)
-
-[@concept-state](../../background/detailed/concept-state.md)
-
-[@concept-design-brief](../../background/concept-design-brief.md)
-
-[@concept-design-overview](../../background/concept-design-overview.md)
-
-[@concept-refactoring](../../background/concept-refactoring.md)
-
-[@concept-specifications](../../background/concept-specifications.md)
-
-# concept: ScheduleGenerator (Updated Specification)
+# concept: ScheduleGenerator (Corrected Specification)
 
 * **concept** ScheduleGenerator\[User, Date, Percent]
 * **purpose** manages events and tasks for users to automatically generate a schedule that meets their needs
@@ -49,9 +41,9 @@
   * `deleteEvent(schedule: Schedule, event: Event)`
     * **requires**: `event` is in the set of `Events` of `schedule`
     * **effects**: deletes the `event` in the set of `Events` in `schedule`
-  * `addTask(schedule: Schedule, name: String, deadline: Date, expectedCompletionTime: Number, completionLevel: Percent, priority: Percent): (task: Task)`
-    * **requires**: `schedule` exists, `completionLevel` is between 0 and 100 (inclusive)
-    * **effects**: returns and adds `task` with `name` to the set of `tasks` in `schedule` with the given attributes, with the given `completionLevel`, and `taskID` incrementing by 1, and `task.scheduleID` being `schedule.scheduleID`
+  * `addTask(schedule: Schedule, name: String, deadline: Date, expectedCompletionTime: Number, priority: Percent): (task: Task)`
+    * **requires**: `schedule` exists
+    * **effects**: returns and adds `task` with `name` to the set of `tasks` in `schedule` with the given attributes and 0% for `completionLevel`, and `taskID` incrementing by 1, and `task.scheduleID` being `schedule.scheduleID`
   * `editTask(schedule: Schedule, oldTask: Task, name: String, deadline: Date, expectedCompletionTime: Number, completionLevel: Percent, priority: Percent)`
     * **requires**: `oldTask` is in the set of `Tasks` of `schedule`
     * **effects**: modifies `oldTask` in the set of `Tasks` in `schedule` with the given attributes

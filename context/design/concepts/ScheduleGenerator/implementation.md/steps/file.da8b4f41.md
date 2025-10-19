@@ -1,3 +1,12 @@
+---
+timestamp: 'Sun Oct 19 2025 12:33:45 GMT-0400 (Eastern Daylight Time)'
+parent: '[[../20251019_123345.999d6a59.md]]'
+content_id: da8b4f41810fbd50766f764c7f4dafb62990851d126f4c9cef9694e2171a45ec
+---
+
+# file: src/ScheduleGenerator/ScheduleGeneratorConcept.ts
+
+```typescript
 import { Collection, Db } from "npm:mongodb";
 import { Empty, ID } from "../../utils/types.ts";
 import { freshID } from "../../utils/database.ts";
@@ -6,12 +15,13 @@ import { freshID } from "../../utils/database.ts";
 const PREFIX = "ScheduleGenerator" + ".";
 
 // Generic types as defined in the concept specification
-type User = ID; // External user identifier
-type Schedule = ID; // Internal identifier for a schedule document
-type Event = ID; // Internal identifier for an event document
-type Task = ID; // Internal identifier for a task document
+type User = ID;      // External user identifier
+type Schedule = ID;  // Internal identifier for a schedule document
+type Event = ID;     // Internal identifier for an event document
+type Task = ID;      // Internal identifier for a task document
 type Percent = number; // Represents a percentage, typically a number between 0 and 100
 
+// --- 1. Updated RepeatScheduleConfig for events ---
 // Define enum for repetition frequency types
 enum RepeatFrequency {
   NONE = "NONE",
@@ -21,11 +31,14 @@ enum RepeatFrequency {
   YEARLY = "YEARLY",
 }
 
-// Interface for repeat configurations: specifies frequency and optionally days of the week for weekly repeats.
-interface RepeatConfig {
+// Interface for advanced repeat configurations, including days of the week
+interface RepeatScheduleConfig {
   frequency: RepeatFrequency;
   // For WEEKLY repeats: array of numbers (0=Sunday, 1=Monday, ..., 6=Saturday)
   daysOfWeek?: number[];
+  // Additional fields for MONTHLY/YEARLY can be added here if more complex patterns are needed,
+  // e.g., dayOfMonth?: number, monthOfYear?: number. For this implementation,
+  // MONTHLY/YEARLY will simply repeat on the same day/date as the event's original start.
 }
 
 /**
@@ -33,9 +46,9 @@ interface RepeatConfig {
  * Corresponds to "a set of Schedules" in the concept state.
  */
 interface ScheduleDoc {
-  _id: Schedule; // MongoDB's primary key for the schedule
-  owner: User; // The ID of the user who owns this schedule
-  scheduleID: number; // An internal, incrementing numerical ID for this concept
+  _id: Schedule;       // MongoDB's primary key for the schedule
+  owner: User;         // The ID of the user who owns this schedule
+  scheduleID: number;  // An internal, incrementing numerical ID for this concept
 }
 
 /**
@@ -43,13 +56,13 @@ interface ScheduleDoc {
  * Corresponds to "a set of Events" in the concept state.
  */
 interface EventDoc {
-  _id: Event; // MongoDB's primary key for the event
+  _id: Event;          // MongoDB's primary key for the event
   name: string;
-  eventID: number; // An internal, incrementing numerical ID for this concept
-  scheduleID: number; // Foreign key linking to the parent ScheduleDoc's internal scheduleID
-  startTime: Date; // The start date and time of the event
-  endTime: Date; // The end date and time of the event
-  repeat: RepeatConfig; // The repetition configuration for the event
+  eventID: number;     // An internal, incrementing numerical ID for this concept
+  scheduleID: number;  // Foreign key linking to the parent ScheduleDoc's internal scheduleID
+  startTime: Date;     // The start date and time of the event
+  endTime: Date;       // The end date and time of the event
+  repeatSchedule: RepeatScheduleConfig; // The repetition configuration for the event
 }
 
 /**
@@ -57,14 +70,14 @@ interface EventDoc {
  * Corresponds to "a set of Tasks" in the concept state.
  */
 interface TaskDoc {
-  _id: Task; // MongoDB's primary key for the task
+  _id: Task;           // MongoDB's primary key for the task
   name: string;
-  taskID: number; // An internal, incrementing numerical ID for this concept
-  scheduleID: number; // Foreign key linking to the parent ScheduleDoc's internal scheduleID
-  deadline: Date; // The deadline for completing the task
+  taskID: number;      // An internal, incrementing numerical ID for this concept
+  scheduleID: number;  // Foreign key linking to the parent ScheduleDoc's internal scheduleID
+  deadline: Date;      // The deadline for completing the task
   expectedCompletionTime: number; // Estimated time needed for task completion (in minutes)
   completionLevel: Percent; // Current progress of the task (0-100%)
-  priority: Percent; // Priority level of the task (0-100%)
+  priority: Percent;   // Priority level of the task (0-100%)
 }
 
 /**
@@ -120,8 +133,8 @@ async function getNextSequence(
     { $inc: { seq: 1 } }, // Increment the 'seq' field by 1
     { upsert: true, returnDocument: "after" }, // Create if not exists, return the updated document
   );
-  // Access seq directly from result
-  return result?.seq || 1;
+  // Return the new sequence value, defaulting to 1 if it was just created
+  return result?.value?.seq || 1;
 }
 
 /**
@@ -131,8 +144,8 @@ async function getNextSequence(
  */
 function isSameDay(d1: Date, d2: Date): boolean {
   return d1.getFullYear() === d2.getFullYear() &&
-    d1.getMonth() === d2.getMonth() &&
-    d1.getDate() === d2.getDate();
+         d1.getMonth() === d2.getMonth() &&
+         d1.getDate() === d2.getDate();
 }
 
 /**
@@ -205,9 +218,8 @@ export default class ScheduleGeneratorConcept {
 
   // --- Constants for the scheduling algorithm ---
   private readonly PLANNING_HORIZON_DAYS = 7; // Generate schedule for the next 7 days
-  // --- Adjusted task scheduling hours (8 AM to 10 PM) ---
-  private readonly DAILY_TASK_START_HOUR = 8; // Tasks can be scheduled from 8 AM
-  private readonly DAILY_TASK_END_HOUR = 22; // Tasks can be scheduled until 10 PM
+  private readonly DAILY_TASK_START_HOUR = 9; // Tasks can be scheduled from 9 AM
+  private readonly DAILY_TASK_END_HOUR = 17;  // Tasks can be scheduled until 5 PM
 
   constructor(private readonly db: Db) {
     this.schedules = this.db.collection(PREFIX + "schedules");
@@ -234,10 +246,7 @@ export default class ScheduleGeneratorConcept {
     schedule?: Schedule;
     error?: string;
   }> {
-    const scheduleID = await getNextSequence(
-      this.counters,
-      "scheduleID_counter",
-    );
+    const scheduleID = await getNextSequence(this.counters, "scheduleID_counter");
     const newScheduleId = freshID(); // Generate a unique MongoDB _id
 
     const newScheduleDoc: ScheduleDoc = {
@@ -256,7 +265,7 @@ export default class ScheduleGeneratorConcept {
   }
 
   /**
-   * addEvent (schedule: Schedule, name: String, startTime: Date, endTime: Date, repeat: RepeatConfig): (event: Event)
+   * addEvent (schedule: Schedule, name: String, startTime: Date, endTime: Date, repeatSchedule: RepeatScheduleConfig): (event: Event)
    *
    * requires: The `schedule` identified by `schedule` ID must exist.
    *
@@ -269,7 +278,7 @@ export default class ScheduleGeneratorConcept {
    * @param {string} params.name - The descriptive name of the event.
    * @param {Date} params.startTime - The start date and time of the event.
    * @param {Date} params.endTime - The end date and time of the event.
-   * @param {RepeatConfig} params.repeat - The repetition configuration for the event.
+   * @param {RepeatScheduleConfig} params.repeatSchedule - The repetition configuration for the event.
    * @returns {Promise<{event?: Event; error?: string}>} - The ID of the newly created event document or an error message.
    */
   async addEvent({
@@ -277,13 +286,13 @@ export default class ScheduleGeneratorConcept {
     name,
     startTime,
     endTime,
-    repeat,
+    repeatSchedule,
   }: {
     schedule: Schedule;
     name: string;
     startTime: Date;
     endTime: Date;
-    repeat: RepeatConfig;
+    repeatSchedule: RepeatScheduleConfig;
   }): Promise<{ event?: Event; error?: string }> {
     // Precondition: check if the schedule exists
     const existingSchedule = await this.schedules.findOne({ _id: schedule });
@@ -296,10 +305,10 @@ export default class ScheduleGeneratorConcept {
       return { error: "Event start time must be before end time." };
     }
 
-    // Validate repeat configuration
+    // Validate repeatSchedule
     if (
-      repeat.frequency === RepeatFrequency.WEEKLY &&
-      (!repeat.daysOfWeek || repeat.daysOfWeek.length === 0)
+      repeatSchedule.frequency === RepeatFrequency.WEEKLY &&
+      (!repeatSchedule.daysOfWeek || repeatSchedule.daysOfWeek.length === 0)
     ) {
       return {
         error:
@@ -317,7 +326,7 @@ export default class ScheduleGeneratorConcept {
       scheduleID: existingSchedule.scheduleID, // Link event to the internal scheduleID
       startTime,
       endTime,
-      repeat,
+      repeatSchedule,
     };
 
     try {
@@ -330,7 +339,7 @@ export default class ScheduleGeneratorConcept {
   }
 
   /**
-   * editEvent (schedule: Schedule, oldEvent: Event, name: String, startTime: Date, endTime: Date, repeat: RepeatConfig)
+   * editEvent (schedule: Schedule, oldEvent: Event, name: String, startTime: Date, endTime: Date, repeatSchedule: RepeatScheduleConfig)
    *
    * requires: The `oldEvent` identified by `oldEvent` ID must exist and be associated
    *           with the `schedule` identified by `schedule` ID.
@@ -343,7 +352,7 @@ export default class ScheduleGeneratorConcept {
    * @param {string} params.name - The new name for the event.
    * @param {Date} params.startTime - The new start date and time.
    * @param {Date} params.endTime - The new end date and time.
-   * @param {RepeatConfig} params.repeat - The new repetition configuration.
+   * @param {RepeatScheduleConfig} params.repeatSchedule - The new repetition configuration.
    * @returns {Promise<Empty | {error: string}>} - An empty object on successful modification or an error message.
    */
   async editEvent({
@@ -352,14 +361,14 @@ export default class ScheduleGeneratorConcept {
     name,
     startTime,
     endTime,
-    repeat,
+    repeatSchedule,
   }: {
     schedule: Schedule;
     oldEvent: Event;
     name: string;
     startTime: Date;
     endTime: Date;
-    repeat: RepeatConfig;
+    repeatSchedule: RepeatScheduleConfig;
   }): Promise<Empty | { error: string }> {
     // Precondition: check if schedule exists
     const existingSchedule = await this.schedules.findOne({ _id: schedule });
@@ -374,8 +383,7 @@ export default class ScheduleGeneratorConcept {
     });
     if (!eventToUpdate) {
       return {
-        error:
-          `Event with ID ${oldEvent} not found or not associated with schedule ${schedule}.`,
+        error: `Event with ID ${oldEvent} not found or not associated with schedule ${schedule}.`,
       };
     }
 
@@ -384,10 +392,10 @@ export default class ScheduleGeneratorConcept {
       return { error: "Event start time must be before end time." };
     }
 
-    // Validate repeat configuration
+    // Validate repeatSchedule
     if (
-      repeat.frequency === RepeatFrequency.WEEKLY &&
-      (!repeat.daysOfWeek || repeat.daysOfWeek.length === 0)
+      repeatSchedule.frequency === RepeatFrequency.WEEKLY &&
+      (!repeatSchedule.daysOfWeek || repeatSchedule.daysOfWeek.length === 0)
     ) {
       return {
         error:
@@ -398,7 +406,7 @@ export default class ScheduleGeneratorConcept {
     try {
       await this.events.updateOne(
         { _id: oldEvent },
-        { $set: { name, startTime, endTime, repeat } },
+        { $set: { name, startTime, endTime, repeatSchedule } },
       );
       return {};
     } catch (e: any) {
@@ -440,8 +448,7 @@ export default class ScheduleGeneratorConcept {
     });
     if (!eventToDelete) {
       return {
-        error:
-          `Event with ID ${event} not found or not associated with schedule ${schedule}.`,
+        error: `Event with ID ${event} not found or not associated with schedule ${schedule}.`,
       };
     }
 
@@ -455,20 +462,18 @@ export default class ScheduleGeneratorConcept {
   }
 
   /**
-   * addTask (schedule: Schedule, name: String, deadline: Date, expectedCompletionTime: Number, completionLevel: Percent, priority: Percent): (task: Task)
+   * addTask (schedule: Schedule, name: String, deadline: Date, expectedCompletionTime: Number, priority: Percent): (task: Task)
    *
    * requires: The `schedule` identified by `schedule` ID must exist.
-   * requires: `completionLevel` is between 0 and 100 (inclusive)
    *
    * effects: Creates and returns a new task document, linked to the specified schedule.
-   *          Sets initial `completionLevel` to the provided value. An internal `taskID` is incremented and assigned.
+   *          Sets initial `completionLevel` to 0. An internal `taskID` is incremented and assigned.
    *
    * @param {Object} params - The action parameters.
    * @param {Schedule} params.schedule - The ID of the schedule to add the task to.
    * @param {string} params.name - The descriptive name of the task.
    * @param {Date} params.deadline - The deadline date for the task.
    * @param {number} params.expectedCompletionTime - The estimated time to complete the task (in minutes).
-   * @param {Percent} params.completionLevel - The initial completion percentage of the task (0-100%).
    * @param {Percent} params.priority - The priority level of the task (0-100%).
    * @returns {Promise<{task?: Task; error?: string}>} - The ID of the newly created task document or an error message.
    */
@@ -477,14 +482,12 @@ export default class ScheduleGeneratorConcept {
     name,
     deadline,
     expectedCompletionTime,
-    completionLevel, // Added completionLevel
     priority,
   }: {
     schedule: Schedule;
     name: string;
     deadline: Date;
     expectedCompletionTime: number;
-    completionLevel: Percent; // Added completionLevel type
     priority: Percent;
   }): Promise<{ task?: Task; error?: string }> {
     // Precondition: check if schedule exists
@@ -499,10 +502,6 @@ export default class ScheduleGeneratorConcept {
     if (priority < 0 || priority > 100) {
       return { error: "Priority must be between 0 and 100." };
     }
-    // Added validation for completionLevel
-    if (completionLevel < 0 || completionLevel > 100) {
-      return { error: "Completion level must be between 0 and 100." };
-    }
 
     const taskID = await getNextSequence(this.counters, "taskID_counter");
     const newTaskId = freshID();
@@ -514,7 +513,7 @@ export default class ScheduleGeneratorConcept {
       scheduleID: existingSchedule.scheduleID, // Link task to the internal scheduleID
       deadline,
       expectedCompletionTime,
-      completionLevel: completionLevel, // Use the provided completionLevel
+      completionLevel: 0, // Tasks start at 0% completion
       priority,
     };
 
@@ -575,8 +574,7 @@ export default class ScheduleGeneratorConcept {
     });
     if (!taskToUpdate) {
       return {
-        error:
-          `Task with ID ${oldTask} not found or not associated with schedule ${schedule}.`,
+        error: `Task with ID ${oldTask} not found or not associated with schedule ${schedule}.`,
       };
     }
 
@@ -643,8 +641,7 @@ export default class ScheduleGeneratorConcept {
     });
     if (!taskToDelete) {
       return {
-        error:
-          `Task with ID ${task} not found or not associated with schedule ${schedule}.`,
+        error: `Task with ID ${task} not found or not associated with schedule ${schedule}.`,
       };
     }
 
@@ -678,13 +675,7 @@ export default class ScheduleGeneratorConcept {
     schedule,
   }: {
     schedule: Schedule;
-  }): Promise<
-    {
-      scheduleId?: Schedule;
-      generatedPlan?: GeneratedSchedulePlan;
-      error?: string;
-    }
-  > {
+  }): Promise<{ scheduleId?: Schedule; generatedPlan?: GeneratedSchedulePlan; error?: string }> {
     // Precondition: check if schedule exists
     const existingSchedule = await this.schedules.findOne({ _id: schedule });
     if (!existingSchedule) {
@@ -736,7 +727,7 @@ export default class ScheduleGeneratorConcept {
         let shouldSchedule = false;
         const eventDate = new Date(event.startTime); // Use event's original date for comparison
 
-        switch (event.repeat.frequency) {
+        switch (event.repeatSchedule.frequency) {
           case RepeatFrequency.NONE:
             // Only schedule if the event falls on the current day 'd'
             if (isSameDay(d, eventDate)) {
@@ -748,7 +739,7 @@ export default class ScheduleGeneratorConcept {
             break;
           case RepeatFrequency.WEEKLY:
             // Schedule if current day 'd' is one of the specified days of the week
-            if (event.repeat.daysOfWeek?.includes(d.getDay())) {
+            if (event.repeatSchedule.daysOfWeek?.includes(d.getDay())) {
               shouldSchedule = true;
             }
             break;
@@ -787,16 +778,13 @@ export default class ScheduleGeneratorConcept {
           );
 
           // Ensure scheduled event doesn't end before it starts or is in the past compared to now
-          if (
-            scheduledEventStartTime < scheduledEventEndTime &&
-            scheduledEventEndTime > new Date()
-          ) {
+          if (scheduledEventStartTime < scheduledEventEndTime && scheduledEventEndTime > new Date()) {
             generatedPlan.push({
               type: "event",
               originalId: event._id,
               name: event.name,
-              scheduledStartTime: scheduledEventStartTime, // Explicitly assign property
-              scheduledEndTime: scheduledEventEndTime, // Explicitly assign property
+              scheduledStartTime,
+              scheduledEndTime,
             });
             // 3. Subtract fixed event times from available slots
             freeTimeSlots = subtractTimeSlot(
@@ -817,15 +805,9 @@ export default class ScheduleGeneratorConcept {
       for (let i = 1; i < freeTimeSlots.length; i++) {
         const next = freeTimeSlots[i];
         // If current slot ends at or after next slot starts, merge them
-        // Add a small buffer (e.g., 1 minute) to consider immediately contiguous slots mergeable
-        if (currentMerged.end.getTime() + 60 * 1000 >= next.start.getTime()) {
-          currentMerged.end = new Date(
-            Math.max(currentMerged.end.getTime(), next.end.getTime()),
-          );
-          currentMerged.durationMinutes = getMinutesDifference(
-            currentMerged.start,
-            currentMerged.end,
-          );
+        if (currentMerged.end >= next.start) {
+          currentMerged.end = new Date(Math.max(currentMerged.end.getTime(), next.end.getTime()));
+          currentMerged.durationMinutes = getMinutesDifference(currentMerged.start, currentMerged.end);
         } else {
           mergedFreeTimeSlots.push(currentMerged);
           currentMerged = { ...next };
@@ -834,20 +816,6 @@ export default class ScheduleGeneratorConcept {
       mergedFreeTimeSlots.push(currentMerged);
     }
     freeTimeSlots = mergedFreeTimeSlots; // Use merged slots for task scheduling
-
-    // Filter out free time slots that are entirely in the past
-    const now = new Date();
-    freeTimeSlots = freeTimeSlots.filter((slot) => slot.end > now);
-    // Adjust start of past-overlapping slots to now
-    freeTimeSlots = freeTimeSlots.map((slot) => ({
-      ...slot,
-      start: slot.start < now ? now : slot.start,
-      durationMinutes: slot.start < now
-        ? getMinutesDifference(now, slot.end)
-        : slot.durationMinutes,
-    }));
-    // Remove slots with non-positive duration after adjustment
-    freeTimeSlots = freeTimeSlots.filter((slot) => slot.durationMinutes > 0);
 
     // 4. Prioritize tasks
     tasks.sort((a, b) => {
@@ -875,18 +843,11 @@ export default class ScheduleGeneratorConcept {
 
     for (const task of tasks) {
       let taskScheduled = false;
-      const remainingTaskDuration = task.expectedCompletionTime *
-        (1 - task.completionLevel / 100); // Only schedule remaining work
+      const remainingTaskDuration = task.expectedCompletionTime * (1 - task.completionLevel / 100); // Only schedule remaining work
 
       if (remainingTaskDuration <= 0) {
-        // Task already completed or no work left, add to plan as completed or skip
-        generatedPlan.push({
-          type: "task",
-          originalId: task._id,
-          name: `${task.name} (Completed)`,
-          scheduledStartTime: task.deadline, // Placeholder, indicating completion
-          scheduledEndTime: task.deadline,
-        });
+        // Task already completed or no work left
+        // Optionally add to plan as completed or skip
         continue;
       }
 
@@ -896,46 +857,31 @@ export default class ScheduleGeneratorConcept {
       for (let i = 0; i < freeTimeSlots.length; i++) {
         const slot = freeTimeSlots[i];
 
-        // Only consider slots that are before the task's deadline and start in the future or now
-        if (slot.start >= taskDeadline || slot.end <= now) {
+        // Only consider slots that are before the task's deadline and in the future
+        if (slot.end <= new Date() || slot.start >= taskDeadline) {
           continue;
         }
 
-        // The effective end of the slot for this task is either the slot's actual end or the task's deadline, whichever comes first.
-        const effectiveSlotEnd = slot.end < taskDeadline
-          ? slot.end
-          : taskDeadline;
-        const availableDurationInSlot = getMinutesDifference(
-          slot.start,
-          effectiveSlotEnd,
-        );
+        const effectiveSlotEnd = slot.end > taskDeadline ? taskDeadline : slot.end;
+        const availableDuration = getMinutesDifference(slot.start, effectiveSlotEnd);
 
-        if (availableDurationInSlot >= remainingTaskDuration) {
+        if (availableDuration >= remainingTaskDuration) {
           // Task fits perfectly or with room to spare
-          // Renamed local variables to avoid potential compiler confusion
-          const taskScheduledStartTime = new Date(slot.start);
-          const taskScheduledEndTime = new Date(
-            taskScheduledStartTime.getTime() +
-              remainingTaskDuration * 60 * 1000,
-          );
+          const scheduledStartTime = slot.start;
+          const scheduledEndTime = new Date(scheduledStartTime.getTime() + remainingTaskDuration * 60 * 1000);
 
           generatedPlan.push({
             type: "task",
             originalId: task._id,
             name: task.name,
-            scheduledStartTime: taskScheduledStartTime, // Use renamed variable
-            scheduledEndTime: taskScheduledEndTime, // Use renamed variable
+            scheduledStartTime,
+            scheduledEndTime,
           });
 
           // Update the free time slots array:
           // Remove the used portion, potentially splitting the slot
-          freeTimeSlots = subtractTimeSlot(
-            freeTimeSlots,
-            taskScheduledStartTime,
-            taskScheduledEndTime,
-          ); // Use renamed variables
-          // Re-sort and merge after modification to keep it clean for subsequent tasks
-          freeTimeSlots.sort((a, b) => a.start.getTime() - b.start.getTime());
+          freeTimeSlots = subtractTimeSlot(freeTimeSlots, scheduledStartTime, scheduledEndTime);
+          freeTimeSlots.sort((a,b) => a.start.getTime() - b.start.getTime()); // Re-sort after modification
 
           taskScheduled = true;
           break;
@@ -952,22 +898,16 @@ export default class ScheduleGeneratorConcept {
       console.warn(
         `Warning: Could not fully schedule ${unscheduledTasks.length} tasks for schedule ${schedule}:`,
       );
-      unscheduledTasks.forEach((task) =>
-        console.warn(
-          `  - ${task.name} (ID: ${task._id}, Deadline: ${task.deadline.toLocaleDateString()})`,
-        )
-      );
+      unscheduledTasks.forEach((task) => console.warn(`  - ${task.name}`));
+      // Decide whether to return an error or a partial schedule.
       // Per spec "If doing this is not possible, then return an error."
       return {
-        error:
-          "Not all tasks could be scheduled within the planning horizon or available time slots.",
+        error: "Not all tasks could be scheduled within the planning horizon or available time slots.",
       };
     }
 
     // Sort the final generated plan by scheduled start time for chronological order
-    generatedPlan.sort((a, b) =>
-      a.scheduledStartTime.getTime() - b.scheduledStartTime.getTime()
-    );
+    generatedPlan.sort((a, b) => a.scheduledStartTime.getTime() - b.scheduledStartTime.getTime());
 
     return { scheduleId: existingSchedule._id, generatedPlan };
   }
@@ -1082,3 +1022,4 @@ export default class ScheduleGeneratorConcept {
     return { taskDetails: taskDoc };
   }
 }
+```

@@ -1,18 +1,10 @@
-[@concept.97c9fea3](../../../context/design/concepts/ScheduleGenerator/ScheduleGenerator.md/steps/concept.97c9fea3.md)
+---
+timestamp: 'Sun Oct 19 2025 12:33:45 GMT-0400 (Eastern Daylight Time)'
+parent: '[[../20251019_123345.999d6a59.md]]'
+content_id: 19c1e280702121468c146ac40a4483a5694f119141a43490b84e76560875a549
+---
 
-[@concept-rubric](../../background/detailed/concept-rubric.md)
-
-[@concept-state](../../background/detailed/concept-state.md)
-
-[@concept-design-brief](../../background/concept-design-brief.md)
-
-[@concept-design-overview](../../background/concept-design-overview.md)
-
-[@concept-refactoring](../../background/concept-refactoring.md)
-
-[@concept-specifications](../../background/concept-specifications.md)
-
-# concept: ScheduleGenerator (Updated Specification)
+# concept: ScheduleGenerator (Revised)
 
 * **concept** ScheduleGenerator\[User, Date, Percent]
 * **purpose** manages events and tasks for users to automatically generate a schedule that meets their needs
@@ -27,7 +19,7 @@
     * a `scheduleID` of type `Number`
     * a `startTime` of type `Date`
     * an `endTime` of type `Date`
-    * a `repeat` of type `RepeatConfig`
+    * a `repeatSchedule` of type `RepeatScheduleConfig`
   * a set of `Tasks` with
     * a `name` of type `String`
     * a `taskID` of type `Number` (static attribute, initially -1)
@@ -40,19 +32,19 @@
   * `initializeSchedule(owner: User): (schedule: Schedule)`
     * **requires**: `owner` exists
     * **effects**: creates an empty `schedule` with `owner` as `schedule.owner`, with static attribute `scheduleID` incrementing by 1
-  * `addEvent(schedule: Schedule, name: String, startTime: Date, endTime: Date, repeat: RepeatConfig): (event: Event)`
+  * `addEvent(schedule: Schedule, name: String, startTime: Date, endTime: Date, repeatSchedule: RepeatScheduleConfig): (event: Event)`
     * **requires**: `schedule` exists
     * **effects**: creates and returns an event with `name` to add to the set of events in `schedule` with the given attributes, and `eventID` incrementing by 1, and `event.scheduleID` being `schedule.scheduleID`
-  * `editEvent(schedule: Schedule, oldEvent: Event, name: String, startTime: Date, endTime: Date, repeat: RepeatConfig)`
+  * `editEvent(schedule: Schedule, oldEvent: Event, name: String, startTime: Date, endTime: Date, repeatSchedule: RepeatScheduleConfig)`
     * **requires**: `oldEvent` is in the set of `Events` of `schedule`
     * **effects**: modifies `oldEvent` in the set of `Events` in `schedule` with the given attributes
   * `deleteEvent(schedule: Schedule, event: Event)`
     * **requires**: `event` is in the set of `Events` of `schedule`
     * **effects**: deletes the `event` in the set of `Events` in `schedule`
-  * `addTask(schedule: Schedule, name: String, deadline: Date, expectedCompletionTime: Number, completionLevel: Percent, priority: Percent): (task: Task)`
-    * **requires**: `schedule` exists, `completionLevel` is between 0 and 100 (inclusive)
-    * **effects**: returns and adds `task` with `name` to the set of `tasks` in `schedule` with the given attributes, with the given `completionLevel`, and `taskID` incrementing by 1, and `task.scheduleID` being `schedule.scheduleID`
-  * `editTask(schedule: Schedule, oldTask: Task, name: String, deadline: Date, expectedCompletionTime: Number, completionLevel: Percent, priority: Percent)`
+  * `addTask(schedule: Schedule, name: String, deadline: Date, expectedCompletionTime: Number, priority: Percent): (task: Task)`
+    * **requires**: `schedule` exists
+    * **effects**: returns and adds `task` with `name` to the set of `tasks` in `schedule` with the given attributes and 0% for `completionLevel`, and `taskID` incrementing by 1, and `task.scheduleID` being `schedule.scheduleID`
+  * `editTask(schedule: Schedule, oldTask: Task, name: String, deadline: Date, expectedCompletionTime: Number, completionLevel: Percent priority: Percent)`
     * **requires**: `oldTask` is in the set of `Tasks` of `schedule`
     * **effects**: modifies `oldTask` in the set of `Tasks` in `schedule` with the given attributes
   * `deleteTask(schedule: Schedule, task: Task)`
@@ -61,3 +53,5 @@
   * `generateSchedule(schedule: Schedule): (scheduleId: Schedule, generatedPlan: GeneratedSchedulePlan | error: Error)`
     * **requires**: `schedule` exists
     * **effects**: Creates `generatedPlan` for `schedule.owner` such that if possible, all given events start, end, and repeat as specified, and task scheduling is optimized by its attributes. Generally, tasks with a sooner deadline, higher priority level, higher expectedCompletionTime, and higher completionLevel are scheduled first. The generated plan details concrete time slots for events and tasks. If doing this is not possible (e.g., due to conflicts), then return an `error`.
+
+***
