@@ -199,6 +199,11 @@
   },
   "active": "9b42b4503c7d88ad",
   "lastOpenFiles": [
+    "src/concept_server.ts",
+    "design/tools/api-extraction-from-code.md",
+    "design/tools/api-extraction-from-spec.md",
+    "design/tools",
+    "design/untitled folder",
     "context/design/concepts/ScheduleGenerator/testing.md/20251019_191508.8aff0ede.md",
     "context/design/concepts/ScheduleGenerator/testing.md/steps/test.94fcfb23.md",
     "context/design/concepts/ScheduleGenerator/testing.md/20251019_191243.4f8a6223.md",
@@ -222,9 +227,6 @@
     "context/design/concepts/ScheduleGenerator/testing.md/steps/response.6a57ac0f.md",
     "context/design/concepts/ScheduleGenerator/testing.md/20251019_185702.e982fdb7.md",
     "context/design/concepts/ScheduleGenerator/testing.md/steps/error.f17a063e.md",
-    "context/design/concepts/ScheduleGenerator/testing.md/20251019_185505.ab4c29b4.md",
-    "context/design/concepts/ScheduleGenerator/testing.md/steps/response.8557ad0a.md",
-    "context/design/concepts/ScheduleGenerator/testing.md/20251019_185206.ea6c0308.md",
     "context/design/concepts/ItemSharing/testing.md/steps",
     "context/design/concepts/ItemSharing/implementation.md/steps",
     "context/design/concepts/ItemSharing/ItemSharing.md/steps",
@@ -232,8 +234,6 @@
     "design/concepts/ItemSharing",
     "src/concepts/ItemSharing/ItemSharing.test.ts",
     "src/concepts/ItemSharing/ItemSharingConcept.ts",
-    "src/concepts/ItemSharing",
-    "context/design/concepts/Notification/testing.md/steps",
-    "context/design/concepts/Notification/implementation.md/steps"
+    "src/concepts/ItemSharing"
   ]
 }
