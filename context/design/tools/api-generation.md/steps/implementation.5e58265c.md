@@ -1,10 +1,8 @@
-[@concept-design-overview](../../background/concept-design-overview.md)
-
-[@concept-specifications](../../background/concept-specifications.md)
-
-[@implementing-concepts](../../background/implementing-concepts.md)
-
-[@ScheduleGenerator](ScheduleGenerator.md)
+---
+timestamp: 'Tue Oct 21 2025 12:28:59 GMT-0400 (Eastern Daylight Time)'
+parent: '[[../20251021_122859.336423ef.md]]'
+content_id: 5e58265c9d56d04dc739197e4b69f505350dd7e4e45c33ea36f96016cde4b6d3
+---
 
 # implementation:
 
