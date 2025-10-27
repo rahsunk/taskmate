@@ -7,9 +7,9 @@ const PREFIX = "ScheduleGenerator" + ".";
 
 // Generic types as defined in the concept specification
 type User = ID; // External user identifier
-type Schedule = ID; // Internal identifier for a schedule document
-type Event = ID; // Internal identifier for an event document
-type Task = ID; // Internal identifier for a task document
+type Schedule = ID; // Internal identifier for a schedule document (MongoDB _id)
+type Event = ID; // Internal identifier for an event document (MongoDB _id)
+type Task = ID; // Internal identifier for a task document (MongoDB _id)
 type Percent = number; // Represents a percentage, typically a number between 0 and 100
 
 // Define enum for repetition frequency types
@@ -303,7 +303,7 @@ export default class ScheduleGeneratorConcept {
     ) {
       return {
         error:
-          "Weekly repeat events must specify at least one day of the week.",
+          "Weekly repeat events must specify at least one day of the week (0=Sunday, 6=Saturday).",
       };
     }
 
@@ -391,7 +391,7 @@ export default class ScheduleGeneratorConcept {
     ) {
       return {
         error:
-          "Weekly repeat events must specify at least one day of the week.",
+          "Weekly repeat events must specify at least one day of the week (0=Sunday, 6=Saturday).",
       };
     }
 
@@ -477,14 +477,14 @@ export default class ScheduleGeneratorConcept {
     name,
     deadline,
     expectedCompletionTime,
-    completionLevel, // Added completionLevel
+    completionLevel,
     priority,
   }: {
     schedule: Schedule;
     name: string;
     deadline: Date;
     expectedCompletionTime: number;
-    completionLevel: Percent; // Added completionLevel type
+    completionLevel: Percent;
     priority: Percent;
   }): Promise<{ task?: Task; error?: string }> {
     // Precondition: check if schedule exists
@@ -934,33 +934,8 @@ export default class ScheduleGeneratorConcept {
             taskScheduledStartTime,
             taskScheduledEndTime,
           ); // Use renamed variables
-
-          // Re-sort and re-merge after modification to keep it clean for subsequent tasks
+          // Re-sort and merge after modification to keep it clean for subsequent tasks
           freeTimeSlots.sort((a, b) => a.start.getTime() - b.start.getTime());
-          const currentFreeTimeSlots: FreeTimeSlot[] = [];
-          if (freeTimeSlots.length > 0) {
-            let currentMerged = { ...freeTimeSlots[0] };
-            for (let j = 1; j < freeTimeSlots.length; j++) {
-              const next = freeTimeSlots[j];
-              // Use a small buffer (e.g., 1 minute) to consider immediately contiguous slots mergeable
-              if (
-                currentMerged.end.getTime() + 60 * 1000 >= next.start.getTime()
-              ) {
-                currentMerged.end = new Date(
-                  Math.max(currentMerged.end.getTime(), next.end.getTime()),
-                );
-                currentMerged.durationMinutes = getMinutesDifference(
-                  currentMerged.start,
-                  currentMerged.end,
-                );
-              } else {
-                currentFreeTimeSlots.push(currentMerged);
-                currentMerged = { ...next };
-              }
-            }
-            currentFreeTimeSlots.push(currentMerged);
-          }
-          freeTimeSlots = currentFreeTimeSlots; // Update with the newly merged and sorted slots
 
           taskScheduled = true;
           break;
@@ -1002,6 +977,8 @@ export default class ScheduleGeneratorConcept {
   /**
    * _getScheduleByOwner (owner: User): (schedule: Schedule)
    *
+   * requires: true
+   *
    * effects: Retrieves the ID of the schedule document associated with a given user owner.
    *
    * @param {Object} params - The query parameters.
@@ -1022,6 +999,8 @@ export default class ScheduleGeneratorConcept {
   /**
    * _getEventsForSchedule (schedule: Schedule): (events: Event[])
    *
+   * requires: `schedule` exists
+   *
    * effects: Retrieves an array of Event IDs that are linked to the specified schedule.
    *
    * @param {Object} params - The query parameters.
@@ -1029,7 +1008,7 @@ export default class ScheduleGeneratorConcept {
    * @returns {Promise<{events?: Event[]; error?: string}>} - An array of event IDs or an error message.
    */
   async _getEventsForSchedule({ schedule }: { schedule: Schedule }): Promise<{
-    events?: Event[];
+    event?: Event[]; // Changed 'events' to 'event' as per query return convention
     error?: string;
   }> {
     const existingSchedule = await this.schedules.findOne({ _id: schedule });
@@ -1040,11 +1019,13 @@ export default class ScheduleGeneratorConcept {
     const eventDocs = await this.events
       .find({ scheduleID: existingSchedule.scheduleID })
       .toArray();
-    return { events: eventDocs.map((doc) => doc._id) };
+    return { event: eventDocs.map((doc) => doc._id) }; // Return array of IDs under 'event' key
   }
 
   /**
    * _getTasksForSchedule (schedule: Schedule): (tasks: Task[])
+   *
+   * requires: `schedule` exists
    *
    * effects: Retrieves an array of Task IDs that are linked to the specified schedule.
    *
@@ -1053,7 +1034,7 @@ export default class ScheduleGeneratorConcept {
    * @returns {Promise<{tasks?: Task[]; error?: string}>} - An array of task IDs or an error message.
    */
   async _getTasksForSchedule({ schedule }: { schedule: Schedule }): Promise<{
-    tasks?: Task[];
+    task?: Task[]; // Changed 'tasks' to 'task' as per query return convention
     error?: string;
   }> {
     const existingSchedule = await this.schedules.findOne({ _id: schedule });
@@ -1064,46 +1045,143 @@ export default class ScheduleGeneratorConcept {
     const taskDocs = await this.tasks
       .find({ scheduleID: existingSchedule.scheduleID })
       .toArray();
-    return { tasks: taskDocs.map((doc) => doc._id) };
+    return { task: taskDocs.map((doc) => doc._id) }; // Return array of IDs under 'task' key
   }
 
   /**
    * _getEventDetails (event: Event): (eventDetails: EventDoc)
    *
+   * requires: `event` exists
+   *
    * effects: Retrieves the full document details for a specific event.
    *
    * @param {Object} params - The query parameters.
    * @param {Event} params.event - The ID of the event to retrieve details for.
-   * @returns {Promise<{eventDetails?: EventDoc; error?: string}>} - The event document or an error message.
+   * @returns {Promise<{eventDetails?: EventDoc[]; error?: string}>} - An array containing the event document or an error message.
    */
   async _getEventDetails({ event }: { event: Event }): Promise<{
-    eventDetails?: EventDoc;
+    eventDetails?: EventDoc[]; // Query returns array of dicts
     error?: string;
   }> {
     const eventDoc = await this.events.findOne({ _id: event });
     if (!eventDoc) {
       return { error: `Event with ID ${event} not found.` };
     }
-    return { eventDetails: eventDoc };
+    return { eventDetails: [eventDoc] }; // Return as an array
   }
 
   /**
    * _getTaskDetails (task: Task): (taskDetails: TaskDoc)
    *
+   * requires: `task` exists
+   *
    * effects: Retrieves the full document details for a specific task.
    *
    * @param {Object} params - The query parameters.
    * @param {Task} params.task - The ID of the task to retrieve details for.
-   * @returns {Promise<{taskDetails?: TaskDoc; error?: string}>} - The task document or an error message.
+   * @returns {Promise<{taskDetails?: TaskDoc[]; error?: string}>} - An array containing the task document or an error message.
    */
   async _getTaskDetails({ task }: { task: Task }): Promise<{
-    taskDetails?: TaskDoc;
+    taskDetails?: TaskDoc[]; // Query returns array of dicts
     error?: string;
   }> {
     const taskDoc = await this.tasks.findOne({ _id: task });
     if (!taskDoc) {
       return { error: `Task with ID ${task} not found.` };
     }
-    return { taskDetails: taskDoc };
+    return { taskDetails: [taskDoc] }; // Return as an array
+  }
+
+  /**
+   * _getAllSchedules (): (schedule: ScheduleDoc)
+   *
+   * requires: true
+   *
+   * effects: Returns an array of all `ScheduleDoc` objects.
+   *
+   * @returns {Promise<{schedule?: ScheduleDoc[]; error?: string}>} - An array of all schedule documents or an error.
+   */
+  async _getAllSchedules(): Promise<{
+    schedule?: ScheduleDoc[];
+    error?: string;
+  }> {
+    try {
+      const scheduleDocs = await this.schedules.find({}).toArray();
+      return { schedule: scheduleDocs };
+    } catch (e: any) {
+      console.error("Error in _getAllSchedules:", e);
+      return { error: `Failed to retrieve all schedules: ${e.message}` };
+    }
+  }
+
+  /**
+   * _getScheduleDetails (schedule: Schedule): (scheduleDetails: ScheduleDoc)
+   *
+   * requires: `schedule` exists
+   *
+   * effects: Returns the `ScheduleDoc` object matching the provided ID.
+   *
+   * @param {Object} params - The query parameters.
+   * @param {Schedule} params.schedule - The ID of the schedule to retrieve details for.
+   * @returns {Promise<{scheduleDetails?: ScheduleDoc[]; error?: string}>} - An array containing the ScheduleDoc object or an error.
+   */
+  async _getScheduleDetails({ schedule }: { schedule: Schedule }): Promise<{
+    scheduleDetails?: ScheduleDoc[];
+    error?: string;
+  }> {
+    try {
+      const scheduleDoc = await this.schedules.findOne({ _id: schedule });
+      if (!scheduleDoc) {
+        return { error: `Schedule with ID ${schedule} not found.` };
+      }
+      return { scheduleDetails: [scheduleDoc] };
+    } catch (e: any) {
+      console.error("Error in _getScheduleDetails:", e);
+      return { error: `Failed to retrieve schedule details: ${e.message}` };
+    }
+  }
+
+  /**
+   * _getAllEvents (): (event: EventDoc)
+   *
+   * requires: true
+   *
+   * effects: Returns an array of all `EventDoc` objects.
+   *
+   * @returns {Promise<{event?: EventDoc[]; error?: string}>} - An array of all event documents or an error.
+   */
+  async _getAllEvents(): Promise<{
+    event?: EventDoc[];
+    error?: string;
+  }> {
+    try {
+      const eventDocs = await this.events.find({}).toArray();
+      return { event: eventDocs };
+    } catch (e: any) {
+      console.error("Error in _getAllEvents:", e);
+      return { error: `Failed to retrieve all events: ${e.message}` };
+    }
+  }
+
+  /**
+   * _getAllTasks (): (task: TaskDoc)
+   *
+   * requires: true
+   *
+   * effects: Returns an array of all `TaskDoc` objects.
+   *
+   * @returns {Promise<{task?: TaskDoc[]; error?: string}>} - An array of all task documents or an error.
+   */
+  async _getAllTasks(): Promise<{
+    task?: TaskDoc[];
+    error?: string;
+  }> {
+    try {
+      const taskDocs = await this.tasks.find({}).toArray();
+      return { task: taskDocs };
+    } catch (e: any) {
+      console.error("Error in _getAllTasks:", e);
+      return { error: `Failed to retrieve all tasks: ${e.message}` };
+    }
   }
 }

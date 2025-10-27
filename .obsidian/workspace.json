@@ -4,66 +4,53 @@
     "type": "split",
     "children": [
       {
-        "id": "746b242d2d3793d1",
+        "id": "35325d0337c60566",
         "type": "tabs",
         "children": [
           {
-            "id": "6da805a73680b84d",
+            "id": "e4ba79d458b95de2",
             "type": "leaf",
             "state": {
               "type": "markdown",
               "state": {
-                "file": "design/tools/api-generation.md",
+                "file": "design/concepts/ScheduleGenerator/ScheduleGenerator.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "api-generation"
+              "title": "ScheduleGenerator"
             }
           },
           {
-            "id": "fa3ec2a3158e387c",
+            "id": "3b8333fe8de92232",
             "type": "leaf",
             "state": {
               "type": "markdown",
               "state": {
-                "file": "design/tools/api-extraction-from-code.md",
+                "file": "design/concepts/ScheduleGenerator/newImplementation.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "api-extraction-from-code"
+              "title": "newImplementation"
             }
           },
           {
-            "id": "45e49eaa36e3107c",
+            "id": "0ee58f760fef2a3f",
             "type": "leaf",
             "state": {
               "type": "markdown",
               "state": {
-                "file": "design/tools/api-extraction-from-spec.md",
+                "file": "design/concepts/ScheduleGenerator/ScheduleGenerator.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "api-extraction-from-spec"
-            }
-          },
-          {
-            "id": "5771dcf8974150f5",
-            "type": "leaf",
-            "state": {
-              "type": "markdown",
-              "state": {
-                "file": "frontEndCheckin/userJourney.md",
-                "mode": "source",
-                "source": false
-              },
-              "icon": "lucide-file",
-              "title": "userJourney"
+              "title": "ScheduleGenerator"
             }
           }
-        ]
+        ],
+        "currentTab": 2
       }
     ],
     "direction": "vertical"
@@ -210,43 +197,43 @@
       "bases:Create new base": false
     }
   },
-  "active": "9b42b4503c7d88ad",
+  "active": "0ee58f760fef2a3f",
   "lastOpenFiles": [
-    "design/tools/api-generation.md",
-    "assignment4bRubric.md",
-    "design/tools/api-extraction-from-spec.md",
-    "design/tools/api-extraction-from-code.md",
-    "frontEndCheckin/userJourney.md",
-    "design/concepts/UserAuthentication/UserAuthentication.md",
-    "context/design/tools/api-generation.md/20251021_123729.506b79cb.md",
-    "context/design/tools/api-generation.md/steps/API Specification.a9733171.md",
-    "context/design/tools/api-generation.md/steps/API Specification.53c4cf41.md",
-    "context/design/tools/api-generation.md/steps/API Specification.662c8311.md",
-    "context/design/tools/api-generation.md/steps/API Specification.96855920.md",
-    "context/design/tools/api-generation.md/steps/response.5d3e0fe2.md",
-    "context/design/tools/api-generation.md/20251021_123644.0dd1f6d3.md",
-    "context/design/tools/api-generation.md/steps/prompt.efe0c8e1.md",
-    "context/design/tools/api-generation.md/steps/_.92ef9357.md",
-    "context/design/tools/api-generation.md/20251021_122931.fcb5e987.md",
-    "context/design/tools/api-generation.md/steps/API Specification.239115c4.md",
-    "context/design/tools/api-generation.md/steps/API Specification.d5b19b0f.md",
-    "context/design/tools/api-generation.md/steps/API Specification.fc54a861.md",
-    "context/design/tools/api-generation.md/steps/API Specification.2894ab13.md",
-    "context/design/tools/api-generation.md/20251021_122859.336423ef.md",
-    "context/design/tools/api-generation.md/steps/prompt.693cb807.md",
-    "context/design/tools/api-generation.md/steps/implement.407a171f.md",
-    "context/design/tools/api-generation.md/steps/response.cbc2e72b.md",
-    "context/design/tools/api-generation.md/steps/implement.7a73841f.md",
-    "context/design/tools/api-generation.md/steps/response.e8ec3238.md",
-    "context/deno.json",
-    "context/design/tools/api-generation.md/steps",
-    "context/design/tools",
-    "context/api-generation.md/steps",
-    "frontEndCheckin",
-    "src/concept_server.ts",
-    "design/tools",
-    "design/untitled folder",
-    "context/design/concepts/ItemSharing/testing.md/steps",
-    "context/design/concepts/ItemSharing/implementation.md/steps"
+    "design/concepts/ScheduleGenerator/newTesting.md",
+    "backups/concept_server/concept_server_modified.ts",
+    "context/design/concepts/ScheduleGenerator/newTesting.md/20251027_163016.a08f4a97.md",
+    "context/design/concepts/ScheduleGenerator/newTesting.md/steps/file.c3fc9286.md",
+    "context/design/concepts/ScheduleGenerator/newTesting.md/steps/response.01b2e588.md",
+    "context/design/concepts/ScheduleGenerator/newTesting.md/20251027_162841.7ec9f7b8.md",
+    "context/design/concepts/ScheduleGenerator/newTesting.md/steps/prompt.586218db.md",
+    "context/design/concepts/ScheduleGenerator/newTesting.md/20251027_162638.d22b5284.md",
+    "context/design/concepts/ScheduleGenerator/newTesting.md/steps/file.f28e802a.md",
+    "context/design/concepts/ScheduleGenerator/newTesting.md/steps/response.429b1238.md",
+    "context/design/concepts/ScheduleGenerator/newTesting.md/20251027_162412.c5ef62b7.md",
+    "context/design/concepts/ScheduleGenerator/newTesting.md/20251027_162356.093a4ac4.md",
+    "context/design/concepts/ScheduleGenerator/newTesting.md/20251027_162156.c344e190.md",
+    "context/design/concepts/ScheduleGenerator/newTesting.md/steps/prompt.186bf730.md",
+    "context/design/concepts/ScheduleGenerator/newTesting.md/20251027_162039.bd67a3b2.md",
+    "context/design/concepts/ScheduleGenerator/newTesting.md/steps/file.0bfcca5d.md",
+    "context/design/concepts/ScheduleGenerator/newTesting.md/steps/response.2daa6bac.md",
+    "context/design/concepts/ScheduleGenerator/newTesting.md/20251027_161940.fcddc602.md",
+    "context/design/concepts/ScheduleGenerator/newTesting.md/steps/prompt.31cd49ff.md",
+    "context/design/concepts/ScheduleGenerator/newTesting.md/20251027_161732.3bd107c5.md",
+    "context/design/concepts/ScheduleGenerator/newTesting.md/steps/file.22b7b3ec.md",
+    "context/design/concepts/ScheduleGenerator/newTesting.md/steps/response.fd17ac39.md",
+    "context/design/concepts/ScheduleGenerator/newTesting.md/20251027_161611.fc010d04.md",
+    "context/design/concepts/ScheduleGenerator/newTesting.md/steps/prompt.b769e6cf.md",
+    "context/design/concepts/ScheduleGenerator/newTesting.md/20251027_161521.d765ddf0.md",
+    "context/design/concepts/ScheduleGenerator/newTesting.md/steps/file.09847ddf.md",
+    "context/design/concepts/ScheduleGenerator/newTesting.md/steps/response.fe416d32.md",
+    "context/design/concepts/ScheduleGenerator/newTesting.md/steps",
+    "context/design/concepts/ScheduleGenerator/newImplementation.md/steps",
+    "backups/concept_server/concept_server_original.ts",
+    "backups/concept_server",
+    "backups",
+    "context/design/concepts/UserAuthentication/newTesting.md/steps",
+    "context/design/concepts/UserAuthentication/newImplementation.md/steps",
+    "design/tools/apiGeneration",
+    "Untitled 1"
   ]
 }

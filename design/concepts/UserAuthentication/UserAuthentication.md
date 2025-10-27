@@ -10,8 +10,8 @@
 
 [@concept-specifications](../../background/concept-specifications.md)
 
-- **concept** UserAuthentication[User]  
-- **purpose** limit access to known users and find users by name  
+- **concept** UserAuthentication[User]
+- **purpose** limit access to known users and find users by name
 - **principle** After a user registers with a username and a password, they can authenticate with that same username and password and be treated each time as the same user. They can also be looked up by other users when sharing events
 - **state**
 	- a set of `Users` with

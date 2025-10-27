@@ -1,512 +1,521 @@
-// # file: src/UserAuthentication/UserAuthenticationConcept.test.ts
-
-import { assertEquals, assertExists, assertNotEquals } from "jsr:@std/assert";
-import { testDb } from "../../utils/database.ts"; // Adjust path as per your project structure
+import { assert, assertEquals, assertExists } from "jsr:@std/assert";
+import { freshID, testDb } from "../../utils/database.ts";
 import UserAuthenticationConcept from "./UserAuthenticationConcept.ts";
 import { Empty, ID } from "../../utils/types.ts";
 
-// Helper for logging action calls and results
-// --- FIX START ---
-// Removed the restrictive generic constraint "extends { error?: string }"
-function logAction<T>(
-  actionName: string,
-  input: Record<string, unknown>,
-  output: T,
-) {
-  console.log(`--- Action: ${actionName} ---`);
-  console.log("Input:", input);
-  console.log("Output:", output);
-  // Safely check if output is an object and has an 'error' property
-  if (
-    typeof output === "object" && output !== null && "error" in output &&
-    typeof (output as { error: string }).error === "string"
-  ) {
-    console.error("Error:", (output as { error: string }).error);
-  }
-}
-// --- FIX END ---
-
 Deno.test("UserAuthenticationConcept Tests", async (t) => {
   const [db, client] = await testDb();
-  const userAuthConcept = new UserAuthenticationConcept(db);
+  const concept = new UserAuthenticationConcept(db);
 
-  // # trace: Operational Principle - Register and Authenticate
+  // Helper for console logging
+  const log = (message: string, ...args: any[]) => {
+    console.log(`\n--- ${message} ---`, ...args);
+  };
+
+  // Type guard to check if a result is an error object
+  function isErrorResult<T>(
+    result: T | { error: string },
+  ): result is { error: string } {
+    return typeof result === "object" && result !== null && "error" in result &&
+      typeof (result as { error: string }).error === "string";
+  }
+
+  // Helper to assert an action/query result is a success (no error object)
+  function assertSuccess<TResult>(
+    result: TResult | { error: string },
+    message: string,
+  ): asserts result is TResult {
+    if (isErrorResult(result)) {
+      throw new Error(`${message}: Unexpected error received: ${result.error}`);
+    }
+  }
+
+  // Helper to assert an action/query result is an error object
+  function assertFailure<TError extends { error: string }>(
+    result: any, // Use `any` to allow checking against the actual return type before narrowing
+    message: string,
+  ): asserts result is TError {
+    if (!isErrorResult(result)) {
+      throw new Error(
+        `${message}: Expected an error object, but received: ${
+          JSON.stringify(result)
+        }`,
+      );
+    }
+    console.log(`  Expected error: ${result.error}`);
+  }
+
   await t.step(
-    "Scenario: Operational Principle (Register and Authenticate)",
+    "Operational Principle: Register, Authenticate, and Query by Username",
     async () => {
+      log("Trace: Operational Principle");
+      log(
+        "Principle: After a user registers with a username and a password, they can authenticate with that same username and password and be treated each time as the same user. They can also be looked up by other users when sharing events.",
+      );
+
       const username = "alice";
       const password = "password123";
+      let aliceId: ID;
 
-      // Action: register
-      console.log(`Attempting to register user '${username}'...`);
-      const registerResult = await userAuthConcept.register({
+      log("Action: register(username: 'alice', password: 'password123')");
+      const registerResult = await concept.register({ username, password });
+      assertSuccess(registerResult, "Registration should succeed"); // Type narrowed to { user: ID }
+      assertExists(
+        registerResult.user,
+        "Registered user ID should be returned",
+      );
+      aliceId = registerResult.user;
+      console.log(`  Registered user with ID: ${aliceId}`);
+
+      log(
+        `Action: authenticate(username: '${username}', password: '${password}')`,
+      );
+      const authenticateResult = await concept.authenticate({
         username,
         password,
       });
-      logAction("register", { username, password }, registerResult); // This call is now valid
-
-      assertExists(
-        (registerResult as { user: ID }).user,
-        "Registration should return a user ID.",
-      );
-      const registeredUserId = (registerResult as { user: ID }).user;
-      console.log(`Registered user ID: ${registeredUserId}`);
-
-      // Action: authenticate
-      console.log(`Attempting to authenticate user '${username}'...`);
-      const authResult = await userAuthConcept.authenticate({
-        username,
-        password,
-      });
-      logAction("authenticate", { username, password }, authResult); // This call is now valid
-
-      assertExists(
-        (authResult as { user: ID }).user,
-        "Authentication should return a user ID.",
-      );
+      assertSuccess(
+        authenticateResult,
+        "Authentication should succeed with correct credentials",
+      ); // Type narrowed to { user: ID }
       assertEquals(
-        (authResult as { user: ID }).user,
-        registeredUserId,
-        "Authenticated user ID should match registered user ID.",
+        authenticateResult.user,
+        aliceId,
+        "Authenticated user ID should match registered ID",
       );
+      console.log(`  Authenticated user with ID: ${authenticateResult.user}`);
 
-      // Verify state via query
-      const userLookup = await userAuthConcept._getUserByUsername({ username });
-      logAction("_getUserByUsername", { username }, userLookup); // This call is now valid
-      assertEquals(
-        (userLookup as { user: ID }).user,
-        registeredUserId,
-        "Query _getUserByUsername should find the registered user.",
-      );
-    },
-  );
-
-  await t.step(
-    "Scenario: Registering with existing username should fail",
-    async () => {
-      const username = "bob";
-      const password = "securepassword";
-
-      // First successful registration
-      const registerResult1 = await userAuthConcept.register({
+      log(`Query: _getUserByUsername(username: '${username}')`);
+      const queryByUsernameResult = await concept._getUserByUsername({
         username,
-        password,
       });
-      logAction("register", { username, password }, registerResult1); // This call is now valid
-      assertExists(
-        (registerResult1 as { user: ID }).user,
-        "First registration should succeed.",
-      );
+      // Queries like _getUserByUsername return { user: User } | Empty, not explicit error objects
+      // So we assert success, then check its specific content.
+      assertSuccess(queryByUsernameResult, "Query by username should succeed"); // Type narrowed to { user: ID } | Empty
+      if ("user" in queryByUsernameResult) { // Check if 'user' property exists for the non-Empty case
+        assertExists(
+          queryByUsernameResult.user,
+          "User should be found by username",
+        );
+        assertEquals(
+          queryByUsernameResult.user,
+          aliceId,
+          "User ID from query should match registered ID",
+        );
+        console.log(`  Found user by username: ${queryByUsernameResult.user}`);
+      } else {
+        throw new Error(
+          "Expected to find user by username, but received Empty.",
+        );
+      }
 
-      // Attempt to register with the same username
-      console.log(`Attempting to re-register user '${username}'...`);
-      const registerResult2 = await userAuthConcept.register({
-        username,
-        password,
+      log(`Query: _checkUserExists(user: '${aliceId}')`);
+      const checkExistsResult = await concept._checkUserExists({
+        user: aliceId,
       });
-      logAction("register", { username, password }, registerResult2); // This call is now valid
+      assert(
+        checkExistsResult.exists,
+        "User should exist after registration and authentication",
+      ); // _checkUserExists returns { exists: boolean } directly
+      console.log(`  User ${aliceId} exists: ${checkExistsResult.exists}`);
 
-      assertExists(
-        (registerResult2 as { error: string }).error,
-        "Second registration should return an error.",
-      );
-      assertEquals(
-        (registerResult2 as { error: string }).error,
-        `User with username '${username}' already exists.`,
-        "Error message should indicate existing username.",
-      );
-    },
-  );
-
-  await t.step(
-    "Scenario: Authentication failures (wrong password, non-existent user)",
-    async () => {
-      const username = "charlie";
-      const password = "supersecret";
-      const wrongPassword = "incorrectpassword";
-      const nonExistentUsername = "diana";
-
-      // Register a user first
-      const registerResult = await userAuthConcept.register({
-        username,
-        password,
-      });
-      logAction("register", { username, password }, registerResult); // This call is now valid
-      assertExists(
-        (registerResult as { user: ID }).user,
-        "Registration should succeed for Charlie.",
-      );
-
-      // Attempt to authenticate with wrong password
       console.log(
-        `Attempting to authenticate '${username}' with wrong password...`,
+        "Operational Principle fulfilled: User registered, authenticated, and successfully looked up.",
       );
-      const authResultWrongPass = await userAuthConcept.authenticate({
+    },
+  );
+
+  await t.step(
+    "Scenario 1: Registration and Authentication Failure Cases",
+    async () => {
+      log("Trace: Scenario 1 - Failure Cases");
+
+      const username = "bob";
+      const password = "bobpassword";
+      const wrongPassword = "wrong";
+      const nonExistentUsername = "charlie";
+
+      log(`Action: register(username: '${username}', password: '${password}')`);
+      const registerResult = await concept.register({ username, password });
+      assertSuccess(
+        registerResult,
+        "Initial registration for Bob should succeed",
+      ); // Type narrowed to { user: ID }
+      const bobId = registerResult.user;
+      console.log(`  Registered user Bob with ID: ${bobId}`);
+
+      log(
+        `Action: register(username: '${username}', password: 'another_password') (Duplicate username)`,
+      );
+      const duplicateRegisterResult = await concept.register({
+        username,
+        password: "another_password",
+      });
+      assertFailure(
+        duplicateRegisterResult,
+        "Registration with duplicate username should fail",
+      ); // Type narrowed to { error: string }
+      console.log(
+        `  Attempt to register duplicate username '${username}' failed as expected: ${duplicateRegisterResult.error}`,
+      );
+
+      log(
+        `Action: authenticate(username: '${username}', password: '${wrongPassword}') (Wrong password)`,
+      );
+      const wrongPasswordAuthResult = await concept.authenticate({
         username,
         password: wrongPassword,
       });
-      logAction(
-        "authenticate",
-        { username, password: wrongPassword },
-        authResultWrongPass,
-      ); // This call is now valid
-      assertExists(
-        (authResultWrongPass as { error: string }).error,
-        "Authentication with wrong password should fail.",
-      );
-      assertEquals(
-        (authResultWrongPass as { error: string }).error,
-        "Invalid username or password.",
-        "Error message should indicate invalid credentials.",
+      assertFailure(
+        wrongPasswordAuthResult,
+        "Authentication with wrong password should fail",
+      ); // Type narrowed to { error: string }
+      console.log(
+        `  Attempt to authenticate with wrong password failed as expected: ${wrongPasswordAuthResult.error}`,
       );
 
-      // Attempt to authenticate non-existent user
-      console.log(
-        `Attempting to authenticate non-existent user '${nonExistentUsername}'...`,
+      log(
+        `Action: authenticate(username: '${nonExistentUsername}', password: 'any_password') (Non-existent user)`,
       );
-      const authResultNonExistent = await userAuthConcept.authenticate({
+      const nonExistentAuthResult = await concept.authenticate({
         username: nonExistentUsername,
-        password: password,
+        password: "any_password",
       });
-      logAction(
-        "authenticate",
-        { username: nonExistentUsername, password },
-        authResultNonExistent,
-      ); // This call is now valid
-      assertExists(
-        (authResultNonExistent as { error: string }).error,
-        "Authentication for non-existent user should fail.",
+      assertFailure(
+        nonExistentAuthResult,
+        "Authentication for non-existent user should fail",
+      ); // Type narrowed to { error: string }
+      console.log(
+        `  Attempt to authenticate non-existent user '${nonExistentUsername}' failed as expected: ${nonExistentAuthResult.error}`,
       );
+
+      log(
+        `Query: _checkUserExists(user: '${freshID() as ID}') (Non-existent user ID)`,
+      );
+      const nonExistentUserCheck = await concept._checkUserExists({
+        user: freshID() as ID,
+      });
       assertEquals(
-        (authResultNonExistent as { error: string }).error,
-        "Invalid username or password.",
-        "Error message should indicate invalid credentials.",
+        nonExistentUserCheck.exists,
+        false,
+        "Checking for a non-existent user ID should return false",
+      );
+      console.log(
+        `  Checking for non-existent user ID returned: ${nonExistentUserCheck.exists}`,
+      );
+
+      log(
+        `Query: _getUserByUsername(username: '${nonExistentUsername}') (Non-existent username)`,
+      );
+      const nonExistentUserQuery = await concept._getUserByUsername({
+        username: nonExistentUsername,
+      });
+      assertSuccess(
+        nonExistentUserQuery,
+        "Querying for non-existent username should return an empty object",
+      ); // Type narrowed to Empty
+      assertEquals(
+        Object.keys(nonExistentUserQuery).length,
+        0,
+        "Querying for non-existent username should return an empty object",
+      );
+      console.log(
+        `  Querying for non-existent username '${nonExistentUsername}' returned: ${
+          JSON.stringify(nonExistentUserQuery)
+        }`,
       );
     },
   );
 
-  await t.step("Scenario: Change password functionality", async () => {
-    const username = "eve";
-    const oldPassword = "oldpassword";
-    const newPassword = "newsecurepassword";
+  await t.step("Scenario 2: Change Password Functionality", async () => {
+    log("Trace: Scenario 2 - Change Password");
 
-    // Register user Eve
-    const registerResult = await userAuthConcept.register({
+    const username = "charlie";
+    const initialPassword = "initialpassword";
+    const newPassword = "newpassword";
+
+    log(
+      `Action: register(username: '${username}', password: '${initialPassword}')`,
+    );
+    const registerResult = await concept.register({
       username,
-      password: oldPassword,
+      password: initialPassword,
     });
-    logAction("register", { username, password: oldPassword }, registerResult); // This call is now valid
-    assertExists(
-      (registerResult as { user: ID }).user,
-      "Eve's registration should succeed.",
-    );
-    const eveId = (registerResult as { user: ID }).user;
+    assertSuccess(registerResult, "Registration for Charlie should succeed"); // Type narrowed to { user: ID }
+    const charlieId = registerResult.user;
+    console.log(`  Registered user Charlie with ID: ${charlieId}`);
 
-    // Authenticate with old password (should succeed)
-    const authOldPass = await userAuthConcept.authenticate({
+    log(
+      `Action: authenticate(username: '${username}', password: '${initialPassword}')`,
+    );
+    const authenticateResult = await concept.authenticate({
       username,
-      password: oldPassword,
+      password: initialPassword,
     });
-    logAction("authenticate", { username, password: oldPassword }, authOldPass); // This call is now valid
-    assertExists(
-      (authOldPass as { user: ID }).user,
-      "Authentication with old password should succeed.",
-    );
+    assertSuccess(
+      authenticateResult,
+      "Authentication with initial password should succeed",
+    ); // Type narrowed to { user: ID }
+    console.log(`  Authenticated with initial password.`);
 
-    // Attempt to change password with wrong old password
-    console.log(
-      `Attempting to change password for '${username}' with wrong old password...`,
+    log(
+      `Action: changePassword(user: '${charlieId}', oldPassword: 'wrong_password', newPassword: '${newPassword}') (Wrong old password)`,
     );
-    const changePassWrongOld = await userAuthConcept.changePassword({
-      user: eveId,
-      oldPassword: "wrongoldpassword",
+    const wrongOldPasswordResult = await concept.changePassword({
+      user: charlieId,
+      oldPassword: "wrong_password",
       newPassword,
     });
-    logAction(
-      "changePassword",
-      { user: eveId, oldPassword: "wrongoldpassword", newPassword },
-      changePassWrongOld,
-    ); // This call is now valid
-    assertExists(
-      (changePassWrongOld as { error: string }).error,
-      "Changing password with wrong old password should fail.",
-    );
-    assertEquals(
-      (changePassWrongOld as { error: string }).error,
-      "Old password does not match.",
-      "Error message should indicate old password mismatch.",
-    );
-
-    // Attempt to change password to the same password
+    assertFailure(
+      wrongOldPasswordResult,
+      "Changing password with wrong old password should fail",
+    ); // Type narrowed to { error: string }
     console.log(
-      `Attempting to change password for '${username}' to the same password...`,
-    );
-    const changePassSame = await userAuthConcept.changePassword({
-      user: eveId,
-      oldPassword,
-      newPassword: oldPassword,
-    });
-    logAction(
-      "changePassword",
-      { user: eveId, oldPassword, newPassword: oldPassword },
-      changePassSame,
-    ); // This call is now valid
-    assertExists(
-      (changePassSame as { error: string }).error,
-      "Changing password to the same password should fail.",
-    );
-    assertEquals(
-      (changePassSame as { error: string }).error,
-      "New password cannot be the same as the old password.",
-      "Error message should indicate same password.",
+      `  Attempt to change password with wrong old password failed as expected: ${wrongOldPasswordResult.error}`,
     );
 
-    // Successfully change password
-    console.log(`Successfully changing password for '${username}'...`);
-    const changePassSuccess = await userAuthConcept.changePassword({
-      user: eveId,
-      oldPassword,
+    log(
+      `Action: changePassword(user: '${charlieId}', oldPassword: '${initialPassword}', newPassword: '${initialPassword}') (Same new password)`,
+    );
+    const sameNewPasswordResult = await concept.changePassword({
+      user: charlieId,
+      oldPassword: initialPassword,
+      newPassword: initialPassword,
+    });
+    assertFailure(
+      sameNewPasswordResult,
+      "Changing password to the same password should fail",
+    ); // Type narrowed to { error: string }
+    console.log(
+      `  Attempt to change password to the same password failed as expected: ${sameNewPasswordResult.error}`,
+    );
+
+    log(
+      `Action: changePassword(user: '${charlieId}', oldPassword: '${initialPassword}', newPassword: '${newPassword}') (Successful change)`,
+    );
+    const changePasswordResult = await concept.changePassword({
+      user: charlieId,
+      oldPassword: initialPassword,
       newPassword,
     });
-    logAction(
-      "changePassword",
-      { user: eveId, oldPassword, newPassword },
-      changePassSuccess,
-    ); // This call is now valid
+    assertSuccess(
+      changePasswordResult,
+      "Password change should succeed with correct old password and different new password",
+    ); // Type narrowed to Empty
     assertEquals(
-      changePassSuccess,
+      changePasswordResult,
       {},
-      "Password change should succeed with an empty result.",
+      "Successful password change should return an empty object",
     );
+    console.log(`  Password for Charlie successfully changed.`);
 
-    // Authenticate with old password (should now fail)
-    console.log(
-      `Attempting to authenticate '${username}' with old password (should fail)...`,
+    log(
+      `Action: authenticate(username: '${username}', password: '${initialPassword}') (Old password after change)`,
     );
-    const authAfterChangeOld = await userAuthConcept.authenticate({
+    const authWithOldPassword = await concept.authenticate({
       username,
-      password: oldPassword,
+      password: initialPassword,
     });
-    logAction(
-      "authenticate",
-      { username, password: oldPassword },
-      authAfterChangeOld,
-    ); // This call is now valid
-    assertExists(
-      (authAfterChangeOld as { error: string }).error,
-      "Authentication with old password after change should fail.",
+    assertFailure(
+      authWithOldPassword,
+      "Authentication with old password should now fail",
+    ); // Type narrowed to { error: string }
+    console.log(
+      `  Authentication with old password failed as expected: ${authWithOldPassword.error}`,
     );
 
-    // Authenticate with new password (should succeed)
-    console.log(
-      `Attempting to authenticate '${username}' with new password (should succeed)...`,
+    log(
+      `Action: authenticate(username: '${username}', password: '${newPassword}') (New password after change)`,
     );
-    const authAfterChangeNew = await userAuthConcept.authenticate({
+    const authWithNewPassword = await concept.authenticate({
       username,
       password: newPassword,
     });
-    logAction(
-      "authenticate",
-      { username, password: newPassword },
-      authAfterChangeNew,
-    ); // This call is now valid
-    assertExists(
-      (authAfterChangeNew as { user: ID }).user,
-      "Authentication with new password after change should succeed.",
-    );
+    assertSuccess(
+      authWithNewPassword,
+      "Authentication with new password should succeed",
+    ); // Type narrowed to { user: ID }
     assertEquals(
-      (authAfterChangeNew as { user: ID }).user,
-      eveId,
-      "Authenticated user ID should match Eve's ID.",
+      authWithNewPassword.user,
+      charlieId,
+      "Authenticated user ID should match Charlie's ID",
     );
+    console.log(`  Authenticated with new password successfully.`);
   });
 
-  await t.step("Scenario: Delete account functionality", async () => {
-    const username1 = "frank";
-    const password1 = "pass1";
-    const username2 = "grace";
-    const password2 = "pass2";
+  await t.step("Scenario 3: Account Deletion Functionality", async () => {
+    log("Trace: Scenario 3 - Account Deletion");
 
-    // Register two users
-    const registerResult1 = await userAuthConcept.register({
-      username: username1,
-      password: password1,
-    });
-    logAction(
-      "register",
-      { username: username1, password: password1 },
-      registerResult1,
-    ); // This call is now valid
-    assertExists(
-      (registerResult1 as { user: ID }).user,
-      "Frank's registration should succeed.",
-    );
-    const frankId = (registerResult1 as { user: ID }).user;
+    const username = "diana";
+    const password = "dianapassword";
 
-    const registerResult2 = await userAuthConcept.register({
-      username: username2,
-      password: password2,
-    });
-    logAction(
-      "register",
-      { username: username2, password: password2 },
-      registerResult2,
-    ); // This call is now valid
-    assertExists(
-      (registerResult2 as { user: ID }).user,
-      "Grace's registration should succeed.",
-    );
-    const graceId = (registerResult2 as { user: ID }).user;
+    log(`Action: register(username: '${username}', password: '${password}')`);
+    const registerResult = await concept.register({ username, password });
+    assertSuccess(registerResult, "Registration for Diana should succeed"); // Type narrowed to { user: ID }
+    const dianaId = registerResult.user;
+    console.log(`  Registered user Diana with ID: ${dianaId}`);
 
-    // Delete Frank's account
-    console.log(`Attempting to delete account for '${username1}'...`);
-    const deleteFrank = await userAuthConcept.deleteAccount({ user: frankId });
-    logAction("deleteAccount", { user: frankId }, deleteFrank); // This call is now valid
-    assertEquals(deleteFrank, {}, "Frank's account deletion should succeed.");
+    log(`Query: _checkUserExists(user: '${dianaId}') before deletion`);
+    let checkExistsResult = await concept._checkUserExists({ user: dianaId });
+    assert(checkExistsResult.exists, "Diana should exist before deletion");
+    console.log(`  Diana exists: ${checkExistsResult.exists}`);
 
-    // Attempt to authenticate Frank (should fail)
-    console.log(`Attempting to authenticate '${username1}' (should fail)...`);
-    const authFrank = await userAuthConcept.authenticate({
-      username: username1,
-      password: password1,
-    });
-    logAction(
-      "authenticate",
-      { username: username1, password: password1 },
-      authFrank,
-    ); // This call is now valid
-    assertExists(
-      (authFrank as { error: string }).error,
-      "Authentication for deleted Frank should fail.",
-    );
-
-    // Verify Frank's existence via query
-    const checkFrankExists = await userAuthConcept._checkUserExists({
-      user: frankId,
-    });
-    logAction("_checkUserExists", { user: frankId }, checkFrankExists); // This call is now valid
+    log(`Action: deleteAccount(user: '${dianaId}')`);
+    const deleteResult = await concept.deleteAccount({ user: dianaId });
+    assertSuccess(
+      deleteResult,
+      "Account deletion should succeed for existing user",
+    ); // Type narrowed to Empty
     assertEquals(
-      checkFrankExists.exists,
-      false,
-      "Frank's account should no longer exist.",
-    );
-
-    // Attempt to delete Frank's account again (should fail)
-    console.log(`Attempting to delete account for '${username1}' again...`);
-    const deleteFrankAgain = await userAuthConcept.deleteAccount({
-      user: frankId,
-    });
-    logAction("deleteAccount", { user: frankId }, deleteFrankAgain); // This call is now valid
-    assertExists(
-      (deleteFrankAgain as { error: string }).error,
-      "Deleting a non-existent account should return an error.",
-    );
-    assertEquals(
-      (deleteFrankAgain as { error: string }).error,
-      `User with ID '${frankId}' not found.`,
-      "Error message should indicate user not found.",
-    );
-
-    // Authenticate Grace (should still succeed)
-    console.log(
-      `Attempting to authenticate '${username2}' (should still succeed)...`,
-    );
-    const authGrace = await userAuthConcept.authenticate({
-      username: username2,
-      password: password2,
-    });
-    logAction(
-      "authenticate",
-      { username: username2, password: password2 },
-      authGrace,
-    ); // This call is now valid
-    assertExists(
-      (authGrace as { user: ID }).user,
-      "Authentication for Grace should still succeed.",
-    );
-    assertEquals(
-      (authGrace as { user: ID }).user,
-      graceId,
-      "Authenticated user ID should match Grace's ID.",
-    );
-  });
-
-  await t.step("Scenario: Query functionality for user existence", async () => {
-    const username = "heidi";
-    const password = "hpassword";
-
-    // Register Heidi
-    const registerResult = await userAuthConcept.register({
-      username,
-      password,
-    });
-    logAction("register", { username, password }, registerResult); // This call is now valid
-    assertExists(
-      (registerResult as { user: ID }).user,
-      "Heidi's registration should succeed.",
-    );
-    const heidiId = (registerResult as { user: ID }).user;
-
-    // Query _getUserByUsername for existing user
-    console.log(`Querying for user by username '${username}'...`);
-    const lookupHeidi = await userAuthConcept._getUserByUsername({ username });
-    logAction("_getUserByUsername", { username }, lookupHeidi); // This call is now valid
-    assertExists(
-      (lookupHeidi as { user: ID }).user,
-      "Query should find Heidi by username.",
-    );
-    assertEquals(
-      (lookupHeidi as { user: ID }).user,
-      heidiId,
-      "Returned user ID should match Heidi's ID.",
-    );
-
-    // Query _getUserByUsername for non-existent user
-    const nonExistentUsername = "ivan";
-    console.log(
-      `Querying for non-existent user by username '${nonExistentUsername}'...`,
-    );
-    const lookupIvan = await userAuthConcept._getUserByUsername({
-      username: nonExistentUsername,
-    });
-    logAction(
-      "_getUserByUsername",
-      { username: nonExistentUsername },
-      lookupIvan,
-    ); // This call is now valid
-    assertEquals(
-      lookupIvan,
+      deleteResult,
       {},
-      "Query for non-existent user should return an empty object.",
+      "Successful deletion should return an empty object",
     );
+    console.log(`  User Diana with ID ${dianaId} successfully deleted.`);
 
-    // Query _checkUserExists for existing user
-    console.log(`Checking existence for user ID '${heidiId}'...`);
-    const checkHeidiExists = await userAuthConcept._checkUserExists({
-      user: heidiId,
-    });
-    logAction("_checkUserExists", { user: heidiId }, checkHeidiExists); // This call is now valid
-    assertEquals(checkHeidiExists.exists, true, "Heidi should exist.");
+    log(`Query: _checkUserExists(user: '${dianaId}') after deletion`);
+    checkExistsResult = await concept._checkUserExists({ user: dianaId });
+    assert(!checkExistsResult.exists, "Diana should not exist after deletion");
+    console.log(`  Diana exists: ${checkExistsResult.exists}`);
 
-    // Query _checkUserExists for non-existent user ID
-    const nonExistentUserId = "nonexistentid" as ID;
+    log(
+      `Action: authenticate(username: '${username}', password: '${password}') (After deletion)`,
+    );
+    const authAfterDelete = await concept.authenticate({ username, password });
+    assertFailure(
+      authAfterDelete,
+      "Authentication should fail for a deleted user",
+    ); // Type narrowed to { error: string }
     console.log(
-      `Checking existence for non-existent user ID '${nonExistentUserId}'...`,
+      `  Authentication for deleted user failed as expected: ${authAfterDelete.error}`,
     );
-    const checkNonExistentUser = await userAuthConcept._checkUserExists({
-      user: nonExistentUserId,
+
+    log(`Action: deleteAccount(user: '${dianaId}') (Non-existent user)`);
+    const deleteNonExistentResult = await concept.deleteAccount({
+      user: dianaId,
     });
-    logAction(
-      "_checkUserExists",
-      { user: nonExistentUserId },
-      checkNonExistentUser,
-    ); // This call is now valid
-    assertEquals(
-      checkNonExistentUser.exists,
-      false,
-      "Non-existent user should not exist.",
+    assertFailure(
+      deleteNonExistentResult,
+      "Deleting a non-existent account should fail",
+    ); // Type narrowed to { error: string }
+    console.log(
+      `  Attempt to delete non-existent user failed as expected: ${deleteNonExistentResult.error}`,
     );
   });
 
-  await client.close();
+  await t.step("Scenario 4: Comprehensive Querying", async () => {
+    log("Trace: Scenario 4 - Comprehensive Querying");
+
+    const user1 = { username: "eve", password: "evepassword" };
+    const user2 = { username: "frank", password: "frankpassword" };
+    const user3 = { username: "grace", password: "gracepassword" };
+
+    log("Action: Register Eve");
+    const eveResult = await concept.register(user1);
+    assertSuccess(eveResult, "Eve registration should succeed"); // Type narrowed to { user: ID }
+    const eveId = eveResult.user;
+    console.log(`  Registered Eve with ID: ${eveId}`);
+
+    log("Action: Register Frank");
+    const frankResult = await concept.register(user2);
+    assertSuccess(frankResult, "Frank registration should succeed"); // Type narrowed to { user: ID }
+    const frankId = frankResult.user;
+    console.log(`  Registered Frank with ID: ${frankId}`);
+
+    log("Action: Register Grace");
+    const graceResult = await concept.register(user3);
+    assertSuccess(graceResult, "Grace registration should succeed"); // Type narrowed to { user: ID }
+    const graceId = graceResult.user;
+    console.log(`  Registered Grace with ID: ${graceId}`);
+
+    log("Query: _getAllUsers()");
+    const allUsers = await concept._getAllUsers(); // Returns UsersDocument[]
+    // _getAllUsers does not return an error object, so we directly assert on its structure
+    assert(Array.isArray(allUsers), "Result should be an array");
+    // FIX: Expected 6 users, not 3, because previous test steps also added users.
+    assertEquals(
+      allUsers.length,
+      6,
+      "Should retrieve 6 users (Alice, Bob, Charlie, Eve, Frank, Grace)",
+    );
+    console.log(`  Retrieved ${allUsers.length} users:`);
+    allUsers.forEach((u) =>
+      console.log(`    ID: ${u._id}, Username: ${u.username}`)
+    );
+    assertExists(
+      allUsers.find((u) => u._id === eveId),
+      "Eve should be in the list",
+    );
+    assertExists(
+      allUsers.find((u) => u._id === frankId),
+      "Frank should be in the list",
+    );
+    assertExists(
+      allUsers.find((u) => u._id === graceId),
+      "Grace should be in the list",
+    );
+
+    log(`Query: _getUserById(user: '${frankId}')`);
+    const frankById = await concept._getUserById({ user: frankId }); // Returns UsersDocument[] | Empty
+    assertSuccess(frankById, "Getting Frank by ID should succeed"); // Type narrowed to UsersDocument[] | Empty
+    assert(Array.isArray(frankById), "Result should be an array");
+    assertEquals(frankById.length, 1, "Should retrieve exactly one user");
+    assertEquals(
+      frankById[0]._id,
+      frankId,
+      "Retrieved user ID should match Frank's ID",
+    );
+    assertEquals(
+      frankById[0].username,
+      user2.username,
+      "Retrieved username should match Frank's",
+    );
+    console.log(
+      `  Retrieved user by ID '${frankId}': ${JSON.stringify(frankById[0])}`,
+    );
+
+    const nonExistentId = freshID() as ID; // Using freshID for a truly unique non-existent ID
+    log(`Query: _getUserById(user: '${nonExistentId}') (Non-existent ID)`);
+    const nonExistentUser = await concept._getUserById({ user: nonExistentId });
+    assertSuccess(
+      nonExistentUser,
+      "Getting a non-existent user by ID should return an empty array",
+    ); // Type narrowed to Empty
+    assertEquals(
+      nonExistentUser,
+      [],
+      "Getting a non-existent user by ID should return an empty array",
+    );
+    console.log(
+      `  Query for non-existent ID '${nonExistentId}' returned: ${
+        JSON.stringify(nonExistentUser)
+      }`,
+    );
+
+    log(`Query: _checkUserExists(user: '${graceId}')`);
+    const graceExists = await concept._checkUserExists({ user: graceId }); // Returns { exists: boolean }
+    assert(graceExists.exists, "Grace should exist");
+    console.log(`  User ${graceId} exists: ${graceExists.exists}`);
+
+    log(`Query: _getUserByUsername(username: '${user3.username}')`);
+    const graceByUsername = await concept._getUserByUsername({
+      username: user3.username,
+    }); // Returns { user: User } | Empty
+    assertSuccess(graceByUsername, "Getting Grace by username should succeed"); // Type narrowed
+    if ("user" in graceByUsername) {
+      assertExists(graceByUsername.user, "Grace should be found by username");
+      assertEquals(
+        graceByUsername.user,
+        graceId,
+        "User ID from query should match Grace's ID",
+      );
+      console.log(
+        `  Found user by username '${user3.username}': ${graceByUsername.user}`,
+      );
+    } else {
+      throw new Error("Expected to find user by username, but received Empty.");
+    }
+  });
+
+  await client.close(); // Close the database connection after all tests in this file
 });

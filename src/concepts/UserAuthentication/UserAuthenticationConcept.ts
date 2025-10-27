@@ -200,4 +200,36 @@ export default class UserAuthenticationConcept {
     const userDoc = await this.users.findOne({ _id: user });
     return { exists: !!userDoc };
   }
+
+  /**
+   * _getAllUsers (): (user: { _id: User, username: String, password: String }[])
+   *
+   * Effects: Returns a list of all user documents.
+   *
+   * @returns {Promise<UsersDocument[]>} - An array of all UsersDocument objects.
+   */
+  async _getAllUsers(): Promise<UsersDocument[]> {
+    const allUsers = await this.users.find({}).toArray();
+    return allUsers;
+  }
+
+  /**
+   * _getUserById (user: User): (user: { _id: User, username: String, password: String })
+   *
+   * Effects: Returns a specific user document by its ID, if found.
+   *
+   * @param {User} user - The ID of the user to retrieve.
+   * @returns {Promise<UsersDocument[] | Empty>} - An array containing the UsersDocument if found, otherwise an empty array.
+   */
+  async _getUserById(
+    { user }: { user: User },
+  ): Promise<UsersDocument[] | Empty> {
+    const userDoc = await this.users.findOne({ _id: user });
+    if (userDoc) {
+      // Queries are expected to return an array of dictionaries for consistency
+      // Even if only one item is returned, wrap it in an array.
+      return [userDoc];
+    }
+    return []; // Return an empty array if not found, consistent with other queries.
+  }
 }
