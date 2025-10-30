@@ -196,8 +196,20 @@
       "bases:Create new base": false
     }
   },
-  "active": "9b42b4503c7d88ad",
+  "active": "e4ba79d458b95de2",
   "lastOpenFiles": [
+    "src/syncs/syncs.ts",
+    "src/syncs/sharing.sync.ts",
+    "src/syncs/sample.sync.ts",
+    "src/syncs/files.sync.ts",
+    "src/syncs/auth.sync.ts",
+    "src/syncs",
+    "src/concepts/test_concepts.ts",
+    "src/concepts/concepts.ts",
+    "src/concepts/Requesting/README.md",
+    "src/concepts/Requesting/RequestingConcept.ts",
+    "src/concepts/Requesting/passthrough.ts",
+    "src/concepts/Requesting",
     "context/design/tools/apiGeneration/api-generation.md/20251030_110207.27b49008.md",
     "context/design/tools/apiGeneration/api-generation.md/steps/API Specification.00cb29c5.md",
     "context/design/tools/apiGeneration/api-generation.md/steps/API Specification.3706fabd.md",
@@ -221,18 +233,6 @@
     "context/design/tools/apiGeneration/api-generation.md/steps/response.9745f7fc.md",
     "context/design/tools/apiGeneration/api-generation.md/steps/implement.f7536c03.md",
     "context/design/tools/apiGeneration/api-generation.md/steps/_.3ae4d190.md",
-    "context/design/tools/apiGeneration/api-generation.md/steps/file.0ef77c5d.md",
-    "context/design/tools/apiGeneration/api-generation.md/steps/concept.a3db4a69.md",
-    "context/design/tools/apiGeneration/api-generation.md/steps/response.727b2c08.md",
-    "context/design/tools/apiGeneration/api-generation.md/steps",
-    "context/design/tools/apiGeneration",
-    "backups/concept_server/concept_server_modified.ts",
-    "context/design/concepts/ScheduleGenerator/newTesting.md/steps",
-    "context/design/concepts/ScheduleGenerator/newImplementation.md/steps",
-    "backups/concept_server/concept_server_original.ts",
-    "backups/concept_server",
-    "backups",
-    "context/design/concepts/UserAuthentication/newTesting.md/steps",
-    "context/design/concepts/UserAuthentication/newImplementation.md/steps"
+    "context/design/tools/apiGeneration/api-generation.md/steps/file.0ef77c5d.md"
   ]
 }
