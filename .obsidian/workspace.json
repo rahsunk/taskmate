@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "design/concepts/ScheduleGenerator/ScheduleGenerator.md",
+                "file": "design/tools/apiGeneration/api-generation.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "ScheduleGenerator"
+              "title": "api-generation"
             }
           },
           {
@@ -41,16 +41,15 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "design/concepts/ScheduleGenerator/ScheduleGenerator.md",
+                "file": "design/concepts/ItemSharing/ItemSharing.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "ScheduleGenerator"
+              "title": "ItemSharing"
             }
           }
-        ],
-        "currentTab": 2
+        ]
       }
     ],
     "direction": "vertical"
@@ -197,43 +196,43 @@
       "bases:Create new base": false
     }
   },
-  "active": "0ee58f760fef2a3f",
+  "active": "9b42b4503c7d88ad",
   "lastOpenFiles": [
-    "design/concepts/ScheduleGenerator/newTesting.md",
+    "context/design/tools/apiGeneration/api-generation.md/20251030_110207.27b49008.md",
+    "context/design/tools/apiGeneration/api-generation.md/steps/API Specification.00cb29c5.md",
+    "context/design/tools/apiGeneration/api-generation.md/steps/API Specification.3706fabd.md",
+    "context/design/tools/apiGeneration/api-generation.md/steps/API Specification.820bad2e.md",
+    "context/design/tools/apiGeneration/api-generation.md/steps/API Specification.3861a4fc.md",
+    "context/design/tools/apiGeneration/api-generation.md/steps/response.91d328ae.md",
+    "context/design/tools/apiGeneration/api-generation.md/20251030_105927.54e03087.md",
+    "context/design/tools/apiGeneration/api-generation.md/steps/prompt.647b696a.md",
+    "context/design/tools/apiGeneration/api-generation.md/steps/API Specification.c5b87318.md",
+    "context/design/tools/apiGeneration/api-generation.md/steps/API Specification.a49527be.md",
+    "context/design/tools/apiGeneration/api-generation.md/steps/API Specification.cef7d411.md",
+    "context/design/tools/apiGeneration/api-generation.md/steps/API Specification.983f236e.md",
+    "context/design/tools/apiGeneration/api-generation.md/steps/response.adf036bf.md",
+    "context/design/tools/apiGeneration/api-generation.md/steps/prompt.8782721a.md",
+    "context/design/tools/apiGeneration/api-generation.md/steps/implement.407a171f.md",
+    "context/design/tools/apiGeneration/api-generation.md/steps/concept.9962ac62.md",
+    "context/design/tools/apiGeneration/api-generation.md/steps/response.cbc2e72b.md",
+    "context/design/tools/apiGeneration/api-generation.md/steps/implement.7a73841f.md",
+    "context/design/tools/apiGeneration/api-generation.md/steps/concept.1c49c453.md",
+    "context/design/tools/apiGeneration/api-generation.md/steps/response.6740c2bd.md",
+    "context/design/tools/apiGeneration/api-generation.md/steps/response.9745f7fc.md",
+    "context/design/tools/apiGeneration/api-generation.md/steps/implement.f7536c03.md",
+    "context/design/tools/apiGeneration/api-generation.md/steps/_.3ae4d190.md",
+    "context/design/tools/apiGeneration/api-generation.md/steps/file.0ef77c5d.md",
+    "context/design/tools/apiGeneration/api-generation.md/steps/concept.a3db4a69.md",
+    "context/design/tools/apiGeneration/api-generation.md/steps/response.727b2c08.md",
+    "context/design/tools/apiGeneration/api-generation.md/steps",
+    "context/design/tools/apiGeneration",
     "backups/concept_server/concept_server_modified.ts",
-    "context/design/concepts/ScheduleGenerator/newTesting.md/20251027_163016.a08f4a97.md",
-    "context/design/concepts/ScheduleGenerator/newTesting.md/steps/file.c3fc9286.md",
-    "context/design/concepts/ScheduleGenerator/newTesting.md/steps/response.01b2e588.md",
-    "context/design/concepts/ScheduleGenerator/newTesting.md/20251027_162841.7ec9f7b8.md",
-    "context/design/concepts/ScheduleGenerator/newTesting.md/steps/prompt.586218db.md",
-    "context/design/concepts/ScheduleGenerator/newTesting.md/20251027_162638.d22b5284.md",
-    "context/design/concepts/ScheduleGenerator/newTesting.md/steps/file.f28e802a.md",
-    "context/design/concepts/ScheduleGenerator/newTesting.md/steps/response.429b1238.md",
-    "context/design/concepts/ScheduleGenerator/newTesting.md/20251027_162412.c5ef62b7.md",
-    "context/design/concepts/ScheduleGenerator/newTesting.md/20251027_162356.093a4ac4.md",
-    "context/design/concepts/ScheduleGenerator/newTesting.md/20251027_162156.c344e190.md",
-    "context/design/concepts/ScheduleGenerator/newTesting.md/steps/prompt.186bf730.md",
-    "context/design/concepts/ScheduleGenerator/newTesting.md/20251027_162039.bd67a3b2.md",
-    "context/design/concepts/ScheduleGenerator/newTesting.md/steps/file.0bfcca5d.md",
-    "context/design/concepts/ScheduleGenerator/newTesting.md/steps/response.2daa6bac.md",
-    "context/design/concepts/ScheduleGenerator/newTesting.md/20251027_161940.fcddc602.md",
-    "context/design/concepts/ScheduleGenerator/newTesting.md/steps/prompt.31cd49ff.md",
-    "context/design/concepts/ScheduleGenerator/newTesting.md/20251027_161732.3bd107c5.md",
-    "context/design/concepts/ScheduleGenerator/newTesting.md/steps/file.22b7b3ec.md",
-    "context/design/concepts/ScheduleGenerator/newTesting.md/steps/response.fd17ac39.md",
-    "context/design/concepts/ScheduleGenerator/newTesting.md/20251027_161611.fc010d04.md",
-    "context/design/concepts/ScheduleGenerator/newTesting.md/steps/prompt.b769e6cf.md",
-    "context/design/concepts/ScheduleGenerator/newTesting.md/20251027_161521.d765ddf0.md",
-    "context/design/concepts/ScheduleGenerator/newTesting.md/steps/file.09847ddf.md",
-    "context/design/concepts/ScheduleGenerator/newTesting.md/steps/response.fe416d32.md",
     "context/design/concepts/ScheduleGenerator/newTesting.md/steps",
     "context/design/concepts/ScheduleGenerator/newImplementation.md/steps",
     "backups/concept_server/concept_server_original.ts",
     "backups/concept_server",
     "backups",
     "context/design/concepts/UserAuthentication/newTesting.md/steps",
-    "context/design/concepts/UserAuthentication/newImplementation.md/steps",
-    "design/tools/apiGeneration",
-    "Untitled 1"
+    "context/design/concepts/UserAuthentication/newImplementation.md/steps"
   ]
 }
