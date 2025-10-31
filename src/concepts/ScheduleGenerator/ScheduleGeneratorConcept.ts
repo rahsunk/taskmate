@@ -17,8 +17,6 @@ enum RepeatFrequency {
   NONE = "NONE",
   DAILY = "DAILY",
   WEEKLY = "WEEKLY",
-  MONTHLY = "MONTHLY",
-  YEARLY = "YEARLY",
 }
 
 // Interface for repeat configurations: specifies frequency and optionally days of the week for weekly repeats.
@@ -130,16 +128,24 @@ async function getNextSequence(
  * @param d2
  */
 function isSameDay(d1: Date, d2: Date): boolean {
-  return d1.getFullYear() === d2.getFullYear() &&
-    d1.getMonth() === d2.getMonth() &&
-    d1.getDate() === d2.getDate();
+  // Ensure both parameters are proper Date objects
+  const date1 = new Date(d1);
+  const date2 = new Date(d2);
+  return (
+    date1.getFullYear() === date2.getFullYear() &&
+    date1.getMonth() === date2.getMonth() &&
+    date1.getDate() === date2.getDate()
+  );
 }
 
 /**
  * Helper to get the difference in minutes between two dates.
  */
 function getMinutesDifference(date1: Date, date2: Date): number {
-  return Math.abs(date1.getTime() - date2.getTime()) / (1000 * 60);
+  // Ensure both parameters are proper Date objects
+  const d1 = new Date(date1);
+  const d2 = new Date(date2);
+  return Math.abs(d1.getTime() - d2.getTime()) / (1000 * 60);
 }
 
 /**
@@ -223,17 +229,25 @@ export default class ScheduleGeneratorConcept {
    *           verify its existence; a higher-level synchronization is expected
    *           to provide a valid `User` ID).
    *
-   * effects: Creates an empty schedule document, associating it with the `owner`.
-   *          Assigns an incrementing `scheduleID` for internal concept use.
+   * effects: Gets or creates a schedule for the owner. Each user can only have one schedule.
+   *          If the user already has a schedule, returns the existing one.
+   *          Otherwise, creates an empty schedule document and assigns an incrementing `scheduleID`.
    *
    * @param {Object} params - The action parameters.
-   * @param {User} params.owner - The ID of the user for whom to create the schedule.
-   * @returns {Promise<{schedule?: Schedule; error?: string}>} - The ID of the newly created schedule document or an error message.
+   * @param {User} params.owner - The ID of the user for whom to get/create the schedule.
+   * @returns {Promise<{schedule?: Schedule; error?: string}>} - The ID of the schedule document (existing or newly created) or an error message.
    */
   async initializeSchedule({ owner }: { owner: User }): Promise<{
     schedule?: Schedule;
     error?: string;
   }> {
+    // Check if the user already has a schedule
+    const existingSchedule = await this.schedules.findOne({ owner });
+    if (existingSchedule) {
+      return { schedule: existingSchedule._id };
+    }
+
+    // Create new schedule if none exists
     const scheduleID = await getNextSequence(
       this.counters,
       "scheduleID_counter",
@@ -674,17 +688,11 @@ export default class ScheduleGeneratorConcept {
    * @returns {Promise<{scheduleId?: Schedule; generatedPlan?: GeneratedSchedulePlan; error?: string}>}
    *   - The ID of the processed schedule, the generated plan, or an error message.
    */
-  async generateSchedule({
-    schedule,
-  }: {
-    schedule: Schedule;
-  }): Promise<
-    {
-      scheduleId?: Schedule;
-      generatedPlan?: GeneratedSchedulePlan;
-      error?: string;
-    }
-  > {
+  async generateSchedule({ schedule }: { schedule: Schedule }): Promise<{
+    scheduleId?: Schedule;
+    generatedPlan?: GeneratedSchedulePlan;
+    error?: string;
+  }> {
     // Precondition: check if schedule exists
     const existingSchedule = await this.schedules.findOne({ _id: schedule });
     if (!existingSchedule) {
@@ -734,7 +742,10 @@ export default class ScheduleGeneratorConcept {
       // Instantiate events for the current day
       for (const event of events) {
         let shouldSchedule = false;
-        const eventDate = new Date(event.startTime); // Use event's original date for comparison
+        // Ensure event times are proper Date objects
+        const eventStartTime = new Date(event.startTime);
+        const eventEndTime = new Date(event.endTime);
+        const eventDate = eventStartTime; // Use event's original date for comparison
 
         switch (event.repeat.frequency) {
           case RepeatFrequency.NONE:
@@ -752,38 +763,23 @@ export default class ScheduleGeneratorConcept {
               shouldSchedule = true;
             }
             break;
-          case RepeatFrequency.MONTHLY:
-            // Schedule if current day 'd' is the same day of the month as event.startTime
-            if (d.getDate() === eventDate.getDate()) {
-              shouldSchedule = true;
-            }
-            break;
-          case RepeatFrequency.YEARLY:
-            // Schedule if current day 'd' is the same day and month as event.startTime
-            if (
-              d.getDate() === eventDate.getDate() &&
-              d.getMonth() === eventDate.getMonth()
-            ) {
-              shouldSchedule = true;
-            }
-            break;
         }
 
         if (shouldSchedule) {
           // Create a concrete instance of the event for the current day 'd'
           const scheduledEventStartTime = new Date(d);
           scheduledEventStartTime.setHours(
-            event.startTime.getHours(),
-            event.startTime.getMinutes(),
-            event.startTime.getSeconds(),
-            event.startTime.getMilliseconds(),
+            eventStartTime.getHours(),
+            eventStartTime.getMinutes(),
+            eventStartTime.getSeconds(),
+            eventStartTime.getMilliseconds(),
           );
           const scheduledEventEndTime = new Date(d);
           scheduledEventEndTime.setHours(
-            event.endTime.getHours(),
-            event.endTime.getMinutes(),
-            event.endTime.getSeconds(),
-            event.endTime.getMilliseconds(),
+            eventEndTime.getHours(),
+            eventEndTime.getMinutes(),
+            eventEndTime.getSeconds(),
+            eventEndTime.getMilliseconds(),
           );
 
           // Ensure scheduled event doesn't end before it starts or is in the past compared to now
@@ -851,8 +847,12 @@ export default class ScheduleGeneratorConcept {
 
     // 4. Prioritize tasks
     tasks.sort((a, b) => {
+      // Ensure deadlines are proper Date objects
+      const aDeadline = new Date(a.deadline);
+      const bDeadline = new Date(b.deadline);
+
       // 1. Sooner deadline first
-      const deadlineDiff = a.deadline.getTime() - b.deadline.getTime();
+      const deadlineDiff = aDeadline.getTime() - bDeadline.getTime();
       if (deadlineDiff !== 0) return deadlineDiff;
 
       // 2. Higher priority level first (descending)
@@ -878,20 +878,22 @@ export default class ScheduleGeneratorConcept {
       const remainingTaskDuration = task.expectedCompletionTime *
         (1 - task.completionLevel / 100); // Only schedule remaining work
 
+      // Ensure task deadline is a proper Date object
+      const taskDeadline = new Date(task.deadline);
+
       if (remainingTaskDuration <= 0) {
         // Task already completed or no work left, add to plan as completed or skip
         generatedPlan.push({
           type: "task",
           originalId: task._id,
           name: `${task.name} (Completed)`,
-          scheduledStartTime: task.deadline, // Placeholder, indicating completion
-          scheduledEndTime: task.deadline,
+          scheduledStartTime: taskDeadline, // Placeholder, indicating completion
+          scheduledEndTime: taskDeadline,
         });
         continue;
       }
 
       // Try to find a slot before the deadline
-      const taskDeadline = task.deadline;
 
       for (let i = 0; i < freeTimeSlots.length; i++) {
         const slot = freeTimeSlots[i];
@@ -954,7 +956,9 @@ export default class ScheduleGeneratorConcept {
       );
       unscheduledTasks.forEach((task) =>
         console.warn(
-          `  - ${task.name} (ID: ${task._id}, Deadline: ${task.deadline.toLocaleDateString()})`,
+          `  - ${task.name} (ID: ${task._id}, Deadline: ${
+            new Date(task.deadline).toLocaleDateString()
+          })`,
         )
       );
       // Per spec "If doing this is not possible, then return an error."
@@ -965,8 +969,8 @@ export default class ScheduleGeneratorConcept {
     }
 
     // Sort the final generated plan by scheduled start time for chronological order
-    generatedPlan.sort((a, b) =>
-      a.scheduledStartTime.getTime() - b.scheduledStartTime.getTime()
+    generatedPlan.sort(
+      (a, b) => a.scheduledStartTime.getTime() - b.scheduledStartTime.getTime(),
     );
 
     return { scheduleId: existingSchedule._id, generatedPlan };

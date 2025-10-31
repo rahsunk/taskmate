@@ -31,13 +31,14 @@ export const inclusions: Record<string, string> = {
   "/api/LikertSurvey/_getRespondentAnswers": "answers are visible",
   "/api/LikertSurvey/submitResponse": "allow anyone to submit response",
   "/api/LikertSurvey/updateResponse": "allow anyone to update their response",
-  
+
   // UserAuthentication
-  "/api/UserAuthentication/_getUserByUsername": "okay to lookup users by their username",
-  "/api/UserAuthentication/_getUsername": "reverse is maybe true too",
+  // "/api/UserAuthentication/_getUserByUsername":
+  // "okay to lookup users by their username",
+  // "/api/UserAuthentication/_getUsername": "reverse is maybe true too",
 
   // FileUploading
-  "/api/FileUploading/_getFilename": "need to grab filenames for previews"
+  "/api/FileUploading/_getFilename": "need to grab filenames for previews",
 };
 
 /**
@@ -56,8 +57,8 @@ export const exclusions: Array<string> = [
   "/api/LikertSurvey/addQuestion",
 
   // UserAuthentication
-  "/api/UserAuthentication/register",
-  "/api/UserAuthentication/login",
+  // "/api/UserAuthentication/register",
+  // "/api/UserAuthentication/login",
 
   // FileUploading
   "/api/FileUploading/requestUploadURL",
