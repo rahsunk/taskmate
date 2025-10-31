@@ -55,9 +55,13 @@ export default class UserAuthenticationConcept {
    * @param {string} password - The password for the new user.
    * @returns {Promise<{ user: User } | { error: string }>} - The ID of the newly created user on success, or an error message.
    */
-  async register(
-    { username, password }: { username: string; password: string },
-  ): Promise<{ user: User } | { error: string }> {
+  async register({
+    username,
+    password,
+  }: {
+    username: string;
+    password: string;
+  }): Promise<{ user: User } | { error: string }> {
     // Check precondition: no User with `username` exists
     const existingUser = await this.users.findOne({ username });
     if (existingUser) {
@@ -86,9 +90,13 @@ export default class UserAuthenticationConcept {
    * @param {string} password - The password to authenticate.
    * @returns {Promise<{ user: User } | { error: string }>} - The ID of the authenticated user on success, or an error message.
    */
-  async authenticate(
-    { username, password }: { username: string; password: string },
-  ): Promise<{ user: User } | { error: string }> {
+  async authenticate({
+    username,
+    password,
+  }: {
+    username: string;
+    password: string;
+  }): Promise<{ user: User } | { error: string }> {
     // Check precondition: User with the same `username` and `password` exists
     const user = await this.users.findOne({ username, password }); // Reminder: Compare against hashed password in real app!
     if (!user) {
@@ -112,13 +120,15 @@ export default class UserAuthenticationConcept {
    * @param {string} newPassword - The new password for the user.
    * @returns {Promise<Empty | { error: string }>} - An empty object on success, or an error message.
    */
-  async changePassword(
-    { user, oldPassword, newPassword }: {
-      user: User;
-      oldPassword: string;
-      newPassword: string;
-    },
-  ): Promise<Empty | { error: string }> {
+  async changePassword({
+    user,
+    oldPassword,
+    newPassword,
+  }: {
+    user: User;
+    oldPassword: string;
+    newPassword: string;
+  }): Promise<Empty | { error: string }> {
     // Check preconditions:
     // 1. `user` exists
     const existingUser = await this.users.findOne({ _id: user });
@@ -126,7 +136,8 @@ export default class UserAuthenticationConcept {
       return { error: `User with ID '${user}' not found.` };
     }
     // 2. `user.password` is equal to `oldPassword`
-    if (existingUser.password !== oldPassword) { // Reminder: Compare against hashed password in real app!
+    if (existingUser.password !== oldPassword) {
+      // Reminder: Compare against hashed password in real app!
       return { error: "Old password does not match." };
     }
     // Additional check: New password must be different from old
@@ -153,9 +164,11 @@ export default class UserAuthenticationConcept {
    * @param {User} user - The ID of the user account to delete.
    * @returns {Promise<Empty | { error: string }>} - An empty object on success, or an error message.
    */
-  async deleteAccount(
-    { user }: { user: User },
-  ): Promise<Empty | { error: string }> {
+  async deleteAccount({
+    user,
+  }: {
+    user: User;
+  }): Promise<Empty | { error: string }> {
     // Check precondition: `user` exists (implicitly checked by deleteOne result)
     const result = await this.users.deleteOne({ _id: user });
     if (result.deletedCount === 0) {
@@ -176,9 +189,11 @@ export default class UserAuthenticationConcept {
    * @param {string} username - The username to look up.
    * @returns {Promise<{ user: User } | Empty>} - The user ID if found, otherwise an empty object.
    */
-  async _getUserByUsername(
-    { username }: { username: string },
-  ): Promise<{ user: User } | Empty> {
+  async _getUserByUsername({
+    username,
+  }: {
+    username: string;
+  }): Promise<{ user: User } | Empty> {
     const userDoc = await this.users.findOne({ username });
     if (userDoc) {
       return { user: userDoc._id };
@@ -194,9 +209,11 @@ export default class UserAuthenticationConcept {
    * @param {User} user - The user ID to check for existence.
    * @returns {Promise<{ exists: boolean }>} - A boolean indicating if the user exists.
    */
-  async _checkUserExists(
-    { user }: { user: User },
-  ): Promise<{ exists: boolean }> {
+  async _checkUserExists({
+    user,
+  }: {
+    user: User;
+  }): Promise<{ exists: boolean }> {
     const userDoc = await this.users.findOne({ _id: user });
     return { exists: !!userDoc };
   }
@@ -221,9 +238,11 @@ export default class UserAuthenticationConcept {
    * @param {User} user - The ID of the user to retrieve.
    * @returns {Promise<UsersDocument[] | Empty>} - An array containing the UsersDocument if found, otherwise an empty array.
    */
-  async _getUserById(
-    { user }: { user: User },
-  ): Promise<UsersDocument[] | Empty> {
+  async _getUserById({
+    user,
+  }: {
+    user: User;
+  }): Promise<UsersDocument[] | Empty> {
     const userDoc = await this.users.findOne({ _id: user });
     if (userDoc) {
       // Queries are expected to return an array of dictionaries for consistency
@@ -231,5 +250,25 @@ export default class UserAuthenticationConcept {
       return [userDoc];
     }
     return []; // Return an empty array if not found, consistent with other queries.
+  }
+
+  /**
+   * _getUsernameById (user: User): (username: String)
+   *
+   * Effects: Returns the username for a specific user ID, if found.
+   *
+   * @param {User} user - The ID of the user to retrieve the username for.
+   * @returns {Promise<{ username: string } | Empty>} - An object containing the username if found, otherwise an empty object.
+   */
+  async _getUsernameById({
+    user,
+  }: {
+    user: User;
+  }): Promise<{ username: string } | Empty> {
+    const userDoc = await this.users.findOne({ _id: user });
+    if (userDoc) {
+      return { username: userDoc.username };
+    }
+    return {}; // Return an empty object if not found
   }
 }

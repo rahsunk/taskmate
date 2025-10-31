@@ -15,6 +15,8 @@
  * - exclusions: those to exclude, using Requesting routes instead
  */
 
+import { TopologyDescription } from "mongodb";
+
 /**
  * INCLUSIONS
  *
@@ -39,6 +41,12 @@ export const inclusions: Record<string, string> = {
 
   // FileUploading
   "/api/FileUploading/_getFilename": "need to grab filenames for previews",
+  // FriendList
+  // "/api/FriendList/canonicalizeUsers": "TODO",
+  // "/api/FriendList/sendFriendRequest": "TODO",
+  // "/api/FriendList/acceptFriendRequest": "TODO",
+  // "/api/FriendList/declineFriendRequest": "TODO",
+  // "/api/FriendList/cancelSentRequest": "TODO",
 };
 
 /**

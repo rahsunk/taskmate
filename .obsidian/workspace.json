@@ -13,15 +13,30 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "design/concepts/ScheduleGenerator/ScheduleGenerator.md",
+                "file": "design/tools/apiGeneration/api-generation.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "ScheduleGenerator"
+              "title": "api-generation"
+            }
+          },
+          {
+            "id": "49cbd9dd84e9ea37",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "design/concepts/FriendList/newImplementation.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "newImplementation"
             }
           }
-        ]
+        ],
+        "currentTab": 1
       }
     ],
     "direction": "vertical"
@@ -168,43 +183,43 @@
       "bases:Create new base": false
     }
   },
-  "active": "0ee58f760fef2a3f",
+  "active": "49cbd9dd84e9ea37",
   "lastOpenFiles": [
-    "design/concepts/ScheduleGenerator/implementation.md",
-    "design/concepts/ItemSharing/ItemSharing.md",
-    "design/tools/apiGeneration/api-generation.md",
-    "design/concepts/ScheduleGenerator/newImplementation.md",
-    "design/concepts/ScheduleGenerator/ScheduleGenerator.md",
-    "design/tools/apiGeneration/ItemSharingAPISpec.md",
-    "src/syncs/syncs.ts",
-    "src/syncs/sharing.sync.ts",
-    "src/syncs/sample.sync.ts",
-    "src/syncs/files.sync.ts",
-    "src/syncs/auth.sync.ts",
-    "src/syncs",
-    "src/concepts/test_concepts.ts",
-    "src/concepts/concepts.ts",
-    "src/concepts/Requesting/README.md",
-    "src/concepts/Requesting/RequestingConcept.ts",
-    "src/concepts/Requesting/passthrough.ts",
-    "context/design/tools/apiGeneration/api-generation.md/20251030_110207.27b49008.md",
-    "context/design/tools/apiGeneration/api-generation.md/steps/API Specification.00cb29c5.md",
-    "context/design/tools/apiGeneration/api-generation.md/steps/API Specification.3706fabd.md",
-    "context/design/tools/apiGeneration/api-generation.md/steps/API Specification.820bad2e.md",
-    "context/design/tools/apiGeneration/api-generation.md/steps/API Specification.3861a4fc.md",
-    "context/design/tools/apiGeneration/api-generation.md/steps/response.91d328ae.md",
-    "context/design/tools/apiGeneration/api-generation.md/20251030_105927.54e03087.md",
-    "context/design/tools/apiGeneration/api-generation.md/steps/prompt.647b696a.md",
-    "context/design/tools/apiGeneration/api-generation.md/steps/API Specification.c5b87318.md",
-    "context/design/tools/apiGeneration/api-generation.md/steps/API Specification.a49527be.md",
-    "context/design/tools/apiGeneration/api-generation.md/steps/API Specification.cef7d411.md",
-    "context/design/tools/apiGeneration/api-generation.md/steps/API Specification.983f236e.md",
-    "context/design/tools/apiGeneration/api-generation.md/steps/response.adf036bf.md",
-    "context/design/tools/apiGeneration/api-generation.md/steps/prompt.8782721a.md",
-    "context/design/tools/apiGeneration/api-generation.md/steps/implement.407a171f.md",
-    "context/design/tools/apiGeneration/api-generation.md/steps/concept.9962ac62.md",
-    "context/design/tools/apiGeneration/api-generation.md/steps/response.cbc2e72b.md",
-    "context/design/tools/apiGeneration/api-generation.md/steps/implement.7a73841f.md",
-    "context/design/tools/apiGeneration/api-generation.md/steps/concept.1c49c453.md"
+    "context/design/concepts/FriendList/newImplementation.md/20251031_065220.114716bd.md",
+    "context/design/concepts/FriendList/newImplementation.md/steps/response.8f51db75.md",
+    "context/design/concepts/FriendList/newImplementation.md/20251031_065154.374a9b52.md",
+    "context/design/concepts/FriendList/newImplementation.md/steps/prompt.99eafeba.md",
+    "context/design/concepts/FriendList/newImplementation.md/20251031_064853.78848dff.md",
+    "context/design/concepts/FriendList/newImplementation.md/steps/response.b40c813c.md",
+    "context/design/concepts/FriendList/newImplementation.md/steps/response.b1ba9e3e.md",
+    "context/design/concepts/FriendList/newImplementation.md/steps/response.a0d2d5d8.md",
+    "context/design/concepts/FriendList/newImplementation.md/steps/prompt.c675f1de.md",
+    "context/design/concepts/FriendList/newImplementation.md/steps/implement.e49a04d6.md",
+    "context/design/concepts/FriendList/newImplementation.md/steps/implement.861a5ca8.md",
+    "context/design/concepts/FriendList/newImplementation.md/steps/file.0d27eac3.md",
+    "context/design/concepts/FriendList/newImplementation.md/steps/approach.5df2171f.md",
+    "context/design/concepts/FriendList/newImplementation.md/steps/_.fa3ad648.md",
+    "context/design/concepts/FriendList/newImplementation.md/steps/_.ee4d1e5e.md",
+    "context/design/concepts/FriendList/newImplementation.md/steps/_.db39d951.md",
+    "context/design/concepts/FriendList/newImplementation.md/steps/_.7386b874.md",
+    "context/design/concepts/FriendList/newImplementation.md/steps/_.6f5cd851.md",
+    "context/design/concepts/FriendList/newImplementation.md/steps/_.5da05fda.md",
+    "context/design/concepts/FriendList/newImplementation.md/steps/_.534e93ad.md",
+    "context/design/concepts/FriendList/newImplementation.md/steps/_.3eb68380.md",
+    "context/design/concepts/FriendList/newImplementation.md/steps/_.3a59af90.md",
+    "context/design/concepts/FriendList/newImplementation.md/steps/_.331f5a1f.md",
+    "context/design/concepts/FriendList/newImplementation.md/steps/_.2086d81d.md",
+    "context/design/concepts/FriendList/newImplementation.md/steps/_.1bf7fdfc.md",
+    "context/design/concepts/FriendList/newImplementation.md/steps/_.16221382.md",
+    "context/design/concepts/FriendList/newImplementation.md/steps",
+    "src/concepts/FriendList/FriendListConcept.ts",
+    "src/concepts/FriendList/FriendList.test.ts",
+    "src/concepts/FriendList",
+    "context/design/concepts/FriendList/implementation.md/steps",
+    "context/design/concepts/FriendList",
+    "design/concepts/FriendList",
+    "context/design/concepts/Friend/Friend.md/steps",
+    "context/design/concepts/Friend",
+    "design/concepts/Friend"
   ]
 }
