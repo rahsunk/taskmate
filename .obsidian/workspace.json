@@ -27,12 +27,54 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "design/concepts/FriendList/newImplementation.md",
+                "file": "design/concepts/Messaging/implementation.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "newImplementation"
+              "title": "implementation"
+            }
+          },
+          {
+            "id": "2ccf24410035f34c",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "design/concepts/FriendList/implementation.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "implementation"
+            }
+          },
+          {
+            "id": "b95b92c6671da4f6",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "design/concepts/ScheduleGenerator/ScheduleGenerator.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "ScheduleGenerator"
+            }
+          },
+          {
+            "id": "cc93a7c11aaec0c0",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "design/concepts/FriendList/FriendList.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "FriendList"
             }
           }
         ],
@@ -185,41 +227,41 @@
   },
   "active": "49cbd9dd84e9ea37",
   "lastOpenFiles": [
-    "context/design/concepts/FriendList/newImplementation.md/20251031_065220.114716bd.md",
-    "context/design/concepts/FriendList/newImplementation.md/steps/response.8f51db75.md",
-    "context/design/concepts/FriendList/newImplementation.md/20251031_065154.374a9b52.md",
-    "context/design/concepts/FriendList/newImplementation.md/steps/prompt.99eafeba.md",
-    "context/design/concepts/FriendList/newImplementation.md/20251031_064853.78848dff.md",
-    "context/design/concepts/FriendList/newImplementation.md/steps/response.b40c813c.md",
-    "context/design/concepts/FriendList/newImplementation.md/steps/response.b1ba9e3e.md",
-    "context/design/concepts/FriendList/newImplementation.md/steps/response.a0d2d5d8.md",
-    "context/design/concepts/FriendList/newImplementation.md/steps/prompt.c675f1de.md",
-    "context/design/concepts/FriendList/newImplementation.md/steps/implement.e49a04d6.md",
-    "context/design/concepts/FriendList/newImplementation.md/steps/implement.861a5ca8.md",
-    "context/design/concepts/FriendList/newImplementation.md/steps/file.0d27eac3.md",
-    "context/design/concepts/FriendList/newImplementation.md/steps/approach.5df2171f.md",
-    "context/design/concepts/FriendList/newImplementation.md/steps/_.fa3ad648.md",
-    "context/design/concepts/FriendList/newImplementation.md/steps/_.ee4d1e5e.md",
-    "context/design/concepts/FriendList/newImplementation.md/steps/_.db39d951.md",
-    "context/design/concepts/FriendList/newImplementation.md/steps/_.7386b874.md",
-    "context/design/concepts/FriendList/newImplementation.md/steps/_.6f5cd851.md",
-    "context/design/concepts/FriendList/newImplementation.md/steps/_.5da05fda.md",
-    "context/design/concepts/FriendList/newImplementation.md/steps/_.534e93ad.md",
-    "context/design/concepts/FriendList/newImplementation.md/steps/_.3eb68380.md",
-    "context/design/concepts/FriendList/newImplementation.md/steps/_.3a59af90.md",
-    "context/design/concepts/FriendList/newImplementation.md/steps/_.331f5a1f.md",
-    "context/design/concepts/FriendList/newImplementation.md/steps/_.2086d81d.md",
-    "context/design/concepts/FriendList/newImplementation.md/steps/_.1bf7fdfc.md",
-    "context/design/concepts/FriendList/newImplementation.md/steps/_.16221382.md",
+    "design/concepts/Messaging/Messaging.md",
+    "design/tools/apiGeneration/api-generation.md",
+    "context/design/tools/apiGeneration/api-generation.md/20251031_144519.9732fddb.md",
+    "context/design/tools/apiGeneration/api-generation.md/steps/API Specification.9b8726f8.md",
+    "context/design/tools/apiGeneration/api-generation.md/20251031_144459.c95e6543.md",
+    "context/design/tools/apiGeneration/api-generation.md/steps/prompt.d609b629.md",
+    "context/design/tools/apiGeneration/api-generation.md/steps/response.6f77decb.md",
+    "context/design/tools/apiGeneration/api-generation.md/steps/implement.ba0ca168.md",
+    "context/design/tools/apiGeneration/api-generation.md/steps/response.c92a370a.md",
+    "context/design/tools/apiGeneration/api-generation.md/steps/prompt.48c7e4e0.md",
+    "context/design/tools/apiGeneration/api-generation.md/steps/response.cb173ada.md",
+    "context/design/tools/apiGeneration/api-generation.md/steps/prompt.3ea28ddb.md",
+    "design/concepts/Messaging/implementation.md",
+    "src/concepts/Messaging/Messaging.test.ts",
+    "src/concepts/Messaging/MessagingConcept.ts",
+    "src/concepts/Messaging/MessagingConcept.test.ts",
+    "context/design/concepts/Messaging/implementation.md/20251031_144231.799934f5.md",
+    "context/design/concepts/Messaging/implementation.md/steps/response.6f77decb.md",
+    "context/design/concepts/Messaging/implementation.md/20251031_143924.c76d255a.md",
+    "context/design/concepts/Messaging/implementation.md/steps/implement.ba0ca168.md",
+    "context/design/concepts/Messaging/implementation.md/steps/response.c92a370a.md",
+    "context/design/concepts/Messaging/implementation.md/steps/prompt.48c7e4e0.md",
+    "context/design/concepts/Messaging/implementation.md/steps/response.cb173ada.md",
+    "context/design/concepts/Messaging/implementation.md/steps/prompt.3ea28ddb.md",
+    "context/design/concepts/Messaging/implementation.md/steps/_.6f5cd851.md",
+    "context/design/concepts/Messaging/implementation.md/steps/_.7386b874.md",
+    "context/design/concepts/Messaging/implementation.md/steps/Concept State.28ab7cd0.md",
+    "context/design/concepts/Messaging/implementation.md/steps/_.16221382.md",
+    "context/design/concepts/Messaging/implementation.md/steps/_.1bf7fdfc.md",
+    "context/design/concepts/Messaging/implementation.md/steps",
+    "context/design/concepts/Messaging/Messaging.md/steps",
+    "context/design/concepts/Messaging",
+    "design/concepts/Messaging",
+    "src/concepts/Messaging",
     "context/design/concepts/FriendList/newImplementation.md/steps",
-    "src/concepts/FriendList/FriendListConcept.ts",
-    "src/concepts/FriendList/FriendList.test.ts",
-    "src/concepts/FriendList",
-    "context/design/concepts/FriendList/implementation.md/steps",
-    "context/design/concepts/FriendList",
-    "design/concepts/FriendList",
-    "context/design/concepts/Friend/Friend.md/steps",
-    "context/design/concepts/Friend",
-    "design/concepts/Friend"
+    "src/concepts/FriendList/FriendListConcept.ts"
   ]
 }
