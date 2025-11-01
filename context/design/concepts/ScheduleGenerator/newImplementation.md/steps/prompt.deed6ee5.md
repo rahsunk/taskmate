@@ -1,12 +1,9 @@
-[@concept-design-overview](../../background/concept-design-overview.md)
+---
+timestamp: 'Fri Oct 31 2025 19:52:02 GMT-0400 (Eastern Daylight Time)'
+parent: '[[../20251031_195202.ee961ae4.md]]'
+content_id: deed6ee5c5e0779d311857ba729875e17772a8ba3d6a1dbaeb1e97aff164981c
+---
 
-[@concept-specifications](../../background/concept-specifications.md)
-
-[@implementing-concepts](../../background/implementing-concepts.md)
-
-[@implementation](implementation.md)
-
-[@ScheduleGeneratorAPISpec](../../tools/apiGeneration/ScheduleGeneratorAPISpec.md)
 # prompt: Given the current implementation of the UserAuthentication concept, update it so that it includes the additional GET endpoints in the API spec.
 
 ```typescript

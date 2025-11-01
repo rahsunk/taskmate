@@ -1,12 +1,12 @@
-[@newImplementation](newImplementation.md)
-
-[@testing-concepts](../../background/testing-concepts.md)
-
-[@testing-concepts-rubric](../../background/testing-concepts-rubric.md)
-
-# prompt: Test UserAuthentication; be careful to assert types of variables of union types, otherwise the Typescript test file will not compile and do not edit the implementation
+---
+timestamp: 'Fri Oct 31 2025 20:24:09 GMT-0400 (Eastern Daylight Time)'
+parent: '[[../20251031_202409.6901b6be.md]]'
+content_id: 80e67507456b804df0dcab4f808d46c554bda6732dbc5ea6ce2b73119683cb8b
+---
 
 # response:
+
+Here is the test implementation for the `UserAuthentication` concept, carefully following the provided rubric and guidelines, including explicit type assertions for union types.
 
 ```typescript
 // # file: src/UserAuthentication/UserAuthenticationConcept.test.ts
@@ -19,14 +19,6 @@ import { ID, Empty } from "../../utils/types.ts";
 Deno.test("UserAuthentication Concept Tests", async (t) => {
   const [db, client] = await testDb();
   const authConcept = new UserAuthenticationConcept(db);
-
-  // Declare user ID variables in the outer scope to retain state across t.step blocks
-  let aliceUser: ID;
-  let bobUser: ID;
-  let charlieUser: ID;
-  let davidUser: ID; // David is created and deleted within its scenario
-  let eveUser: ID;
-  let frankUser: ID;
 
   // Helper to log action calls and results
   const logAction = <T, E>(name: string, args: Record<string, unknown>, result: T | E): void => {
@@ -60,7 +52,7 @@ Deno.test("UserAuthentication Concept Tests", async (t) => {
       assertNotEquals(registerAliceResult.error, registerAliceResult.error, "Registration should not fail unexpectedly");
       return; // Stop if registration fails (unexpectedly)
     }
-    aliceUser = registerAliceResult.user; // Assign to outer scope variable
+    const aliceUser: ID = registerAliceResult.user;
     assertExists(aliceUser, "Alice's user ID should be returned upon successful registration.");
     console.log(`✅ Registered Alice with ID: ${aliceUser}`);
 
@@ -81,12 +73,11 @@ Deno.test("UserAuthentication Concept Tests", async (t) => {
     const getUserByUsernameResult = await authConcept._getUserByUsername(getUserByUsernameArgs);
     logQuery("_getUserByUsername", getUserByUsernameArgs, getUserByUsernameResult);
 
-    if ("user" in getUserByUsernameResult) { // Type assertion for union type
+    if ("user" in getUserByUsernameResult) {
       assertEquals(getUserByUsernameResult.user, aliceUser, "Query by username should return Alice's ID.");
       console.log(`✅ Found Alice by username: ${getUserByUsernameResult.user}`);
     } else {
-      // If no user field, it means it returned Empty. For this scenario, we expect success.
-      assertExists(getUserByUsernameResult, "Should have found user by username."); 
+      assertExists(getUserByUsernameResult, "Should have found user by username.");
     }
 
     // 4. Use _checkUserExists for Alice
@@ -99,7 +90,7 @@ Deno.test("UserAuthentication Concept Tests", async (t) => {
     // 5. Use _getAllUsers to verify Alice is there (expect array with one user)
     const getAllUsersResult = await authConcept._getAllUsers();
     logQuery("_getAllUsers", {}, getAllUsersResult);
-    assertEquals(getAllUsersResult.length, 1, "Should have exactly one user in the database (Alice).");
+    assertEquals(getAllUsersResult.length, 1, "Should have exactly one user in the database.");
     assertEquals(getAllUsersResult[0]._id, aliceUser, "The retrieved user should be Alice.");
     assertEquals(getAllUsersResult[0].username, "alice", "The retrieved username should be alice.");
     console.log(`✅ Confirmed Alice is present via _getAllUsers.`);
@@ -109,7 +100,7 @@ Deno.test("UserAuthentication Concept Tests", async (t) => {
     const getUserByIdResult = await authConcept._getUserById(getUserByIdArgs);
     logQuery("_getUserById", getUserByIdArgs, getUserByIdResult);
 
-    if (Array.isArray(getUserByIdResult) && getUserByIdResult.length > 0) { // Type assertion for union type
+    if (Array.isArray(getUserByIdResult) && getUserByIdResult.length > 0) {
       assertEquals(getUserByIdResult[0]._id, aliceUser, "Query by ID should return Alice's document.");
       console.log(`✅ Found Alice by ID.`);
     } else {
@@ -121,7 +112,7 @@ Deno.test("UserAuthentication Concept Tests", async (t) => {
     const getUsernameByIdResult = await authConcept._getUsernameById(getUsernameByIdArgs);
     logQuery("_getUsernameById", getUsernameByIdArgs, getUsernameByIdResult);
 
-    if ("username" in getUsernameByIdResult) { // Type assertion for union type
+    if ("username" in getUsernameByIdResult) {
       assertEquals(getUsernameByIdResult.username, "alice", "Query for username by ID should return 'alice'.");
       console.log(`✅ Retrieved Alice's username by ID.`);
     } else {
@@ -142,20 +133,15 @@ Deno.test("UserAuthentication Concept Tests", async (t) => {
       assertNotEquals(registerBobResult.error, registerBobResult.error, "Bob registration should succeed");
       return;
     }
-    bobUser = registerBobResult.user; // Assign to outer scope variable
+    const bobUser: ID = registerBobResult.user;
     assertExists(bobUser, "Bob's user ID should exist.");
     console.log(`✅ Registered Bob with ID: ${bobUser}`);
-
-    // Verify current user count (Alice + Bob = 2 users)
-    const currentUsers1 = await authConcept._getAllUsers();
-    assertEquals(currentUsers1.length, 2, "Should have two users after Bob's registration.");
-    assertArrayIncludes(currentUsers1.map(u => u._id), [aliceUser, bobUser], "Alice and Bob should be present.");
 
     // Attempt to register with an existing username (expect error)
     const registerDuplicateBobArgs = { username: "bob", password: "another_password" };
     const registerDuplicateBobResult = await authConcept.register(registerDuplicateBobArgs);
     logAction("register", registerDuplicateBobArgs, registerDuplicateBobResult);
-    if ("error" in registerDuplicateBobResult) { // Type assertion for union type
+    if ("error" in registerDuplicateBobResult) {
       assertEquals(registerDuplicateBobResult.error, "User with username 'bob' already exists.", "Should prevent duplicate username registration.");
       console.log(`✅ Correctly prevented registration with duplicate username.`);
     } else {
@@ -166,7 +152,7 @@ Deno.test("UserAuthentication Concept Tests", async (t) => {
     const authenticateWrongPasswordArgs = { username: "bob", password: "wrong_password" };
     const authenticateWrongPasswordResult = await authConcept.authenticate(authenticateWrongPasswordArgs);
     logAction("authenticate", authenticateWrongPasswordArgs, authenticateWrongPasswordResult);
-    if ("error" in authenticateWrongPasswordResult) { // Type assertion for union type
+    if ("error" in authenticateWrongPasswordResult) {
       assertEquals(authenticateWrongPasswordResult.error, "Invalid username or password.", "Should fail authentication with wrong password.");
       console.log(`✅ Correctly failed authentication with wrong password.`);
     } else {
@@ -177,7 +163,7 @@ Deno.test("UserAuthentication Concept Tests", async (t) => {
     const authenticateNonExistentArgs = { username: "unknown", password: "any_password" };
     const authenticateNonExistentResult = await authConcept.authenticate(authenticateNonExistentArgs);
     logAction("authenticate", authenticateNonExistentArgs, authenticateNonExistentResult);
-    if ("error" in authenticateNonExistentResult) { // Type assertion for union type
+    if ("error" in authenticateNonExistentResult) {
       assertEquals(authenticateNonExistentResult.error, "Invalid username or password.", "Should fail authentication for non-existent user.");
       console.log(`✅ Correctly failed authentication for non-existent user.`);
     } else {
@@ -198,14 +184,9 @@ Deno.test("UserAuthentication Concept Tests", async (t) => {
       assertNotEquals(registerCharlieResult.error, registerCharlieResult.error, "Charlie registration should succeed");
       return;
     }
-    charlieUser = registerCharlieResult.user; // Assign to outer scope variable
+    const charlieUser: ID = registerCharlieResult.user;
     assertExists(charlieUser, "Charlie's user ID should exist.");
     console.log(`✅ Registered Charlie with ID: ${charlieUser}`);
-
-    // Verify current user count (Alice + Bob + Charlie = 3 users)
-    const currentUsers2 = await authConcept._getAllUsers();
-    assertEquals(currentUsers2.length, 3, "Should have three users after Charlie's registration.");
-    assertArrayIncludes(currentUsers2.map(u => u._id), [aliceUser, bobUser, charlieUser], "Alice, Bob, and Charlie should be present.");
 
     // Authenticate Charlie
     const authenticateCharlieArgs = { username: "charlie", password: "charlie_old_pass" };
@@ -222,23 +203,23 @@ Deno.test("UserAuthentication Concept Tests", async (t) => {
     const changePasswordWrongOldArgs = { user: charlieUser, oldPassword: "wrong_old_pass", newPassword: "charlie_new_pass" };
     const changePasswordWrongOldResult = await authConcept.changePassword(changePasswordWrongOldArgs);
     logAction("changePassword", changePasswordWrongOldArgs, changePasswordWrongOldResult);
-    if ("error" in changePasswordWrongOldResult) { // Type assertion for union type
+    if ("error" in changePasswordWrongOldResult) {
       assertEquals(changePasswordWrongOldResult.error, "Old password does not match.", "Should fail to change password with wrong old password.");
       console.log(`✅ Correctly failed to change password with wrong old password.`);
     } else {
-      // If no error, it should be an Empty object. Assert it's not a successful empty object if an error was expected.
-      assertNotEquals(Object.keys(changePasswordWrongOldResult).length, 0, "Expected an error object, not an empty success object.");
+      // If no error, it should be an Empty object
+      assertNotEquals(changePasswordWrongOldResult, {}, "Should have returned an error.");
     }
 
     // Attempt to change Charlie's password to the same password (expect error)
     const changePasswordSameArgs = { user: charlieUser, oldPassword: "charlie_old_pass", newPassword: "charlie_old_pass" };
     const changePasswordSameResult = await authConcept.changePassword(changePasswordSameArgs);
     logAction("changePassword", changePasswordSameArgs, changePasswordSameResult);
-    if ("error" in changePasswordSameResult) { // Type assertion for union type
+    if ("error" in changePasswordSameResult) {
       assertEquals(changePasswordSameResult.error, "New password cannot be the same as the old password.", "Should fail to change password to the same password.");
       console.log(`✅ Correctly failed to change password to the same password.`);
     } else {
-      assertNotEquals(Object.keys(changePasswordSameResult).length, 0, "Expected an error object, not an empty success object.");
+      assertNotEquals(changePasswordSameResult, {}, "Should have returned an error.");
     }
 
     // Change Charlie's password successfully
@@ -256,7 +237,7 @@ Deno.test("UserAuthentication Concept Tests", async (t) => {
     const authenticateOldPassArgs = { username: "charlie", password: "charlie_old_pass" };
     const authenticateOldPassResult = await authConcept.authenticate(authenticateOldPassArgs);
     logAction("authenticate", authenticateOldPassArgs, authenticateOldPassResult);
-    if ("error" in authenticateOldPassResult) { // Type assertion for union type
+    if ("error" in authenticateOldPassResult) {
       assertEquals(authenticateOldPassResult.error, "Invalid username or password.", "Should fail authentication with old password.");
       console.log(`✅ Correctly failed authentication with old password.`);
     } else {
@@ -288,14 +269,9 @@ Deno.test("UserAuthentication Concept Tests", async (t) => {
       assertNotEquals(registerDavidResult.error, registerDavidResult.error, "David registration should succeed");
       return;
     }
-    davidUser = registerDavidResult.user; // Assign to outer scope variable
+    const davidUser: ID = registerDavidResult.user;
     assertExists(davidUser, "David's user ID should exist.");
     console.log(`✅ Registered David with ID: ${davidUser}`);
-
-    // Verify current user count (Alice + Bob + Charlie + David = 4 users)
-    const currentUsers3_beforeDelete = await authConcept._getAllUsers();
-    assertEquals(currentUsers3_beforeDelete.length, 4, "Should have four users before David's deletion.");
-    assertArrayIncludes(currentUsers3_beforeDelete.map(u => u._id), [aliceUser, bobUser, charlieUser, davidUser], "Alice, Bob, Charlie, and David should be present.");
 
     // Authenticate David
     const authenticateDavidArgs = { username: "david", password: "david_password" };
@@ -312,24 +288,18 @@ Deno.test("UserAuthentication Concept Tests", async (t) => {
     const deleteDavidArgs = { user: davidUser };
     const deleteDavidResult = await authConcept.deleteAccount(deleteDavidArgs);
     logAction("deleteAccount", deleteDavidArgs, deleteDavidResult);
-    if ("error" in deleteDavidResult) { // Type assertion for union type
+    if ("error" in deleteDavidResult) {
       assertNotEquals(deleteDavidResult.error, deleteDavidResult.error, "David account deletion should succeed.");
       return;
     }
     assertEquals(deleteDavidResult, {}, "Account deletion should return an empty object on success.");
     console.log(`✅ Deleted David's account.`);
 
-    // After deletion, there should be 3 users (Alice, Bob, Charlie)
-    const currentUsers3_afterDelete = await authConcept._getAllUsers();
-    assertEquals(currentUsers3_afterDelete.length, 3, "Should have three users after David's deletion.");
-    assertArrayIncludes(currentUsers3_afterDelete.map(u => u._id), [aliceUser, bobUser, charlieUser], "Alice, Bob, Charlie should remain.");
-    assertFalse(currentUsers3_afterDelete.map(u => u._id).includes(davidUser), "David should not be in the list.");
-
     // Attempt to authenticate David (expect error)
     const authenticateDeletedDavidArgs = { username: "david", password: "david_password" };
     const authenticateDeletedDavidResult = await authConcept.authenticate(authenticateDeletedDavidArgs);
     logAction("authenticate", authenticateDeletedDavidArgs, authenticateDeletedDavidResult);
-    if ("error" in authenticateDeletedDavidResult) { // Type assertion for union type
+    if ("error" in authenticateDeletedDavidResult) {
       assertEquals(authenticateDeletedDavidResult.error, "Invalid username or password.", "Should fail to authenticate deleted user.");
       console.log(`✅ Correctly failed to authenticate deleted user.`);
     } else {
@@ -340,11 +310,11 @@ Deno.test("UserAuthentication Concept Tests", async (t) => {
     const deleteDavidAgainArgs = { user: davidUser };
     const deleteDavidAgainResult = await authConcept.deleteAccount(deleteDavidAgainArgs);
     logAction("deleteAccount", deleteDavidAgainArgs, deleteDavidAgainResult);
-    if ("error" in deleteDavidAgainResult) { // Type assertion for union type
+    if ("error" in deleteDavidAgainResult) {
       assertEquals(deleteDavidAgainResult.error, `User with ID '${davidUser}' not found.`, "Should fail to delete non-existent user.");
       console.log(`✅ Correctly failed to delete non-existent user.`);
     } else {
-      assertNotEquals(Object.keys(deleteDavidAgainResult).length, 0, "Expected an error object, not an empty success object.");
+      assertNotEquals(deleteDavidAgainResult, {}, "Should have returned an error.");
     }
 
     // Use _checkUserExists for David (expect false)
@@ -354,7 +324,7 @@ Deno.test("UserAuthentication Concept Tests", async (t) => {
     assertFalse(checkDeletedDavidExistsResult.exists, "David should no longer exist.");
     console.log(`✅ Confirmed David no longer exists.`);
 
-    // Use _getAllUsers to confirm David is gone (already done above, but for redundancy)
+    // Use _getAllUsers to confirm David is gone
     const getAllUsersAfterDeleteResult = await authConcept._getAllUsers();
     logQuery("_getAllUsers", {}, getAllUsersAfterDeleteResult);
     assertEquals(getAllUsersAfterDeleteResult.some(u => u._id === davidUser), false, "David should not appear in _getAllUsers.");
@@ -366,9 +336,7 @@ Deno.test("UserAuthentication Concept Tests", async (t) => {
   await t.step("Scenario 4: Multiple Users and Comprehensive Querying", async () => {
     console.log("\n--- Executing Multiple Users Querying Scenario ---");
 
-    // At this point, there are 3 users in the database: Alice, Bob, Charlie.
-
-    // Register two new users (Eve and Frank)
+    // Register two users (Eve and Frank)
     const registerEveArgs = { username: "eve", password: "eve_pass" };
     const registerEveResult = await authConcept.register(registerEveArgs);
     logAction("register", registerEveArgs, registerEveResult);
@@ -376,7 +344,7 @@ Deno.test("UserAuthentication Concept Tests", async (t) => {
       assertNotEquals(registerEveResult.error, registerEveResult.error, "Eve registration should succeed");
       return;
     }
-    eveUser = registerEveResult.user; // Assign to outer scope variable
+    const eveUser: ID = registerEveResult.user;
     assertExists(eveUser);
     console.log(`✅ Registered Eve with ID: ${eveUser}`);
 
@@ -387,64 +355,64 @@ Deno.test("UserAuthentication Concept Tests", async (t) => {
       assertNotEquals(registerFrankResult.error, registerFrankResult.error, "Frank registration should succeed");
       return;
     }
-    frankUser = registerFrankResult.user; // Assign to outer scope variable
+    const frankUser: ID = registerFrankResult.user;
     assertExists(frankUser);
     console.log(`✅ Registered Frank with ID: ${frankUser}`);
 
-    // Now, there should be 5 users in total: Alice, Bob, Charlie, Eve, Frank
-    const expectedUserIds = [aliceUser, bobUser, charlieUser, eveUser, frankUser];
-    
-    // Use _getAllUsers to get all users
+    // Use _getAllUsers to get both
     const allUsersResult = await authConcept._getAllUsers();
     logQuery("_getAllUsers", {}, allUsersResult);
-    // FIX: Updated assertion to account for cumulative users from previous t.step blocks
-    assertEquals(allUsersResult.length, expectedUserIds.length, `Should now have ${expectedUserIds.length} users (Alice, Bob, Charlie, Eve, Frank).`); 
-    assertArrayIncludes(allUsersResult.map(u => u._id), expectedUserIds, "All expected users should be present.");
-    console.log(`✅ Confirmed all ${expectedUserIds.length} users are present via _getAllUsers.`);
+    assertEquals(allUsersResult.length, 2, "Should now have two users.");
+    assertArrayIncludes(allUsersResult.map(u => u._id), [eveUser, frankUser], "Both Eve and Frank should be present.");
+    console.log(`✅ Confirmed both Eve and Frank are present via _getAllUsers.`);
 
     // Use _getUserByUsername to find Eve
     const getUserByUsernameEveArgs = { username: "eve" };
     const getUserByUsernameEveResult = await authConcept._getUserByUsername(getUserByUsernameEveArgs);
     logQuery("_getUserByUsername", getUserByUsernameEveArgs, getUserByUsernameEveResult);
-    if ("user" in getUserByUsernameEveResult) { // Type assertion for union type
+    if ("user" in getUserByUsernameEveResult) {
       assertEquals(getUserByUsernameEveResult.user, eveUser, "Should find Eve by username.");
       console.log(`✅ Found Eve by username.`);
     } else {
       assertExists(getUserByUsernameEveResult, "Should have found Eve by username.");
     }
 
+
     // Use _getUserByUsername to find Frank
     const getUserByUsernameFrankArgs = { username: "frank" };
     const getUserByUsernameFrankResult = await authConcept._getUserByUsername(getUserByUsernameFrankArgs);
     logQuery("_getUserByUsername", getUserByUsernameFrankArgs, getUserByUsernameFrankResult);
-    if ("user" in getUserByUsernameFrankResult) { // Type assertion for union type
+    if ("user" in getUserByUsernameFrankResult) {
       assertEquals(getUserByUsernameFrankResult.user, frankUser, "Should find Frank by username.");
       console.log(`✅ Found Frank by username.`);
     } else {
       assertExists(getUserByUsernameFrankResult, "Should have found Frank by username.");
     }
 
+
     // Use _getUserById to find Eve
     const getUserByIdEveArgs = { user: eveUser };
     const getUserByIdEveResult = await authConcept._getUserById(getUserByIdEveArgs);
     logQuery("_getUserById", getUserByIdEveArgs, getUserByIdEveResult);
-    if (Array.isArray(getUserByIdEveResult) && getUserByIdEveResult.length > 0) { // Type assertion for union type
+    if (Array.isArray(getUserByIdEveResult) && getUserByIdEveResult.length > 0) {
       assertEquals(getUserByIdEveResult[0]._id, eveUser, "Should find Eve by ID.");
       console.log(`✅ Found Eve by ID.`);
     } else {
       assertExists(getUserByIdEveResult, "Should have found Eve by ID.");
     }
 
+
     // Use _getUserById to find Frank
     const getUserByIdFrankArgs = { user: frankUser };
     const getUserByIdFrankResult = await authConcept._getUserById(getUserByIdFrankArgs);
     logQuery("_getUserById", getUserByIdFrankArgs, getUserByIdFrankResult);
-    if (Array.isArray(getUserByIdFrankResult) && getUserByIdFrankResult.length > 0) { // Type assertion for union type
+    if (Array.isArray(getUserByIdFrankResult) && getUserByIdFrankResult.length > 0) {
       assertEquals(getUserByIdFrankResult[0]._id, frankUser, "Should find Frank by ID.");
       console.log(`✅ Found Frank by ID.`);
     } else {
       assertExists(getUserByIdFrankResult, "Should have found Frank by ID.");
     }
+
 
     // Query for a non-existent user by ID
     const nonExistentUserId = "nonexistent:user" as ID;
@@ -461,6 +429,7 @@ Deno.test("UserAuthentication Concept Tests", async (t) => {
 
     console.log("--- Multiple Users Querying Scenario Complete ---");
   });
+
 
   await client.close();
 });

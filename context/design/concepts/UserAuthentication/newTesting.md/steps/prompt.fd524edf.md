@@ -1,12 +1,8 @@
-[@concept-design-overview](../../background/concept-design-overview.md)
-
-[@concept-specifications](../../background/concept-specifications.md)
-
-[@implementing-concepts](../../background/implementing-concepts.md)
-
-[@implementation](implementation.md)
-
-[@UserAuthenticationAPISpec](../../tools/apiGeneration/UserAuthenticationAPISpec.md)
+---
+timestamp: 'Fri Oct 31 2025 20:23:34 GMT-0400 (Eastern Daylight Time)'
+parent: '[[../20251031_202334.3a4c0cbc.md]]'
+content_id: fd524edf0866774de44ba8bb3a9428116820a70adaff9215cc0c78cd1ab2afee
+---
 
 # prompt: Given the current implementation of the UserAuthentication concept, update it so that it includes the additional GET endpoints in the API spec.
 

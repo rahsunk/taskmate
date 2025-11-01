@@ -1,216 +1,203 @@
-Check file:///Users/rahsunkomatsuzaki-fields/Desktop/MIT/academic/Y3/Fall/6.1040/taskmate/src/concepts/ScheduleGenerator/ScheduleGenerator.test.ts\
-running 3 tests from ./src/concepts/ScheduleGenerator/ScheduleGenerator.test.ts\
-ScheduleGeneratorConcept - Basic CRUD for Schedules, Events, and Tasks ...\
-  initializeSchedule: creates a new schedule ...\
-------- output -------\
-Action: initializeSchedule for owner user:Alice\
-Output: Created schedule ID: 0199febf-58e4-7d5a-9d7f-5d681a5beb1b\
------ output end -----\
-  initializeSchedule: creates a new schedule ... ok (98ms)\
-  addEvent: adds an event to the schedule ...\
-------- output -------\
-Action: addEvent to schedule 0199febf-58e4-7d5a-9d7f-5d681a5beb1b - Team Meeting\
-Output: Added event ID: 0199febf-593d-744d-89b8-e8cd81366282\
------ output end -----\
-  addEvent: adds an event to the schedule ... ok (88ms)\
-  addEvent: fails if schedule does not exist ...\
-------- output -------\
-Action: addEvent to non-existent schedule nonExistent\
-Output: Error: Schedule with ID nonExistent not found.\
------ output end -----\
-  addEvent: fails if schedule does not exist ... ok (18ms)\
-  editEvent: modifies an existing event ...\
-------- output -------\
-Action: editEvent 0199febf-593d-744d-89b8-e8cd81366282 to new details\
-Output: Event edited successfully\
------ output end -----\
-  editEvent: modifies an existing event ... ok (82ms)\
-  editEvent: fails if event not associated with schedule ...\
-------- output -------\
-Action: editEvent 0199febf-593d-744d-89b8-e8cd81366282 with wrong schedule 0199febf-59e8-7940-8392-e1df8c877d32\
-Output: Error: Event with ID 0199febf-593d-744d-89b8-e8cd81366282 not found or not associated with schedule 0199febf-59e8-7\940-8392-e1df8c877d32.
------ output end -----\
-  editEvent: fails if event not associated with schedule ... ok (78ms)\
-  deleteEvent: removes an event from the schedule ...\
-------- output -------\
-Added second event ID: 0199febf-5a48-786d-924f-db7abefd4219\
-Action: deleteEvent 0199febf-593d-744d-89b8-e8cd81366282 from schedule 0199febf-58e4-7d5a-9d7f-5d681a5beb1b\
-Output: Event deleted successfully\
------ output end -----\
-  deleteEvent: removes an event from the schedule ... ok (170ms)\
-  deleteEvent: fails if event not found or not associated ...\
-------- output -------\
-Action: deleteEvent nonExistentEvent\
-Output: Error: Event with ID nonExistentEvent not found or not associated with schedule 0199febf-58e4-7d5a-9d7f-5d681a5beb1b.\
------ output end -----\
-  deleteEvent: fails if event not found or not associated ... ok (35ms)\
-  addTask: adds a task to the schedule with 0% completion ...\
-------- output -------\
-Action: addTask to schedule 0199febf-58e4-7d5a-9d7f-5d681a5beb1b - Project Report (0% completed)\
-Output: Added task ID: 0199febf-5b19-7d1f-92ac-4782e518fb55\
------ output end -----\
-  addTask: adds a task to the schedule with 0% completion ... ok (91ms)\
-  addTask: adds a task to the schedule with 25% completion ...\
-------- output -------\
-Action: addTask to schedule 0199febf-58e4-7d5a-9d7f-5d681a5beb1b - Research Paper (25% completed)\
-Output: Added task ID: 0199febf-5b73-7f03-a252-a0cd2a9d1f9f\
------ output end -----\
-  addTask: adds a task to the schedule with 25% completion ... ok (74ms)\
-  addTask: fails with invalid expectedCompletionTime ...\
-------- output -------\
-Action: addTask with invalid expectedCompletionTime\
-Output: Error: Expected completion time must be positive.\
------ output end -----\
-  addTask: fails with invalid expectedCompletionTime ... ok (18ms)\
-  addTask: fails with invalid completionLevel (too high) ...\
-------- output -------\
-Action: addTask with invalid completionLevel (101)\
-Output: Error: Completion level must be between 0 and 100.\
------ output end -----\
-  addTask: fails with invalid completionLevel (too high) ... ok (18ms)\
-  addTask: fails with invalid completionLevel (too low) ...\
-------- output -------\
-Action: addTask with invalid completionLevel (-1)\
-Output: Error: Completion level must be between 0 and 100.\
------ output end -----\
-  addTask: fails with invalid completionLevel (too low) ... ok (17ms)\
-  editTask: modifies an existing task ...\
-------- output -------\
-Action: editTask 0199febf-5b19-7d1f-92ac-4782e518fb55 with new details\
-Output: Task edited successfully\
------ output end -----\
-  editTask: modifies an existing task ... ok (83ms)\
-  editTask: fails with invalid priority ...\
-------- output -------\
-Action: editTask with invalid priority\
-Output: Error: Priority must be between 0 and 100.\
------ output end -----\
-  editTask: fails with invalid priority ... ok (37ms)\
-  deleteTask: removes a task from the schedule ...\
-------- output -------\
-Added second task ID: 0199febf-5c6c-75af-b252-dde77b863243\
-Action: deleteTask 0199febf-5b19-7d1f-92ac-4782e518fb55 from schedule 0199febf-58e4-7d5a-9d7f-5d681a5beb1b\
-Output: Task deleted successfully\
------ output end -----\
-  deleteTask: removes a task from the schedule ... ok (167ms)\
-  deleteTask: fails if task not found or not associated ...\
-------- output -------\
-Action: deleteTask nonExistentTask\
-Output: Error: Task with ID nonExistentTask not found or not associated with schedule 0199febf-58e4-7d5a-9d7f-5d681a5beb1b.\
------ output end -----\
-  deleteTask: fails if task not found or not associated ... ok (35ms)\
-ScheduleGeneratorConcept - Basic CRUD for Schedules, Events, and Tasks ... ok (1s)\
-ScheduleGeneratorConcept - generateSchedule operational principle and scenarios ...\
-  Operational Principle: Generate a simple schedule ...\
-------- output -------\
-\
---- Operational Principle Test ---\
-Initialized schedule for user:Bob: 0199febf-5f6a-7ed4-91f9-4957cf968674\
-Added daily event: 0199febf-5fba-7dcd-abcd-46e9be613cf6\
-Added high priority task: 0199febf-6003-72c7-b912-2324968592ce\
-Added low priority task: 0199febf-6049-703d-9d0b-45b98b1c2218\
-Action: generateSchedule for 0199febf-5f6a-7ed4-91f9-4957cf968674\
-Output: Generated Plan:\
- 1. task: Review Documents from 10/19/2025, 7:12:59 PM to 10/19/2025, 8:12:59 PM\
- 2. event: Daily Sync from 10/20/2025, 9:00:00 AM to 10/20/2025, 10:00:00 AM\
- 3. task: Prepare Presentation from 10/20/2025, 10:00:00 AM to 10/20/2025, 1:00:00 PM\
- 4. event: Daily Sync from 10/21/2025, 9:00:00 AM to 10/21/2025, 10:00:00 AM\
- 5. event: Daily Sync from 10/22/2025, 9:00:00 AM to 10/22/2025, 10:00:00 AM\
- 6. event: Daily Sync from 10/23/2025, 9:00:00 AM to 10/23/2025, 10:00:00 AM\
- 7. event: Daily Sync from 10/24/2025, 9:00:00 AM to 10/24/2025, 10:00:00 AM\
- 8. event: Daily Sync from 10/25/2025, 9:00:00 AM to 10/25/2025, 10:00:00 AM\
- 9. event: Daily Sync from 10/26/2025, 9:00:00 AM to 10/26/2025, 10:00:00 AM\
------ output end -----\
-  Operational Principle: Generate a simple schedule ... ok (346ms)\
-  Scenario 1: Conflicts and Unscheduled Tasks (Expect Error) ...\
-------- output -------\
-\
---- Scenario 1: Conflicts and Unscheduled Tasks ---\
-Initialized schedule for user:Charlie: 0199febf-60b6-7c8e-b94d-c7ab77be0b9a\
-Added daily all-day work block event (8 AM - 9 PM).\
-Added a long task that might not fit (2 hours expected).\
-Action: generateSchedule for 0199febf-60b6-7c8e-b94d-c7ab77be0b9a\
-Warning: Could not fully schedule 1 tasks for schedule 0199febf-60b6-7c8e-b94d-c7ab77be0b9a:\
-  - Long Task for Busy Schedule (ID: 0199febf-6127-751a-8db0-f5ec8bba076b, Deadline: 10/20/2025)\
-Output: Error: Not all tasks could be scheduled within the planning horizon or available time slots.\
------ output end -----\
-  Scenario 1: Conflicts and Unscheduled Tasks (Expect Error) ... ok (208ms)\
-  Scenario 2: Task Prioritization Order ...\
-------- output -------\
-\
---- Scenario 2: Task Prioritization Order ---\
-Initialized schedule for user:David: 0199febf-6187-77a0-baf3-9f435d1b0382\
-Action: generateSchedule for 0199febf-6187-77a0-baf3-9f435d1b0382\
-Output: Generated Plan (tasks only):\
- 1. Task A - High Priority, Soon Deadline, Partial from 10/19/2025, 7:12:59 PM to 10/19/2025, 7:42:59 PM\
- 2. Task B - Low Priority, Soon Deadline from 10/19/2025, 7:42:59 PM to 10/19/2025, 8:42:59 PM\
- 3. Task D - Medium Priority, Later Deadline, Short from 10/19/2025, 8:42:59 PM to 10/19/2025, 9:12:59 PM\
- 4. Task C - High Priority, Later Deadline, Long from 10/20/2025, 8:00:00 AM to 10/20/2025, 10:00:00 AM\
- 5. Task E - Very Late Deadline, High Priority from 10/20/2025, 10:00:00 AM to 10/20/2025, 11:00:00 AM\
------ output end -----\
-  Scenario 2: Task Prioritization Order ... ok (368ms)\
-  Scenario 3: Repeating Events for different days & Monthly/Yearly ...\
-------- output -------\
-\
---- Scenario 3: Repeating Events for different days & Monthly/Yearly ---\
-Initialized schedule for user:Eve: 0199febf-62fb-78f2-a7fc-dfd780da8edc\
-Added weekly event for Mon & Wed.\
-Added monthly event (15th of month).\
-Added yearly event (Jan 1st).\
-Action: generateSchedule for 0199febf-62fb-78f2-a7fc-dfd780da8edc\
-Output: Generated Plan (events only):\
- 1. Weekly Sync (Mon/Wed) on 10/20/2025 at 10:00:00 AM\
- 2. Weekly Sync (Mon/Wed) on 10/22/2025 at 10:00:00 AM\
------ output end -----\
-  Scenario 3: Repeating Events for different days & Monthly/Yearly ... ok (262ms)\
-  Scenario 4: Task completionLevel and remaining time ...\
-------- output -------\
-\
---- Scenario 4: Task completionLevel and remaining time ---\
-Initialized schedule for user:Frank: 0199febf-63fe-782b-aabc-ae29988d342f\
-Added Partial Task (ID: 0199febf-6435-7e1e-866d-73e210f7b75b)\
-Added Completed Task (ID: 0199febf-646e-708f-9c0d-edb242385998)\
-Action: generateSchedule for 0199febf-63fe-782b-aabc-ae29988d342f\
-Output: Generated Plan (tasks only):\
- 1. Partial Task from 10/19/2025, 7:13:00 PM to 10/19/2025, 7:43:00 PM\
- 2. Completed Task (Completed) from 10/21/2025, 12:00:00 PM to 10/21/2025, 12:00:00 PM\
------ output end -----\
-  Scenario 4: Task completionLevel and remaining time ... ok (207ms)\
-ScheduleGeneratorConcept - generateSchedule operational principle and scenarios ... ok (1s)\
-ScheduleGeneratorConcept - Query Actions ...\
-  _getScheduleByOwner: retrieves schedule ID for owner ...\
-------- output -------\
-Action: _getScheduleByOwner for user:Grace\
-Output: Retrieved schedule: 0199febf-66e9-7c9e-99ac-8e183e4308a6\
------ output end -----\
-  _getScheduleByOwner: retrieves schedule ID for owner ... ok (110ms)\
-  _getEventsForSchedule: retrieves events for a schedule ...\
-------- output -------\
-Added event 0199febf-6756-7ed9-9084-5fffcda9e7a9 to 0199febf-66e9-7c9e-99ac-8e183e4308a6\
-Action: _getEventsForSchedule for 0199febf-66e9-7c9e-99ac-8e183e4308a6\
-Output: Retrieved events: 0199febf-6756-7ed9-9084-5fffcda9e7a9\
------ output end -----\
-  _getEventsForSchedule: retrieves events for a schedule ... ok (126ms)\
-  _getTasksForSchedule: retrieves tasks for a schedule ...\
-------- output -------\
-Added task 0199febf-67d8-70a1-931d-9792a7d2d6a7 to 0199febf-66e9-7c9e-99ac-8e183e4308a6\
-Action: _getTasksForSchedule for 0199febf-66e9-7c9e-99ac-8e183e4308a6\
-Output: Retrieved tasks: 0199febf-67d8-70a1-931d-9792a7d2d6a7\
------ output end -----\
-  _getTasksForSchedule: retrieves tasks for a schedule ... ok (124ms)\
-  _getEventDetails: retrieves full event details ...\
-------- output -------\
-Action: _getEventDetails for 0199febf-6756-7ed9-9084-5fffcda9e7a9\
-Output: Retrieved event details: Event A\
------ output end -----\
-  _getEventDetails: retrieves full event details ... ok (34ms)\
-  _getTaskDetails: retrieves full task details ...\
-------- output -------\
-Action: _getTaskDetails for 0199febf-67d8-70a1-931d-9792a7d2d6a7\
-Output: Retrieved task details: Task X\
------ output end -----\
-  _getTaskDetails: retrieves full task details ... ok (40ms)\
-ScheduleGeneratorConcept - Query Actions ... ok (957ms)\
-\
-ok | 3 passed (26 steps) | 0 failed (4s)\
-\
+Check file:///Users/rahsunkomatsuzaki-fields/Desktop/MIT/academic/Y3/Fall/6.1040/taskmate/src/concepts/ScheduleGenerator/ScheduleGenerator.test.ts
+running 3 tests from ./src/concepts/ScheduleGenerator/ScheduleGenerator.test.ts
+ScheduleGeneratorConcept - Operational Principle ...
+------- output -------
+
+--- Test: Operational Principle ---
+----- output end -----
+  1. Initialize Schedule for Alice ...
+------- output -------
+Action: initializeSchedule({ owner: "user:Alice" })
+Result: { schedule: "019a3cc7-939a-7f45-b34b-dedef62625b8" }
+Query _getScheduleByOwner({ owner: "user:Alice" }): { schedule: "019a3cc7-939a-7f45-b34b-dedef62625b8" }
+----- output end -----
+  1. Initialize Schedule for Alice ... ok (122ms)
+  2. Add Events and Tasks ...
+------- output -------
+Action: addEvent({ schedule: "019a3cc7-939a-7f45-b34b-dedef62625b8", name: "Daily Standup", startTime: 2025-11-01T13:00:00.000Z, endTime: 2025-11-01T14:00:00.000Z, repeat: {"frequency":"DAILY"} })
+Result: { event: "019a3cc7-93fe-7fc7-b801-fc575ea382e9" }
+Action: addEvent({ schedule: "019a3cc7-939a-7f45-b34b-dedef62625b8", name: "Weekly Team Meeting", startTime: 2025-11-04T19:00:00.000Z, endTime: 2025-11-04T20:00:00.000Z, repeat: {"frequency":"WEEKLY","daysOfWeek":[2]} })
+Result: { event: "019a3cc7-9442-7b35-a5bd-ceac9c9fe35d" }
+Action: addTask({ schedule: "019a3cc7-939a-7f45-b34b-dedef62625b8", name: "Finish Report", deadline: 2025-11-01T21:00:00.000Z, expectedCompletionTime: 120, completionLevel: 0, priority: 90 })
+Result: { task: "019a3cc7-948b-7f61-abb5-c7dea4f8300f" }
+Action: addTask({ schedule: "019a3cc7-939a-7f45-b34b-dedef62625b8", name: "Review PRs", deadline: 2025-11-03T17:00:00.000Z, expectedCompletionTime: 60, completionLevel: 50, priority: 50 })
+Result: { task: "019a3cc7-94dd-7840-ad42-7fa0b7585a31" }
+Query _getEventsForSchedule({ schedule: "019a3cc7-939a-7f45-b34b-dedef62625b8" }): { event: ["019a3cc7-93fe-7fc7-b801-fc575ea382e9","019a3cc7-9442-7b35-a5bd-ceac9c9fe35d"] }
+Query _getTasksForSchedule({ schedule: "019a3cc7-939a-7f45-b34b-dedef62625b8" }): { task: ["019a3cc7-948b-7f61-abb5-c7dea4f8300f","019a3cc7-94dd-7840-ad42-7fa0b7585a31"] }
+----- output end -----
+  2. Add Events and Tasks ... ok (363ms)
+  3. Generate Schedule and Verify Basic Content and Task Priority ...
+------- output -------
+Action: generateSchedule({ schedule: "019a3cc7-939a-7f45-b34b-dedef62625b8" })
+Result: Generated plan with 10 items
+Schedule generation verified (basic content and task deadline adherence).
+----- output end -----
+  3. Generate Schedule and Verify Basic Content and Task Priority ... ok (85ms)
+  4. Edit an Event and Regenerate Schedule to see changes ...
+------- output -------
+Action: editEvent({ schedule: "019a3cc7-939a-7f45-b34b-dedef62625b8", oldEvent: "019a3cc7-93fe-7fc7-b801-fc575ea382e9", name: "Daily Standup (Short)", startTime: 2025-11-01T13:00:00.000Z, endTime: 2025-11-01T13:30:00.000Z, repeat: {"frequency":"DAILY"} })
+Result: {}
+Action: generateSchedule({ schedule: "019a3cc7-939a-7f45-b34b-dedef62625b8" }) (after event edit)
+Event edit and schedule regeneration verified.
+----- output end -----
+  4. Edit an Event and Regenerate Schedule to see changes ... ok (104ms)
+  5. Edit a Task to be 100% complete and Regenerate Schedule ...
+------- output -------
+Action: editTask({ schedule: "019a3cc7-939a-7f45-b34b-dedef62625b8", oldTask: "019a3cc7-948b-7f61-abb5-c7dea4f8300f", name: "Finish Report", deadline: 2025-11-01T21:00:00.000Z, expectedCompletionTime: 120, completionLevel: 100, priority: 90 })
+Result: {}
+Action: generateSchedule({ schedule: "019a3cc7-939a-7f45-b34b-dedef62625b8" }) (after task completion edit)
+Task completion edit and schedule regeneration verified.
+----- output end -----
+  5. Edit a Task to be 100% complete and Regenerate Schedule ... ok (132ms)
+  6. Delete a Task and Regenerate Schedule to confirm removal ...
+------- output -------
+Action: deleteTask({ schedule: "019a3cc7-939a-7f45-b34b-dedef62625b8", task: "019a3cc7-94dd-7840-ad42-7fa0b7585a31" })
+Result: {}
+Action: generateSchedule({ schedule: "019a3cc7-939a-7f45-b34b-dedef62625b8" }) (after task delete)
+Task deletion and schedule regeneration verified.
+----- output end -----
+  6. Delete a Task and Regenerate Schedule to confirm removal ... ok (104ms)
+ScheduleGeneratorConcept - Operational Principle ... ok (1s)
+ScheduleGeneratorConcept - Error and Edge Cases ...
+------- output -------
+
+--- Test: Error and Edge Cases ---
+----- output end -----
+  1. Initialize schedule, then try to initialize again for the same user ...
+------- output -------
+Action: initializeSchedule({ owner: "user:Bob" })
+Result: { schedule: "019a3cc7-99a9-7678-aa7b-e6bf9b12c0ee" }
+Action: initializeSchedule({ owner: "user:Bob" }) (again)
+Result: { schedule: "019a3cc7-99a9-7678-aa7b-e6bf9b12c0ee" }
+----- output end -----
+  1. Initialize schedule, then try to initialize again for the same user ... ok (111ms)
+  2. Add Event with invalid times ...
+------- output -------
+Action: addEvent({ schedule: "019a3cc7-99a9-7678-aa7b-e6bf9b12c0ee", name: "Invalid Event", startTime: 2025-11-01T14:00:00.000Z, endTime: 2025-11-01T13:00:00.000Z, repeat: {"frequency":"NONE"} })
+Result: { error: "Event start time must be before end time." }
+----- output end -----
+  2. Add Event with invalid times ... ok (19ms)
+  3. Add Event with WEEKLY repeat missing daysOfWeek ...
+------- output -------
+Action: addEvent({ schedule: "019a3cc7-99a9-7678-aa7b-e6bf9b12c0ee", name: "Invalid Weekly Event", startTime: 2025-11-01T14:00:00.000Z, endTime: 2025-11-01T15:00:00.000Z, repeat: {"frequency":"WEEKLY"} })
+Result: { error: "Weekly repeat events must specify at least one day of the week (0=Sunday, 6=Saturday)." }
+----- output end -----
+  3. Add Event with WEEKLY repeat missing daysOfWeek ... ok (19ms)
+  4. Add Task with invalid expectedCompletionTime ...
+------- output -------
+Action: addTask({ schedule: "019a3cc7-99a9-7678-aa7b-e6bf9b12c0ee", name: "Invalid Task", deadline: 2025-11-02T22:00:00.000Z, expectedCompletionTime: 0, completionLevel: 0, priority: 50 })
+Result: { error: "Expected completion time must be positive." }
+----- output end -----
+  4. Add Task with invalid expectedCompletionTime ... ok (33ms)
+  5. Add Task with invalid priority ...
+------- output -------
+Action: addTask({ schedule: "019a3cc7-99a9-7678-aa7b-e6bf9b12c0ee", name: "Invalid Priority Task", deadline: 2025-11-02T22:00:00.000Z, expectedCompletionTime: 60, completionLevel: 0, priority: 150 })
+Result: { error: "Priority must be between 0 and 100." }
+----- output end -----
+  5. Add Task with invalid priority ... ok (19ms)
+  6. Add Task with invalid completionLevel ...
+------- output -------
+Action: addTask({ schedule: "019a3cc7-99a9-7678-aa7b-e6bf9b12c0ee", name: "Invalid Completion Task", deadline: 2025-11-02T22:00:00.000Z, expectedCompletionTime: 60, completionLevel: -10, priority: 50 })
+Result: { error: "Completion level must be between 0 and 100." }
+----- output end -----
+  6. Add Task with invalid completionLevel ... ok (19ms)
+  7. Try to edit/delete non-existent event or with wrong schedule context ...
+------- output -------
+Action: editEvent({ schedule: "019a3cc7-99a9-7678-aa7b-e6bf9b12c0ee", oldEvent: "nonExistentEvent123", name: "Dummy", startTime: 2025-11-01T14:00:00.000Z, endTime: 2025-11-01T15:00:00.000Z, repeat: {"frequency":"NONE"} })
+Result: { error: "Event with ID nonExistentEvent123 not found or not associated with schedule 019a3cc7-99a9-7678-aa7b-e6bf9b12c0ee." }
+Action: deleteEvent({ schedule: "019a3cc7-99a9-7678-aa7b-e6bf9b12c0ee", event: "nonExistentEvent123" })
+Result: { error: "Event with ID nonExistentEvent123 not found or not associated with schedule 019a3cc7-99a9-7678-aa7b-e6bf9b12c0ee." }
+----- output end -----
+  7. Try to edit/delete non-existent event or with wrong schedule context ... ok (159ms)
+  8. Try to delete event with non-existent schedule ID ...
+------- output -------
+Action: deleteEvent({ schedule: "nonExistentSchedule123", event: "019a3cc7-9acd-7d73-a45d-319ea80ef804" })
+Result: { error: "Schedule with ID nonExistentSchedule123 not found." }
+----- output end -----
+  8. Try to delete event with non-existent schedule ID ... ok (19ms)
+  9. Generate Schedule with impossible tasks (total time conflict) ...
+------- output -------
+Action: addEvent({ schedule: "019a3cc7-99a9-7678-aa7b-e6bf9b12c0ee", name: "Blocking Event", startTime: 2025-10-31T12:00:00.000Z, endTime: 2025-11-01T02:00:00.000Z, repeat: {"frequency":"NONE"} })
+Result: { event: "019a3cc7-9b3b-7c34-ad4e-8c5fc3f27a94" }
+Action: addTask({ schedule: "019a3cc7-99a9-7678-aa7b-e6bf9b12c0ee", name: "Impossible Task", deadline: 2025-11-01T03:00:00.000Z, expectedCompletionTime: 60, completionLevel: 0, priority: 100 })
+Result: { task: "019a3cc7-9b89-77da-9c89-3b832f551e24" }
+Action: generateSchedule({ schedule: "019a3cc7-99a9-7678-aa7b-e6bf9b12c0ee" })
+Warning: Could not fully schedule 1 tasks for schedule 019a3cc7-99a9-7678-aa7b-e6bf9b12c0ee:
+  - Impossible Task (ID: 019a3cc7-9b89-77da-9c89-3b832f551e24, Deadline: 10/31/2025)
+Result: { error: "Not all tasks could be scheduled within the planning horizon or available time slots." }
+----- output end -----
+  9. Generate Schedule with impossible tasks (total time conflict) ... ok (397ms)
+ScheduleGeneratorConcept - Error and Edge Cases ... ok (1s)
+ScheduleGeneratorConcept - Query Functionality ...
+------- output -------
+
+--- Test: Query Functionality ---
+Initialized schedule for Charlie: 019a3cc7-9f52-74e8-82a7-f0e203de9f8a
+Added event: 019a3cc7-9f9c-7f7c-a71e-f392bef551b0
+Added task: 019a3cc7-9fe7-7d5c-ad13-7ff65dca494c
+----- output end -----
+  1. _getScheduleByOwner (Positive & Negative) ...
+------- output -------
+Query: _getScheduleByOwner({ owner: "user:Charlie" })
+Result: { schedule: "019a3cc7-9f52-74e8-82a7-f0e203de9f8a" }
+Query: _getScheduleByOwner({ owner: "user:NonExistent" })
+Result: { error: "No schedule found for owner user:NonExistent." }
+----- output end -----
+  1. _getScheduleByOwner (Positive & Negative) ... ok (42ms)
+  2. _getEventsForSchedule ...
+------- output -------
+Query: _getEventsForSchedule({ schedule: "019a3cc7-9f52-74e8-82a7-f0e203de9f8a" })
+Result: { event: ["019a3cc7-9f9c-7f7c-a71e-f392bef551b0"] }
+----- output end -----
+  2. _getEventsForSchedule ... ok (36ms)
+  3. _getTasksForSchedule ...
+------- output -------
+Query: _getTasksForSchedule({ schedule: "019a3cc7-9f52-74e8-82a7-f0e203de9f8a" })
+Result: { task: ["019a3cc7-9fe7-7d5c-ad13-7ff65dca494c"] }
+----- output end -----
+  3. _getTasksForSchedule ... ok (37ms)
+  4. _getEventDetails (Positive & Negative) ...
+------- output -------
+Query: _getEventDetails({ event: "019a3cc7-9f9c-7f7c-a71e-f392bef551b0" })
+Result: { eventDetails: [{"_id":"019a3cc7-9f9c-7f7c-a71e-f392bef551b0","name":"Daily Scrum","eventID":1,"scheduleID":1,"startTime":"2025-11-01T14:00:00.000Z","endTime":"2025-11-01T15:00:00.000Z","repeat":{"frequency":"DAILY"}}] }
+Query: _getEventDetails({ event: "nonExistentEventDetails" })
+Result: { error: "Event with ID nonExistentEventDetails not found." }
+----- output end -----
+  4. _getEventDetails (Positive & Negative) ... ok (37ms)
+  5. _getTaskDetails (Positive & Negative) ...
+------- output -------
+Query: _getTaskDetails({ task: "019a3cc7-9fe7-7d5c-ad13-7ff65dca494c" })
+Result: { taskDetails: [{"_id":"019a3cc7-9fe7-7d5c-ad13-7ff65dca494c","name":"Write Docs","taskID":1,"scheduleID":1,"deadline":"2025-11-02T22:00:00.000Z","expectedCompletionTime":60,"completionLevel":0,"priority":70}] }
+Query: _getTaskDetails({ task: "nonExistentTaskDetails" })
+Result: { error: "Task with ID nonExistentTaskDetails not found." }
+----- output end -----
+  5. _getTaskDetails (Positive & Negative) ... ok (61ms)
+  6. _getAllSchedules ...
+------- output -------
+Query: _getAllSchedules()
+Result: Found 1 schedules.
+----- output end -----
+  6. _getAllSchedules ... ok (19ms)
+  7. _getScheduleDetails (Positive & Negative) ...
+------- output -------
+Query: _getScheduleDetails({ schedule: "019a3cc7-9f52-74e8-82a7-f0e203de9f8a" })
+Result: { scheduleDetails: [{"_id":"019a3cc7-9f52-74e8-82a7-f0e203de9f8a","owner":"user:Charlie","scheduleID":1}] }
+Query: _getScheduleDetails({ schedule: "nonExistentScheduleDetails" })
+Result: { error: "Schedule with ID nonExistentScheduleDetails not found." }
+----- output end -----
+  7. _getScheduleDetails (Positive & Negative) ... ok (37ms)
+  8. _getAllEvents ...
+------- output -------
+Query: _getAllEvents()
+Result: Found 1 events.
+----- output end -----
+  8. _getAllEvents ... ok (19ms)
+  9. _getAllTasks ...
+------- output -------
+Query: _getAllTasks()
+Result: Found 1 tasks.
+----- output end -----
+  9. _getAllTasks ... ok (19ms)
+ScheduleGeneratorConcept - Query Functionality ... ok (1s)
+
+ok | 3 passed (24 steps) | 0 failed (4s)

@@ -1,10 +1,8 @@
-[@newImplementation](newImplementation.md)
-
-[@testing-concepts](../../background/testing-concepts.md)
-
-[@testing-concepts-rubric](../../background/testing-concepts-rubric.md)
-
-# prompt: Test UserAuthentication; be careful to assert types of variables of union types, otherwise the Typescript test file will not compile and do not edit the implementation
+---
+timestamp: 'Fri Oct 31 2025 20:28:57 GMT-0400 (Eastern Daylight Time)'
+parent: '[[../20251031_202857.2b5a737a.md]]'
+content_id: d5cbdea5e7d3e91aab6013776a4185e8d38393cb593debf3aaf30fae21b913ce
+---
 
 # response:
 
