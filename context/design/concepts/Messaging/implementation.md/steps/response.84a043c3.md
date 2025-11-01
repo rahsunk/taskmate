@@ -1,12 +1,9 @@
-[@concept-design-overview](../../background/concept-design-overview.md)
+---
+timestamp: 'Fri Oct 31 2025 21:04:08 GMT-0400 (Eastern Daylight Time)'
+parent: '[[../20251031_210408.94a9d77a.md]]'
+content_id: 84a043c33eb65a4cdb0244c9ec58849ece0292b825c97c8951fbe4f033b91568
+---
 
-[@concept-specifications](../../background/concept-specifications.md)
-
-[@implementing-concepts](../../background/implementing-concepts.md)
-
-[@Messaging](Messaging.md)
-
-# implement: Messaging
 # response:
 
 ```typescript

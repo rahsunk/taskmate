@@ -1,10 +1,9 @@
-[@newImplementation](newImplementation.md)
+---
+timestamp: 'Fri Oct 31 2025 20:48:07 GMT-0400 (Eastern Daylight Time)'
+parent: '[[../20251031_204807.6f689144.md]]'
+content_id: bee5abdc4a3867df0708bb6ca336b3f1cfa4a0b2751471a851beeba1985311f8
+---
 
-[@testing-concepts](../../background/testing-concepts.md)
-
-[@testing-concepts-rubric](../../background/testing-concepts-rubric.md)
-
-# prompt: Test FriendList; be careful to assert types of variables of union types, otherwise the Typescript test file will not compile, and do not edit the implementation
 # response:
 
 ```typescript
@@ -13,7 +12,7 @@
 import { assertEquals, assertNotEquals, assertArrayIncludes } from "jsr:@std/assert";
 import { testDb } from "@utils/database.ts";
 import { ID } from "@utils/types.ts";
-import FriendsListConcept from "./FriendListConcept.ts";
+import FriendsListConcept from "./FriendsListConcept.ts";
 
 Deno.test("FriendsListConcept Tests", async (test) => {
   const [db, client] = await testDb();

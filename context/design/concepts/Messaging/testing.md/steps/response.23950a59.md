@@ -1,10 +1,9 @@
-[@implementation](implementation.md)
+---
+timestamp: 'Fri Oct 31 2025 21:02:56 GMT-0400 (Eastern Daylight Time)'
+parent: '[[../20251031_210256.342d9653.md]]'
+content_id: 23950a5948f46330eaa5685b650761690de675b929360a55d5c971dbb3a995f1
+---
 
-[@testing-concepts](../../background/testing-concepts.md)
-
-[@testing-concepts-rubric](../../background/testing-concepts-rubric.md)
-
-# prompt: Test FriendList; be careful to assert types of variables of union types, otherwise the Typescript test file will not compile, and do not edit the implementation
 # response:
 
 ```typescript
