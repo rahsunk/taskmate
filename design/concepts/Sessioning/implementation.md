@@ -1,4 +1,3 @@
-```typescript
 import { Collection, Db } from "npm:mongodb";
 import { freshID } from "@utils/database.ts";
 import { Empty, ID } from "@utils/types.ts";
@@ -67,23 +66,21 @@ export default class SessioningConcept {
   }
 
   /**
-   * _getUser (session: Session): (user: User)
+   * _getUser (session: Session): (user: User)[]
    *
    * **requires**: the given `session` exists.
    *
-   * **effects**: returns the user associated with the session.
+   * **effects**: returns an array containing the user associated with the session, or an empty array if not found.
    */
   async _getUser(
     { session }: { session: Session },
-  ): Promise<Array<{ user: User }> | [{ error: string }]> {
+  ): Promise<Array<{ user: User }>> { // CHANGED: Returns an array of user objects, or an empty array
     const sessionDoc = await this.sessions.findOne({ _id: session });
 
     if (!sessionDoc) {
-      return [{ error: `Session with id ${session} not found` }];
+      return []; // Return an empty array if session not found
     }
 
     return [{ user: sessionDoc.user }];
   }
 }
-
-````

@@ -979,213 +979,104 @@ export default class ScheduleGeneratorConcept {
   // --- Concept Queries (methods prefixed with '_' as per convention) ---
 
   /**
-   * _getScheduleByOwner (owner: User): (schedule: Schedule)
-   *
-   * requires: true
-   *
-   * effects: Retrieves the ID of the schedule document associated with a given user owner.
-   *
-   * @param {Object} params - The query parameters.
-   * @param {User} params.owner - The ID of the owner user.
-   * @returns {Promise<{schedule?: Schedule; error?: string}>} - The schedule ID or an error message if not found.
+   * _getScheduleByOwner (owner: User): (schedule: Schedule)[]
+   * effects: Retrieves the ID of the schedule document for a given user.
    */
-  async _getScheduleByOwner({ owner }: { owner: User }): Promise<{
-    schedule?: Schedule;
-    error?: string;
-  }> {
+  async _getScheduleByOwner(
+    { owner }: { owner: User },
+  ): Promise<{ schedule: Schedule }[]> {
     const scheduleDoc = await this.schedules.findOne({ owner });
-    if (!scheduleDoc) {
-      return { error: `No schedule found for owner ${owner}.` };
-    }
-    return { schedule: scheduleDoc._id };
+    return scheduleDoc ? [{ schedule: scheduleDoc._id }] : [];
   }
 
   /**
-   * _getEventsForSchedule (schedule: Schedule): (events: Event[])
-   *
-   * requires: `schedule` exists
-   *
-   * effects: Retrieves an array of Event IDs that are linked to the specified schedule.
-   *
-   * @param {Object} params - The query parameters.
-   * @param {Schedule} params.schedule - The ID of the schedule to retrieve events for.
-   * @returns {Promise<{events?: Event[]; error?: string}>} - An array of event IDs or an error message.
+   * _getEventsForSchedule (schedule: Schedule): (event: EventDoc)[]
+   * effects: Retrieves all event documents linked to the specified schedule.
    */
-  async _getEventsForSchedule({ schedule }: { schedule: Schedule }): Promise<{
-    event?: Event[]; // Changed 'events' to 'event' as per query return convention
-    error?: string;
-  }> {
+  async _getEventsForSchedule(
+    { schedule }: { schedule: Schedule },
+  ): Promise<{ event: EventDoc }[]> {
     const existingSchedule = await this.schedules.findOne({ _id: schedule });
     if (!existingSchedule) {
-      return { error: `Schedule with ID ${schedule} not found.` };
+      return [];
     }
-    // Find all events that reference this schedule's internal ID
-    const eventDocs = await this.events
-      .find({ scheduleID: existingSchedule.scheduleID })
-      .toArray();
-    return { event: eventDocs.map((doc) => doc._id) }; // Return array of IDs under 'event' key
+    const eventDocs = await this.events.find({
+      scheduleID: existingSchedule.scheduleID,
+    }).toArray();
+    return eventDocs.map((doc) => ({ event: doc as EventDoc }));
   }
 
   /**
-   * _getTasksForSchedule (schedule: Schedule): (tasks: Task[])
-   *
-   * requires: `schedule` exists
-   *
-   * effects: Retrieves an array of Task IDs that are linked to the specified schedule.
-   *
-   * @param {Object} params - The query parameters.
-   * @param {Schedule} params.schedule - The ID of the schedule to retrieve tasks for.
-   * @returns {Promise<{tasks?: Task[]; error?: string}>} - An array of task IDs or an error message.
+   * _getTasksForSchedule (schedule: Schedule): (task: TaskDoc)[]
+   * effects: Retrieves all task documents linked to the specified schedule.
    */
-  async _getTasksForSchedule({ schedule }: { schedule: Schedule }): Promise<{
-    task?: Task[]; // Changed 'tasks' to 'task' as per query return convention
-    error?: string;
-  }> {
+  async _getTasksForSchedule(
+    { schedule }: { schedule: Schedule },
+  ): Promise<{ task: TaskDoc }[]> {
     const existingSchedule = await this.schedules.findOne({ _id: schedule });
     if (!existingSchedule) {
-      return { error: `Schedule with ID ${schedule} not found.` };
+      return [];
     }
-    // Find all tasks that reference this schedule's internal ID
-    const taskDocs = await this.tasks
-      .find({ scheduleID: existingSchedule.scheduleID })
-      .toArray();
-    return { task: taskDocs.map((doc) => doc._id) }; // Return array of IDs under 'task' key
+    const taskDocs = await this.tasks.find({
+      scheduleID: existingSchedule.scheduleID,
+    }).toArray();
+    return taskDocs.map((doc) => ({ task: doc as TaskDoc }));
   }
 
   /**
-   * _getEventDetails (event: Event): (eventDetails: EventDoc)
-   *
-   * requires: `event` exists
-   *
-   * effects: Retrieves the full document details for a specific event.
-   *
-   * @param {Object} params - The query parameters.
-   * @param {Event} params.event - The ID of the event to retrieve details for.
-   * @returns {Promise<{eventDetails?: EventDoc[]; error?: string}>} - An array containing the event document or an error message.
+   * _getEventDetails (event: Event): (eventDetails: EventDoc)[]
+   * effects: Retrieves the full document for a specific event.
    */
-  async _getEventDetails({ event }: { event: Event }): Promise<{
-    eventDetails?: EventDoc[]; // Query returns array of dicts
-    error?: string;
-  }> {
+  async _getEventDetails(
+    { event }: { event: Event },
+  ): Promise<{ eventDetails: EventDoc }[]> {
     const eventDoc = await this.events.findOne({ _id: event });
-    if (!eventDoc) {
-      return { error: `Event with ID ${event} not found.` };
-    }
-    return { eventDetails: [eventDoc] }; // Return as an array
+    return eventDoc ? [{ eventDetails: eventDoc as EventDoc }] : [];
   }
 
   /**
-   * _getTaskDetails (task: Task): (taskDetails: TaskDoc)
-   *
-   * requires: `task` exists
-   *
-   * effects: Retrieves the full document details for a specific task.
-   *
-   * @param {Object} params - The query parameters.
-   * @param {Task} params.task - The ID of the task to retrieve details for.
-   * @returns {Promise<{taskDetails?: TaskDoc[]; error?: string}>} - An array containing the task document or an error message.
+   * _getTaskDetails (task: Task): (taskDetails: TaskDoc)[]
+   * effects: Retrieves the full document for a specific task.
    */
-  async _getTaskDetails({ task }: { task: Task }): Promise<{
-    taskDetails?: TaskDoc[]; // Query returns array of dicts
-    error?: string;
-  }> {
+  async _getTaskDetails(
+    { task }: { task: Task },
+  ): Promise<{ taskDetails: TaskDoc }[]> {
     const taskDoc = await this.tasks.findOne({ _id: task });
-    if (!taskDoc) {
-      return { error: `Task with ID ${task} not found.` };
-    }
-    return { taskDetails: [taskDoc] }; // Return as an array
+    return taskDoc ? [{ taskDetails: taskDoc as TaskDoc }] : [];
   }
 
   /**
-   * _getAllSchedules (): (schedule: ScheduleDoc)
-   *
-   * requires: true
-   *
-   * effects: Returns an array of all `ScheduleDoc` objects.
-   *
-   * @returns {Promise<{schedule?: ScheduleDoc[]; error?: string}>} - An array of all schedule documents or an error.
+   * _getAllSchedules(): (schedules: ScheduleDoc[])
+   * effects: Returns an array of all schedule documents.
    */
-  async _getAllSchedules(): Promise<{
-    schedule?: ScheduleDoc[];
-    error?: string;
-  }> {
-    try {
-      const scheduleDocs = await this.schedules.find({}).toArray();
-      return { schedule: scheduleDocs };
-    } catch (e: any) {
-      console.error("Error in _getAllSchedules:", e);
-      return { error: `Failed to retrieve all schedules: ${e.message}` };
-    }
+  async _getAllSchedules(): Promise<ScheduleDoc[]> {
+    return await this.schedules.find({}).toArray() as ScheduleDoc[];
   }
 
   /**
-   * _getScheduleDetails (schedule: Schedule): (scheduleDetails: ScheduleDoc)
-   *
-   * requires: `schedule` exists
-   *
-   * effects: Returns the `ScheduleDoc` object matching the provided ID.
-   *
-   * @param {Object} params - The query parameters.
-   * @param {Schedule} params.schedule - The ID of the schedule to retrieve details for.
-   * @returns {Promise<{scheduleDetails?: ScheduleDoc[]; error?: string}>} - An array containing the ScheduleDoc object or an error.
+   * _getScheduleDetails(schedule: Schedule): (scheduleDetails: ScheduleDoc)[]
+   * effects: Returns the document for a specific schedule ID.
    */
-  async _getScheduleDetails({ schedule }: { schedule: Schedule }): Promise<{
-    scheduleDetails?: ScheduleDoc[];
-    error?: string;
-  }> {
-    try {
-      const scheduleDoc = await this.schedules.findOne({ _id: schedule });
-      if (!scheduleDoc) {
-        return { error: `Schedule with ID ${schedule} not found.` };
-      }
-      return { scheduleDetails: [scheduleDoc] };
-    } catch (e: any) {
-      console.error("Error in _getScheduleDetails:", e);
-      return { error: `Failed to retrieve schedule details: ${e.message}` };
-    }
+  async _getScheduleDetails(
+    { schedule }: { schedule: Schedule },
+  ): Promise<{ scheduleDetails: ScheduleDoc }[]> {
+    const scheduleDoc = await this.schedules.findOne({ _id: schedule });
+    return scheduleDoc ? [{ scheduleDetails: scheduleDoc as ScheduleDoc }] : [];
   }
 
   /**
-   * _getAllEvents (): (event: EventDoc)
-   *
-   * requires: true
-   *
-   * effects: Returns an array of all `EventDoc` objects.
-   *
-   * @returns {Promise<{event?: EventDoc[]; error?: string}>} - An array of all event documents or an error.
+   * _getAllEvents(): (events: EventDoc[])
+   * effects: Returns an array of all event documents.
    */
-  async _getAllEvents(): Promise<{
-    event?: EventDoc[];
-    error?: string;
-  }> {
-    try {
-      const eventDocs = await this.events.find({}).toArray();
-      return { event: eventDocs };
-    } catch (e: any) {
-      console.error("Error in _getAllEvents:", e);
-      return { error: `Failed to retrieve all events: ${e.message}` };
-    }
+  async _getAllEvents(): Promise<EventDoc[]> {
+    return await this.events.find({}).toArray() as EventDoc[];
   }
 
   /**
-   * _getAllTasks (): (task: TaskDoc)
-   *
-   * requires: true
-   *
-   * effects: Returns an array of all `TaskDoc` objects.
-   *
-   * @returns {Promise<{task?: TaskDoc[]; error?: string}>} - An array of all task documents or an error.
+   * _getAllTasks(): (tasks: TaskDoc[])
+   * effects: Returns an array of all task documents.
    */
-  async _getAllTasks(): Promise<{
-    task?: TaskDoc[];
-    error?: string;
-  }> {
-    try {
-      const taskDocs = await this.tasks.find({}).toArray();
-      return { task: taskDocs };
-    } catch (e: any) {
-      console.error("Error in _getAllTasks:", e);
-      return { error: `Failed to retrieve all tasks: ${e.message}` };
-    }
+  async _getAllTasks(): Promise<TaskDoc[]> {
+    return await this.tasks.find({}).toArray() as TaskDoc[];
   }
 }

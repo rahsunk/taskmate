@@ -38,11 +38,6 @@ export const inclusions: Record<string, string> = {
   // "/api/FileUploading/_getFilename": "need to grab filenames for previews"
 
   // UserAuthentication
-  // "/api/UserAuthentication/register": "anyone is allowed to register",
-
-  // "/api/UserAuthentication/authenticate":
-  //   "anyone is allowed to authenticate (login)",
-
   "/api/UserAuthentication/_getUserByUsername":
     "okay to lookup users by their username",
 };
@@ -62,15 +57,6 @@ export const exclusions: Array<string> = [
   "/api/LikertSurvey/createSurvey",
   "/api/LikertSurvey/addQuestion",
 
-  // UserAuthentication
-  "/api/UserAuthentication/register",
-  "/api/UserAuthentication/authenticate",
-  "/api/UserAuthentication/changePassword",
-  "/api/UserAuthentication/deleteAccount",
-  "/api/UserAuthentication/_checkUserExists",
-  "/api/UserAuthentication/_getAllUsers",
-  "/api/UserAuthentication/_getUsernameById",
-
   // FileUploading
   "/api/FileUploading/requestUploadURL",
   "/api/FileUploading/confirmUpload",
@@ -89,4 +75,32 @@ export const exclusions: Array<string> = [
   "/api/Sharing/revokeAccess",
   "/api/Sharing/_isSharedWith",
   "/api/Sharing/_getFilesSharedWithUser",
+
+  // UserAuthentication
+  "/api/UserAuthentication/register",
+  "/api/UserAuthentication/authenticate",
+  "/api/UserAuthentication/changePassword",
+  "/api/UserAuthentication/deleteAccount",
+  "/api/UserAuthentication/_checkUserExists",
+  "/api/UserAuthentication/_getAllUsers",
+  "/api/UserAuthentication/_getUsernameById",
+
+  // ScheduleGenerator
+  "/api/ScheduleGenerator/initializeSchedule",
+  "/api/ScheduleGenerator/addEvent",
+  "/api/ScheduleGenerator/editEvent",
+  "/api/ScheduleGenerator/deleteEvent",
+  "/api/ScheduleGenerator/addTask",
+  "/api/ScheduleGenerator/editTask",
+  "/api/ScheduleGenerator/deleteTask",
+  "/api/ScheduleGenerator/generateSchedule",
+  "/api/ScheduleGenerator/_getScheduleByOwner",
+  "/api/ScheduleGenerator/_getEventsForSchedule",
+  "/api/ScheduleGenerator/_getTasksForSchedule",
+  "/api/ScheduleGenerator/_getEventDetails",
+  "/api/ScheduleGenerator/_getTaskDetails",
+  "/api/ScheduleGenerator/_getAllSchedules",
+  "/api/ScheduleGenerator/_getScheduleDetails",
+  "/api/ScheduleGenerator/_getAllEvents",
+  "/api/ScheduleGenerator/_getAllTasks",
 ];

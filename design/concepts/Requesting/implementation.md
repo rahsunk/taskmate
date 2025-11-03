@@ -1,4 +1,3 @@
-```typescript
 import { Hono } from "jsr:@hono/hono";
 import { cors } from "jsr:@hono/hono/cors";
 import { Collection, Db } from "npm:mongodb";
@@ -300,5 +299,3 @@ export function startRequestingServer(
 
   Deno.serve({ port: PORT }, app.fetch);
 }
-
-```
