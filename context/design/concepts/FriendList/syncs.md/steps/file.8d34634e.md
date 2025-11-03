@@ -1,3 +1,12 @@
+---
+timestamp: 'Mon Nov 03 2025 14:16:42 GMT-0500 (Eastern Standard Time)'
+parent: '[[../20251103_141642.89187ff5.md]]'
+content_id: 8d34634e7c271ac47cb477fa9c29e1f1cdc0fdf26a45a525f916b239224aeb1d
+---
+
+# file: src/FriendList/FriendListConcept.ts
+
+```typescript
 import { Collection, Db } from "npm:mongodb";
 import { ID } from "@utils/types.ts";
 import { freshID } from "@utils/database.ts";
@@ -82,17 +91,11 @@ export default class FriendsListConcept {
       $or: [{ sender, receiver }, { sender: receiver, receiver: sender }],
     });
     if (existingRequest) {
-      return {
-        error: "A pending friend request already exists between these users.",
-      };
+      return { error: "A pending friend request already exists between these users." };
     }
 
     const newRequestId = freshID();
-    await this.friendRequests.insertOne({
-      _id: newRequestId,
-      sender,
-      receiver,
-    });
+    await this.friendRequests.insertOne({ _id: newRequestId, sender, receiver });
 
     return { request: newRequestId };
   }
@@ -103,10 +106,7 @@ export default class FriendsListConcept {
   async acceptFriendRequest(
     { receiver, sender }: { receiver: User; sender: User },
   ): Promise<ActionSuccessResult | { error: string }> {
-    const friendRequest = await this.friendRequests.findOne({
-      sender,
-      receiver,
-    });
+    const friendRequest = await this.friendRequests.findOne({ sender, receiver });
     if (!friendRequest) {
       return { error: "No pending friend request from sender to receiver." };
     }
@@ -133,10 +133,7 @@ export default class FriendsListConcept {
   ): Promise<ActionSuccessResult | { error: string }> {
     const result = await this.friendRequests.deleteOne({ sender, receiver });
     if (result.deletedCount === 0) {
-      return {
-        error:
-          "No pending friend request from sender to receiver found to decline.",
-      };
+      return { error: "No pending friend request from sender to receiver found to decline." };
     }
     return { success: true };
   }
@@ -149,10 +146,7 @@ export default class FriendsListConcept {
   ): Promise<ActionSuccessResult | { error: string }> {
     const result = await this.friendRequests.deleteOne({ sender, receiver });
     if (result.deletedCount === 0) {
-      return {
-        error:
-          "No pending friend request from sender to receiver found to cancel.",
-      };
+      return { error: "No pending friend request from sender to receiver found to cancel." };
     }
     return { success: true };
   }
@@ -180,117 +174,80 @@ export default class FriendsListConcept {
     try {
       return await this.friendships.find().toArray();
     } catch (e) {
-      return {
-        error: `Database error: ${
-          e instanceof Error ? e.message : "Unknown error"
-        }`,
-      };
+      return { error: `Database error: ${e instanceof Error ? e.message : "Unknown error"}` };
     }
   }
 
   /**
    * _getFriendshipsByUser (user: User): FriendshipDoc[] | { error: string }
    */
-  async _getFriendshipsByUser(
-    { user }: { user: User },
-  ): Promise<FriendshipDoc[] | { error: string }> {
+  async _getFriendshipsByUser({ user }: { user: User }): Promise<FriendshipDoc[] | { error: string }> {
     try {
-      return await this.friendships.find({
-        $or: [{ user1: user }, { user2: user }],
-      }).toArray();
+      return await this.friendships.find({ $or: [{ user1: user }, { user2: user }] }).toArray();
     } catch (e) {
-      return {
-        error: `Database error: ${
-          e instanceof Error ? e.message : "Unknown error"
-        }`,
-      };
+      return { error: `Database error: ${e instanceof Error ? e.message : "Unknown error"}` };
     }
   }
 
   /**
    * _getAllFriendRequests (): FriendRequestDoc[] | { error: string }
    */
-  async _getAllFriendRequests(): Promise<
-    FriendRequestDoc[] | { error: string }
-  > {
+  async _getAllFriendRequests(): Promise<FriendRequestDoc[] | { error: string }> {
     try {
       return await this.friendRequests.find().toArray();
     } catch (e) {
-      return {
-        error: `Database error: ${
-          e instanceof Error ? e.message : "Unknown error"
-        }`,
-      };
+      return { error: `Database error: ${e instanceof Error ? e.message : "Unknown error"}` };
     }
   }
 
   /**
    * _getSentFriendRequests (sender: User): FriendRequestDoc[] | { error: string }
    */
-  async _getSentFriendRequests(
-    { sender }: { sender: User },
-  ): Promise<FriendRequestDoc[] | { error: string }> {
+  async _getSentFriendRequests({ sender }: { sender: User }): Promise<FriendRequestDoc[] | { error: string }> {
     try {
       return await this.friendRequests.find({ sender }).toArray();
     } catch (e) {
-      return {
-        error: `Database error: ${
-          e instanceof Error ? e.message : "Unknown error"
-        }`,
-      };
+      return { error: `Database error: ${e instanceof Error ? e.message : "Unknown error"}` };
     }
   }
 
   /**
    * _getReceivedFriendRequests (receiver: User): FriendRequestDoc[] | { error: string }
    */
-  async _getReceivedFriendRequests(
-    { receiver }: { receiver: User },
-  ): Promise<FriendRequestDoc[] | { error: string }> {
+  async _getReceivedFriendRequests({ receiver }: { receiver: User }): Promise<FriendRequestDoc[] | { error: string }> {
     try {
       return await this.friendRequests.find({ receiver }).toArray();
     } catch (e) {
-      return {
-        error: `Database error: ${
-          e instanceof Error ? e.message : "Unknown error"
-        }`,
-      };
+      return { error: `Database error: ${e instanceof Error ? e.message : "Unknown error"}` };
     }
   }
 
   /**
    * _getFriendshipDetails (friendshipId: ID): FriendshipDoc[] | { error: string }
    */
-  async _getFriendshipDetails(
-    { friendshipId }: { friendshipId: ID },
-  ): Promise<FriendshipDoc[] | { error: string }> {
+  async _getFriendshipDetails({ friendshipId }: { friendshipId: ID }): Promise<FriendshipDoc[] | { error: string }> {
     try {
       const result = await this.friendships.findOne({ _id: friendshipId });
       return result ? [result] : [];
     } catch (e) {
-      return {
-        error: `Database error: ${
-          e instanceof Error ? e.message : "Unknown error"
-        }`,
-      };
+      return { error: `Database error: ${e instanceof Error ? e.message : "Unknown error"}` };
     }
   }
 
   /**
    * _getFriendRequestDetails (requestId: ID): FriendRequestDoc[] | { error: string }
    */
-  async _getFriendRequestDetails(
-    { requestId }: { requestId: ID },
-  ): Promise<FriendRequestDoc[] | { error: string }> {
+  async _getFriendRequestDetails({ requestId }: { requestId: ID }): Promise<FriendRequestDoc[] | { error: string }> {
     try {
       const result = await this.friendRequests.findOne({ _id: requestId });
       return result ? [result] : [];
     } catch (e) {
-      return {
-        error: `Database error: ${
-          e instanceof Error ? e.message : "Unknown error"
-        }`,
-      };
+      return { error: `Database error: ${e instanceof Error ? e.message : "Unknown error"}` };
     }
   }
 }
+```
+
+### 2. Updated `FriendList.sync.ts`
+
+This version is now fully compatible with the updated concept implementation. The logic remains mostly the same because the previous version was already defensively coded with `Array.isArray` checks. The main change is fixing the calls to `_getAllFriendships` and `_getAllFriendRequests`.

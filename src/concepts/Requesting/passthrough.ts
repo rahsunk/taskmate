@@ -103,4 +103,19 @@ export const exclusions: Array<string> = [
   "/api/ScheduleGenerator/_getScheduleDetails",
   "/api/ScheduleGenerator/_getAllEvents",
   "/api/ScheduleGenerator/_getAllTasks",
+
+  // FriendList
+  "/api/FriendList/canonicalizeUsers",
+  "/api/FriendList/sendFriendRequest",
+  "/api/FriendList/acceptFriendRequest",
+  "/api/FriendList/declineFriendRequest",
+  "/api/FriendList/cancelSentRequest",
+  "/api/FriendList/removeFriend",
+  "/api/FriendList/_getAllFriendships",
+  "/api/FriendList/_getFriendshipsByUser",
+  "/api/FriendList/_getAllFriendRequests",
+  "/api/FriendList/_getSentFriendRequests",
+  "/api/FriendList/_getReceivedFriendRequests",
+  "/api/FriendList/_getFriendshipDetails",
+  "/api/FriendList/_getFriendRequestDetails",
 ];

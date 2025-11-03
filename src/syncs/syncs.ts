@@ -6,7 +6,7 @@ import type { Sync } from "@engine";
 
 import * as sync_UserAuthentication from "./UserAuthentication.sync.ts";
 import * as sync_ScheduleGenerator from "./ScheduleGenerator.sync.ts";
-import * as sync_sample from "./sample.sync.ts";
+import * as sync_FriendList from "./FriendList.sync.ts";
 
 const allSyncs: Record<string, Sync> = {};
 
@@ -21,9 +21,9 @@ for (const [name, func] of Object.entries(sync_ScheduleGenerator)) {
     allSyncs[`ScheduleGenerator.${name}`] = func as Sync;
   }
 }
-for (const [name, func] of Object.entries(sync_sample)) {
+for (const [name, func] of Object.entries(sync_FriendList)) {
   if (typeof func === "function") {
-    allSyncs[`sample.${name}`] = func as Sync;
+    allSyncs[`FriendList.${name}`] = func as Sync;
   }
 }
 
