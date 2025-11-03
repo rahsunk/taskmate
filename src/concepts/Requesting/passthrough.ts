@@ -118,4 +118,14 @@ export const exclusions: Array<string> = [
   "/api/FriendList/_getReceivedFriendRequests",
   "/api/FriendList/_getFriendshipDetails",
   "/api/FriendList/_getFriendRequestDetails",
+
+  // Messaging
+  "/api/Messaging/createConversation",
+  "/api/Messaging/sendMessage",
+  "/api/Messaging/_getConversation",
+  "/api/Messaging/_getMessagesInConversation",
+  "/api/Messaging/_getConversationsForUser",
+  "/api/Messaging/_getAllConversations",
+  "/api/Messaging/_getMessageDetails",
+  "/api/Messaging/_getAllMessages",
 ];

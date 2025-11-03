@@ -251,7 +251,9 @@ export const CheckUserExistsRequest: Sync = (
 
     // Call the query and bind the result to 'exists'
     const userToCheckValue = frames.at(0)![userToCheck];
-    frames = await frames.query(UserAuthentication._checkUserExists, { user: userToCheckValue }, { exists });
+    frames = await frames.query(UserAuthentication._checkUserExists, {
+      user: userToCheckValue,
+    }, { exists });
     return frames;
   },
   then: actions([Requesting.respond, {
@@ -308,7 +310,9 @@ export const GetUsernameByIdRequest: Sync = (
 
     // Call the query and bind the result to 'username'
     const userToLookupValue = frames.at(0)![userToLookup];
-    frames = await frames.query(UserAuthentication._getUsernameById, { user: userToLookupValue }, { username });
+    frames = await frames.query(UserAuthentication._getUsernameById, {
+      user: userToLookupValue,
+    }, { username });
     return frames;
   },
   then: actions([Requesting.respond, { request, username }]),

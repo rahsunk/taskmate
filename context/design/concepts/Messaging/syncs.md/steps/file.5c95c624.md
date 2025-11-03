@@ -1,3 +1,14 @@
+---
+timestamp: 'Mon Nov 03 2025 15:13:24 GMT-0500 (Eastern Standard Time)'
+parent: '[[../20251103_151324.73c009d3.md]]'
+content_id: 5c95c6241658735fbc26d0f22d6f53a969cc0527817d9a74174a9cff10114c8b
+---
+
+# file: src/Messaging/MessagingConcept.ts
+
+This is the corrected implementation of the `Messaging` concept. The key change is that all query methods (`_get...`) now have a return type of `Promise<Doc[]>` and return an empty array `[]` when no results are found, instead of an error object.
+
+```typescript
 import { Collection, Db } from "npm:mongodb";
 import { ID } from "@utils/types.ts";
 import { freshID } from "@utils/database.ts";
@@ -63,9 +74,7 @@ export default class MessagingConcept {
     });
 
     if (existingConversation) {
-      return {
-        error: "A conversation between these two users already exists.",
-      };
+      return { error: "A conversation between these two users already exists." };
     }
 
     const newConversationId = freshID() as ConversationId;
@@ -84,27 +93,18 @@ export default class MessagingConcept {
    * **effects** Creates a new `Message` and returns it.
    */
   async sendMessage(
-    { conversationId, sender, content }: {
-      conversationId: ConversationId;
-      sender: User;
-      content: string;
-    },
+    { conversationId, sender, content }: { conversationId: ConversationId; sender: User; content: string },
   ): Promise<{ message: MessageDoc } | { error: string }> {
     if (!content || content.trim() === "") {
       return { error: "Message content cannot be empty." };
     }
 
-    const conversation = await this.conversations.findOne({
-      _id: conversationId,
-    });
+    const conversation = await this.conversations.findOne({ _id: conversationId });
     if (!conversation) {
       return { error: `Conversation with ID ${conversationId} not found.` };
     }
 
-    if (
-      sender !== conversation.participant1 &&
-      sender !== conversation.participant2
-    ) {
+    if (sender !== conversation.participant1 && sender !== conversation.participant2) {
       return { error: "Sender is not a participant in this conversation." };
     }
 
@@ -124,24 +124,16 @@ export default class MessagingConcept {
   /**
    * _getConversation (conversationId: ID): (conversation: ConversationDoc)[]
    */
-  async _getConversation(
-    { conversationId }: { conversationId: ConversationId },
-  ): Promise<{ conversation: ConversationDoc }[]> {
-    const conversation = await this.conversations.findOne({
-      _id: conversationId,
-    });
-    return conversation ? [{ conversation }] : [];
+  async _getConversation({ conversationId }: { conversationId: ConversationId }): Promise<ConversationDoc[]> {
+    const conversation = await this.conversations.findOne({ _id: conversationId });
+    return conversation ? [conversation] : [];
   }
 
   /**
    * _getMessagesInConversation (conversationId: ID): (messages: MessageDoc)[]
    */
-  async _getMessagesInConversation(
-    { conversationId }: { conversationId: ConversationId },
-  ): Promise<MessageDoc[]> {
-    const conversationExists = await this.conversations.countDocuments({
-      _id: conversationId,
-    });
+  async _getMessagesInConversation({ conversationId }: { conversationId: ConversationId }): Promise<MessageDoc[]> {
+    const conversationExists = await this.conversations.countDocuments({ _id: conversationId });
     if (conversationExists === 0) {
       return [];
     }
@@ -151,12 +143,8 @@ export default class MessagingConcept {
   /**
    * _getConversationsForUser (user: User): (conversations: ConversationDoc)[]
    */
-  async _getConversationsForUser(
-    { user }: { user: User },
-  ): Promise<ConversationDoc[]> {
-    return this.conversations.find({
-      $or: [{ participant1: user }, { participant2: user }],
-    }).toArray();
+  async _getConversationsForUser({ user }: { user: User }): Promise<ConversationDoc[]> {
+    return this.conversations.find({ $or: [{ participant1: user }, { participant2: user }] }).toArray();
   }
 
   /**
@@ -169,9 +157,7 @@ export default class MessagingConcept {
   /**
    * _getMessageDetails (messageId: ID): (message: MessageDoc)[]
    */
-  async _getMessageDetails(
-    { messageId }: { messageId: ID },
-  ): Promise<MessageDoc[]> {
+  async _getMessageDetails({ messageId }: { messageId: ID }): Promise<MessageDoc[]> {
     const message = await this.messages.findOne({ _id: messageId });
     return message ? [message] : [];
   }
@@ -183,3 +169,4 @@ export default class MessagingConcept {
     return this.messages.find({}).toArray();
   }
 }
+```
