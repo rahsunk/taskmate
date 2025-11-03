@@ -34,19 +34,17 @@ export const inclusions: Record<string, string> = {
   "/api/LikertSurvey/submitResponse": "allow anyone to submit response",
   "/api/LikertSurvey/updateResponse": "allow anyone to update their response",
 
-  // UserAuthentication
-  // "/api/UserAuthentication/_getUserByUsername":
-  // "okay to lookup users by their username",
-  // "/api/UserAuthentication/_getUsername": "reverse is maybe true too",
-
   // FileUploading
-  "/api/FileUploading/_getFilename": "need to grab filenames for previews",
-  // FriendList
-  // "/api/FriendList/canonicalizeUsers": "TODO",
-  // "/api/FriendList/sendFriendRequest": "TODO",
-  // "/api/FriendList/acceptFriendRequest": "TODO",
-  // "/api/FriendList/declineFriendRequest": "TODO",
-  // "/api/FriendList/cancelSentRequest": "TODO",
+  // "/api/FileUploading/_getFilename": "need to grab filenames for previews"
+
+  // UserAuthentication
+  // "/api/UserAuthentication/register": "anyone is allowed to register",
+
+  // "/api/UserAuthentication/authenticate":
+  //   "anyone is allowed to authenticate (login)",
+
+  "/api/UserAuthentication/_getUserByUsername":
+    "okay to lookup users by their username",
 };
 
 /**
@@ -65,8 +63,13 @@ export const exclusions: Array<string> = [
   "/api/LikertSurvey/addQuestion",
 
   // UserAuthentication
-  // "/api/UserAuthentication/register",
-  // "/api/UserAuthentication/login",
+  "/api/UserAuthentication/register",
+  "/api/UserAuthentication/authenticate",
+  "/api/UserAuthentication/changePassword",
+  "/api/UserAuthentication/deleteAccount",
+  "/api/UserAuthentication/_checkUserExists",
+  "/api/UserAuthentication/_getAllUsers",
+  "/api/UserAuthentication/_getUsernameById",
 
   // FileUploading
   "/api/FileUploading/requestUploadURL",

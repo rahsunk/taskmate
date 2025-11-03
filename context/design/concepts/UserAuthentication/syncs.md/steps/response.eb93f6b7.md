@@ -1,13 +1,12 @@
-// # concept: UserAuthentication[User]
+---
+timestamp: 'Mon Nov 03 2025 00:08:19 GMT-0500 (Eastern Standard Time)'
+parent: '[[../20251103_000819.77396fc7.md]]'
+content_id: eb93f6b7bb83bc6127bb31cd7bffa196413c3ef13afd58e75efd97019a5cf4c5
+---
 
-/**
- * **concept** UserAuthentication[User]
- *
- * **purpose** limit access to known users and find users by name
- *
- * **principle** After a user registers with a username and a password, they can authenticate with that same username and password and be treated each time as the same user. They can also be looked up by other users when sharing events
- */
+# response:
 
+```typescript
 // # file: src/UserAuthentication/UserAuthenticationConcept.ts
 
 import { Collection, Db } from "npm:mongodb";
@@ -18,7 +17,7 @@ import { freshID } from "../../utils/database.ts"; // Adjust path as per your pr
 const PREFIX = "UserAuthentication" + ".";
 
 // Generic types of this concept, defined as branded IDs
-type User = ID;
+export type User = ID; // Export User type for use in syncs and other concepts
 
 /**
  * **state**
@@ -29,25 +28,28 @@ type User = ID;
  * Represents the persistent state for the UserAuthentication concept.
  * Each document in this collection stores the unique user ID, their username, and their password.
  */
-interface UsersDocument {
+export interface UsersDocument { // Export for _getAllUsers query return type
   _id: User;
   username: string;
   password: string; // In a production system, this should be a hashed password, not plain text.
 }
 
+/**
+ * **concept** UserAuthentication[User]
+ *
+ * **purpose** limit access to known users and find users by name
+ *
+ * **principle** After a user registers with a username and a password, they can authenticate with that same username and password and be treated each time as the same user. They can also be looked up by other users when sharing events
+ */
 export default class UserAuthenticationConcept {
   private users: Collection<UsersDocument>;
 
   constructor(private readonly db: Db) {
     this.users = this.db.collection(PREFIX + "users");
-    // Ensure username is unique at the database level for robust checks
-    this.users.createIndex({ username: 1 }, { unique: true }).catch(
-      console.error,
-    );
   }
 
   /**
-   * **action** register (username: String, password: String): (user: User) | (error: String)
+   * **action** register (username: String, password: String): (user: User)
    *
    * **requires**: no `User` with `username` exists
    * **effects**: create and return a new `User` with the given `username` and `password`
@@ -79,7 +81,7 @@ export default class UserAuthenticationConcept {
   }
 
   /**
-   * **action** authenticate (username: String, password: String): (user: User) | (error: String)
+   * **action** authenticate (username: String, password: String): (user: User)
    *
    * **requires**: `User` with the same `username` and `password` exists
    * **effects**: grants access to the `User` associated with that `username` and `password`
@@ -104,7 +106,7 @@ export default class UserAuthenticationConcept {
   }
 
   /**
-   * **action** changePassword (user: User, oldPassword: String, newPassword: String): Empty | (error: String)
+   * **action** changePassword (user: User, oldPassword: String, newPassword: String)
    *
    * **requires**: `user` exists and `user.password` is equal to `oldPassword`
    * **effects**: `password` for `user` is changed to `newPassword`.
@@ -147,7 +149,7 @@ export default class UserAuthenticationConcept {
   }
 
   /**
-   * **action** deleteAccount (user: User): Empty | (error: String)
+   * **action** deleteAccount (user: User)
    *
    * **requires**: `user` exists
    * **effects**: `user` is removed from the state
@@ -170,72 +172,87 @@ export default class UserAuthenticationConcept {
     return {};
   }
 
-  // --- Queries ---
+  // --- Queries (Modified to consistently return Array of Dictionaries) ---
 
   /**
-   * _getUserByUsername (username: String): (user: User)[]
+   * _getUserByUsername (username: String): (user: User)
    *
-   * Effects: returns the user ID associated with a username if found.
+   * Effects: returns an array containing the user ID associated with a username if found, otherwise an empty array.
    *
    * @param {string} username - The username to look up.
-   * @returns {Promise<{ user: User }[]>} - An array containing the user ID if found, otherwise an empty array.
+   * @returns {Promise<Array<{ user: User }>>} - An array containing the user ID if found, otherwise an empty array.
    */
   async _getUserByUsername(
     { username }: { username: string },
-  ): Promise<{ user: User }[]> {
+  ): Promise<Array<{ user: User }>> {
     const userDoc = await this.users.findOne({ username });
     if (userDoc) {
       return [{ user: userDoc._id }];
     }
-    return [];
+    return []; // Return empty array if not found
   }
 
   /**
-   * _checkUserExists (user: User): (exists: Flag)[]
+   * _checkUserExists (user: User): (exists: Flag)
    *
-   * Effects: returns true if the user with the given ID exists, false otherwise.
+   * Effects: returns an array containing an object with `exists: true` if the user with the given ID exists,
+   * otherwise an array containing an object with `exists: false`.
+   * (Note: Always returns an array with one result, even if exists is false, for consistent query behavior).
    *
    * @param {User} user - The user ID to check for existence.
-   * @returns {Promise<{ exists: boolean }[]>} - An array containing a boolean indicating if the user exists.
+   * @returns {Promise<Array<{ exists: boolean }>>} - An array with a single object indicating if the user exists.
    */
-  async _checkUserExists(
-    { user }: { user: User },
-  ): Promise<{ exists: boolean }[]> {
+  async _checkUserExists({ user }: { user: User }): Promise<Array<{ exists: boolean }>> {
     const userDoc = await this.users.findOne({ _id: user });
-    return [{ exists: !!userDoc }];
+    return [{ exists: !!userDoc }]; // Always return an array with one result
   }
 
   /**
    * _getAllUsers (): (user: { _id: User, username: String, password: String }[])
    *
-   * Effects: Returns a list of all user documents.
+   * Effects: Returns an array of all user documents.
    *
    * @returns {Promise<UsersDocument[]>} - An array of all UsersDocument objects.
    */
   async _getAllUsers(): Promise<UsersDocument[]> {
-    const allUsers = await this.users.find({}).project({
-      _id: 1,
-      username: 1,
-      password: 1,
-    }).toArray();
-    return allUsers as UsersDocument[];
+    const allUsers = await this.users.find({}).toArray();
+    return allUsers;
   }
 
   /**
-   * _getUsernameById (user: User): (username: String)[]
+   * _getUsernameById (user: User): (username: String)
    *
-   * Effects: Returns the username for a specific user ID, if found.
+   * Effects: Returns an array containing the username for a specific user ID, if found, otherwise an empty array.
    *
    * @param {User} user - The ID of the user to retrieve the username for.
-   * @returns {Promise<{ username: string }[]>} - An array containing an object with the username if found, otherwise an empty array.
+   * @returns {Promise<Array<{ username: string }>>} - An array containing the username if found, otherwise an empty array.
    */
   async _getUsernameById(
     { user }: { user: User },
-  ): Promise<{ username: string }[]> {
+  ): Promise<Array<{ username: string }>> {
     const userDoc = await this.users.findOne({ _id: user });
     if (userDoc) {
       return [{ username: userDoc.username }];
     }
-    return [];
+    return []; // Return empty array if not found
+  }
+
+  /**
+   * _getUserById (user: User): (user: { _id: User, username: String, password: String })
+   *
+   * Effects: Retrieves a specific user document by its ID.
+   *
+   * @param {User} user - The ID of the user to retrieve.
+   * @returns {Promise<Array<UsersDocument>>} - An array containing the UsersDocument object if found, otherwise an empty array.
+   */
+  async _getUserById(
+    { user }: { user: User },
+  ): Promise<Array<UsersDocument>> {
+    const userDoc = await this.users.findOne({ _id: user });
+    if (userDoc) {
+      return [userDoc];
+    }
+    return []; // Return an empty array if not found
   }
 }
+```

@@ -4,49 +4,35 @@
     "type": "split",
     "children": [
       {
-        "id": "35325d0337c60566",
+        "id": "33113018bc33d7e4",
         "type": "tabs",
         "children": [
           {
-            "id": "0ee58f760fef2a3f",
+            "id": "f7db4af4965c86e2",
             "type": "leaf",
             "state": {
               "type": "markdown",
               "state": {
-                "file": "design/tools/apiGeneration/api-generation.md",
+                "file": "design/background/implementing-synchronizations.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "api-generation"
+              "title": "implementing-synchronizations"
             }
           },
           {
-            "id": "a49310c472c9af98",
+            "id": "ff38041f826273c0",
             "type": "leaf",
             "state": {
               "type": "markdown",
               "state": {
-                "file": "design/concepts/Messaging/implementation.md",
+                "file": "design/concepts/UserAuthentication/syncs.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "implementation"
-            }
-          },
-          {
-            "id": "810e4ed3f13e0762",
-            "type": "leaf",
-            "state": {
-              "type": "markdown",
-              "state": {
-                "file": "design/concepts/FriendList/testing.md",
-                "mode": "source",
-                "source": false
-              },
-              "icon": "lucide-file",
-              "title": "testing"
+              "title": "syncs"
             }
           }
         ],
@@ -197,43 +183,43 @@
       "bases:Create new base": false
     }
   },
-  "active": "9b42b4503c7d88ad",
+  "active": "ff38041f826273c0",
   "lastOpenFiles": [
-    "context/design/concepts/Messaging/implementation.md/20251031_210408.94a9d77a.md",
-    "context/design/concepts/Messaging/implementation.md/steps/response.84a043c3.md",
-    "design/concepts/Messaging/testing.md",
-    "design/concepts/Messaging/Messaging.md",
-    "context/design/concepts/Messaging/testing.md/20251031_210256.342d9653.md",
-    "context/design/concepts/Messaging/testing.md/steps/response.23950a59.md",
-    "design/concepts/Messaging/implementation.md",
-    "context/design/concepts/Messaging/testing.md/20251031_210057.74a97098.md",
-    "context/design/concepts/Messaging/testing.md/steps/response.421a7caa.md",
-    "context/design/concepts/Messaging/testing.md/20251031_210016.dd4bc31f.md",
-    "context/design/concepts/Messaging/testing.md/steps/prompt.341d6b20.md",
-    "context/design/concepts/Messaging/testing.md/20251031_205650.4d7613fc.md",
-    "context/design/concepts/Messaging/testing.md/steps/response.caef286d.md",
-    "context/design/concepts/Messaging/testing.md/20251031_205616.062836e1.md",
-    "context/design/concepts/Messaging/testing.md/steps/prompt.cebc223a.md",
-    "context/design/concepts/Messaging/testing.md/20251031_205429.12fc3b5a.md",
-    "context/design/concepts/Messaging/testing.md/steps/response.b2079815.md",
-    "context/design/concepts/Messaging/testing.md/20251031_205404.1ab4f46f.md",
-    "context/design/concepts/Messaging/testing.md/steps/prompt.1ccb9dbe.md",
-    "context/design/concepts/Messaging/testing.md/20251031_205237.6e3755a3.md",
-    "context/design/concepts/Messaging/testing.md/steps/response.b506b72b.md",
-    "context/design/concepts/Messaging/testing.md/20251031_205211.09c2964f.md",
-    "context/design/concepts/Messaging/testing.md/steps/prompt.9f0e0648.md",
-    "context/design/concepts/Messaging/testing.md/steps/_.c1701e57.md",
-    "context/design/concepts/Messaging/testing.md/steps/_.eb4d1820.md",
-    "context/design/concepts/Messaging/testing.md/steps/approach.3e0d5a8f.md",
-    "context/design/concepts/Messaging/testing.md/steps",
-    "context/design/concepts/FriendList/testing.md/steps",
-    "src/concepts/majorDesign",
-    "design/concepts/ItemSharing",
-    "src/concepts/Messaging/Messaging.test.ts",
-    "src/concepts/Messaging/MessagingConcept.ts",
-    "src/concepts/Messaging/MessagingConcept.test.ts",
-    "context/design/concepts/Messaging/implementation.md/steps",
-    "context/design/concepts/Messaging/Messaging.md/steps",
-    "context/design/concepts/Messaging"
+    "context/design/concepts/UserAuthentication/syncs.md/20251103_010027.a9e7d6f5.md",
+    "context/design/concepts/UserAuthentication/syncs.md/steps/response.0881fded.md",
+    "context/design/concepts/UserAuthentication/syncs.md/20251103_005941.c3d99216.md",
+    "context/design/concepts/UserAuthentication/syncs.md/steps/For the sync file.425050f4.md",
+    "src/syncs/UserAuthentication.sync.ts",
+    "context/design/concepts/UserAuthentication/syncs.md/20251103_005459.1d8392d4.md",
+    "context/design/concepts/UserAuthentication/syncs.md/steps/response.9f13ab6a.md",
+    "context/design/concepts/UserAuthentication/syncs.md/20251103_005357.8bb130b2.md",
+    "context/design/concepts/UserAuthentication/syncs.md/steps/prompt.a2e2ef46.md",
+    "context/design/concepts/UserAuthentication/syncs.md/steps/_.2d103a74.md",
+    "context/design/concepts/UserAuthentication/syncs.md/20251103_005008.51085b8a.md",
+    "context/design/concepts/UserAuthentication/syncs.md/steps/prompt.0bec6fec.md",
+    "context/design/concepts/UserAuthentication/syncs.md/steps/Alternate UserAuthentication implementation (used by the example sync).74bd5c9f.md",
+    "context/design/concepts/UserAuthentication/syncs.md/steps/Example auth sync.7ab4dc2c.md",
+    "context/design/concepts/UserAuthentication/syncs.md/20251103_002859.3f5d82a9.md",
+    "context/design/concepts/UserAuthentication/syncs.md/steps/response.23d77f95.md",
+    "context/design/concepts/UserAuthentication/syncs.md/20251103_002745.f19da571.md",
+    "context/design/concepts/UserAuthentication/syncs.md/steps/prompt.72b90f9c.md",
+    "context/design/concepts/UserAuthentication/syncs.md/20251103_002629.38e6a8b6.md",
+    "context/design/concepts/UserAuthentication/syncs.md/steps/response.9ac0f128.md",
+    "context/design/concepts/UserAuthentication/syncs.md/20251103_002556.386b3a65.md",
+    "context/design/concepts/UserAuthentication/syncs.md/steps/prompt.c74919f1.md",
+    "context/design/concepts/UserAuthentication/syncs.md/20251103_002318.cd62b99c.md",
+    "context/design/concepts/UserAuthentication/syncs.md/steps/response.e5b38a87.md",
+    "context/design/concepts/UserAuthentication/syncs.md/20251103_002141.5c9f50f0.md",
+    "context/design/concepts/UserAuthentication/syncs.md/steps/prompt.912e06f5.md",
+    "src/syncs/user_auth_syncs.ts",
+    "context/design/concepts/UserAuthentication/syncs.md/20251103_001635.d624f5fa.md",
+    "design/concepts/Requesting",
+    "design/concepts/Sessioning",
+    "src/concepts/Sessioning/SessioningConcept.ts",
+    "src/concepts/Sessioning",
+    "context/design/concepts/UserAuthentication/syncs.md/steps",
+    "src/concepts/LikertSurvey/LikertSurveyConcept.ts",
+    "src/concepts/LikertSurvey",
+    "src/syncs/sample.sync.ts"
   ]
 }

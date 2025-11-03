@@ -1,3 +1,14 @@
+---
+timestamp: 'Sun Nov 02 2025 23:51:53 GMT-0500 (Eastern Standard Time)'
+parent: '[[../20251102_235153.5415c2fd.md]]'
+content_id: 9745f7fc76a45861534e55bbd9cea3f167d85e07d371f25c02d7d3bb18dc79f3
+---
+
+# response:
+
+Here's the TypeScript implementation for the `UserAuthentication` concept, following all the specified guidelines and structure.
+
+```typescript
 // # concept: UserAuthentication[User]
 
 /**
@@ -11,7 +22,7 @@
 // # file: src/UserAuthentication/UserAuthenticationConcept.ts
 
 import { Collection, Db } from "npm:mongodb";
-import { Empty, ID } from "../../utils/types.ts"; // Adjust path as per your project structure
+import { ID, Empty } from "../../utils/types.ts"; // Adjust path as per your project structure
 import { freshID } from "../../utils/database.ts"; // Adjust path as per your project structure
 
 // Declare collection prefix, uses the concept name to avoid conflicts
@@ -40,14 +51,10 @@ export default class UserAuthenticationConcept {
 
   constructor(private readonly db: Db) {
     this.users = this.db.collection(PREFIX + "users");
-    // Ensure username is unique at the database level for robust checks
-    this.users.createIndex({ username: 1 }, { unique: true }).catch(
-      console.error,
-    );
   }
 
   /**
-   * **action** register (username: String, password: String): (user: User) | (error: String)
+   * **action** register (username: String, password: String): (user: User)
    *
    * **requires**: no `User` with `username` exists
    * **effects**: create and return a new `User` with the given `username` and `password`
@@ -79,7 +86,7 @@ export default class UserAuthenticationConcept {
   }
 
   /**
-   * **action** authenticate (username: String, password: String): (user: User) | (error: String)
+   * **action** authenticate (username: String, password: String): (user: User)
    *
    * **requires**: `User` with the same `username` and `password` exists
    * **effects**: grants access to the `User` associated with that `username` and `password`
@@ -104,7 +111,7 @@ export default class UserAuthenticationConcept {
   }
 
   /**
-   * **action** changePassword (user: User, oldPassword: String, newPassword: String): Empty | (error: String)
+   * **action** changePassword (user: User, oldPassword: String, newPassword: String)
    *
    * **requires**: `user` exists and `user.password` is equal to `oldPassword`
    * **effects**: `password` for `user` is changed to `newPassword`.
@@ -147,7 +154,7 @@ export default class UserAuthenticationConcept {
   }
 
   /**
-   * **action** deleteAccount (user: User): Empty | (error: String)
+   * **action** deleteAccount (user: User)
    *
    * **requires**: `user` exists
    * **effects**: `user` is removed from the state
@@ -173,69 +180,336 @@ export default class UserAuthenticationConcept {
   // --- Queries ---
 
   /**
-   * _getUserByUsername (username: String): (user: User)[]
+   * _getUserByUsername (username: String): (user: User)
    *
    * Effects: returns the user ID associated with a username if found.
    *
    * @param {string} username - The username to look up.
-   * @returns {Promise<{ user: User }[]>} - An array containing the user ID if found, otherwise an empty array.
+   * @returns {Promise<{ user: User } | Empty>} - The user ID if found, otherwise an empty object.
    */
   async _getUserByUsername(
     { username }: { username: string },
-  ): Promise<{ user: User }[]> {
+  ): Promise<{ user: User } | Empty> {
     const userDoc = await this.users.findOne({ username });
     if (userDoc) {
-      return [{ user: userDoc._id }];
+      return { user: userDoc._id };
     }
-    return [];
+    return {};
   }
 
   /**
-   * _checkUserExists (user: User): (exists: Flag)[]
+   * _checkUserExists (user: User): (exists: Flag)
    *
    * Effects: returns true if the user with the given ID exists, false otherwise.
    *
    * @param {User} user - The user ID to check for existence.
-   * @returns {Promise<{ exists: boolean }[]>} - An array containing a boolean indicating if the user exists.
+   * @returns {Promise<{ exists: boolean }>} - A boolean indicating if the user exists.
    */
-  async _checkUserExists(
-    { user }: { user: User },
-  ): Promise<{ exists: boolean }[]> {
+  async _checkUserExists({ user }: { user: User }): Promise<{ exists: boolean }> {
     const userDoc = await this.users.findOne({ _id: user });
-    return [{ exists: !!userDoc }];
-  }
-
-  /**
-   * _getAllUsers (): (user: { _id: User, username: String, password: String }[])
-   *
-   * Effects: Returns a list of all user documents.
-   *
-   * @returns {Promise<UsersDocument[]>} - An array of all UsersDocument objects.
-   */
-  async _getAllUsers(): Promise<UsersDocument[]> {
-    const allUsers = await this.users.find({}).project({
-      _id: 1,
-      username: 1,
-      password: 1,
-    }).toArray();
-    return allUsers as UsersDocument[];
-  }
-
-  /**
-   * _getUsernameById (user: User): (username: String)[]
-   *
-   * Effects: Returns the username for a specific user ID, if found.
-   *
-   * @param {User} user - The ID of the user to retrieve the username for.
-   * @returns {Promise<{ username: string }[]>} - An array containing an object with the username if found, otherwise an empty array.
-   */
-  async _getUsernameById(
-    { user }: { user: User },
-  ): Promise<{ username: string }[]> {
-    const userDoc = await this.users.findOne({ _id: user });
-    if (userDoc) {
-      return [{ username: userDoc.username }];
-    }
-    return [];
+    return { exists: !!userDoc };
   }
 }
+```
+
+**Purpose:** limit access to known users and find users by name.
+
+***
+
+## API Endpoints
+
+### POST /api/UserAuthentication/register
+
+**Description:** Registers a new user with a unique username and password.
+
+**Requirements:**
+
+* No `User` with `username` already exists.
+
+**Effects:**
+
+* Creates and returns a new `User` with the given `username` and `password`.
+
+**Request Body:**
+
+```json
+{
+  "username": "string",
+  "password": "string"
+}
+```
+
+**Success Response Body (Action):**
+
+```json
+{
+  "user": "string"
+}
+```
+
+**Error Response Body:**
+
+```json
+{
+  "error": "string"
+}
+```
+
+***
+
+### POST /api/UserAuthentication/authenticate
+
+**Description:** Authenticates a user by checking if the provided username and password match an existing user.
+
+**Requirements:**
+
+* A `User` with the same `username` and `password` exists.
+
+**Effects:**
+
+* Grants access to the `User` associated with that `username` and `password`.
+
+**Request Body:**
+
+```json
+{
+  "username": "string",
+  "password": "string"
+}
+```
+
+**Success Response Body (Action):**
+
+```json
+{
+  "user": "string"
+}
+```
+
+**Error Response Body:**
+
+```json
+{
+  "error": "string"
+}
+```
+
+***
+
+### POST /api/UserAuthentication/changePassword
+
+**Description:** Allows an authenticated user to change their password.
+
+**Requirements:**
+
+* `user` exists.
+* `user.password` is equal to `oldPassword`.
+* `newPassword` must be different from `oldPassword`.
+
+**Effects:**
+
+* `password` for `user` is changed to `newPassword`.
+
+**Request Body:**
+
+```json
+{
+  "user": "string",
+  "oldPassword": "string",
+  "newPassword": "string"
+}
+```
+
+**Success Response Body (Action):**
+
+```json
+{}
+```
+
+**Error Response Body:**
+
+```json
+{
+  "error": "string"
+}
+```
+
+***
+
+### POST /api/UserAuthentication/deleteAccount
+
+**Description:** Deletes a user account from the system.
+
+**Requirements:**
+
+* `user` exists.
+
+**Effects:**
+
+* `user` is removed from the state.
+
+**Request Body:**
+
+```json
+{
+  "user": "string"
+}
+```
+
+**Success Response Body (Action):**
+
+```json
+{}
+```
+
+**Error Response Body:**
+
+```json
+{
+  "error": "string"
+}
+```
+
+***
+
+### GET /api/UserAuthentication/\_getUserByUsername
+
+**Description:** Returns the user ID associated with a username if found.
+
+**Requirements:**
+
+* None explicitly stated for the query, but an existing username is implied for a successful lookup.
+
+**Effects:**
+
+* Returns the user ID if found, otherwise an empty array.
+
+**Request Parameters (Query String):**
+
+* `username`: `string`
+
+**Success Response Body (Query):**
+
+```json
+[
+  {
+    "user": "string"
+  }
+]
+```
+
+*(If no user is found, an empty array `[]` will be returned.)*
+
+**Error Response Body:**
+
+*(Queries generally return an empty array for no results, not an error object, unless an exceptional database error occurs which should be handled internally or re-thrown as a true exception per concept guidelines.)*
+
+***
+
+### GET /api/UserAuthentication/\_checkUserExists
+
+**Description:** Returns true if the user with the given ID exists, false otherwise.
+
+**Requirements:**
+
+* None.
+
+**Effects:**
+
+* Returns a boolean indicating if the user exists.
+
+**Request Parameters (Query String):**
+
+* `user`: `string` (User ID)
+
+**Success Response Body (Query):**
+
+```json
+[
+  {
+    "exists": "boolean"
+  }
+]
+```
+
+**Error Response Body:**
+
+*(Queries generally return an empty array for no results or a `false` flag as a successful result, not an error object, unless an exceptional database error occurs.)*
+
+***
+
+### GET /api/UserAuthentication/\_getAllUsers
+
+**Description:** Retrieves all user documents.
+
+**Requirements:**
+
+* None.
+
+**Effects:**
+
+* Returns an array of all `UsersDocument` objects, each containing `_id`, `username`, and `password`.
+
+**Request Parameters:**
+
+* None.
+
+**Success Response Body (Query):**
+
+```json
+[
+  {
+    "_id": "string",
+    "username": "string",
+    "password": "string"
+  },
+  {
+    "_id": "string",
+    "username": "string",
+    "password": "string"
+  }
+  // ... more user objects
+]
+```
+
+*(If no users are found, an empty array `[]` will be returned.)*
+
+**Error Response Body:**
+
+*(Queries generally return an empty array for no results, not an error object, unless an exceptional database error occurs.)*
+
+***
+
+### GET /api/UserAuthentication/\_getUserById
+
+**Description:** Retrieves a specific user document by its ID.
+
+**Requirements:**
+
+* The `user` ID exists in the state.
+
+**Effects:**
+
+* Returns an array containing the `UsersDocument` object matching the provided ID, if found.
+
+**Request Parameters (Query String):**
+
+* `user`: `string` (User ID)
+
+**Success Response Body (Query):**
+
+```json
+[
+  {
+    "_id": "string",
+    "username": "string",
+    "password": "string"
+  }
+]
+```
+
+*(If no user is found, an empty array `[]` will be returned.)*
+
+**Error Response Body:**
+
+*(Queries generally return an empty array for no results, not an error object, unless an exceptional database error occurs.)*
