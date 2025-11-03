@@ -27,16 +27,6 @@ import { TopologyDescription } from "mongodb";
  */
 
 export const inclusions: Record<string, string> = {
-  // Feel free to delete these example inclusions
-  "/api/LikertSurvey/_getSurveyQuestions": "this is a public query",
-  "/api/LikertSurvey/_getSurveyResponses": "responses are public",
-  "/api/LikertSurvey/_getRespondentAnswers": "answers are visible",
-  "/api/LikertSurvey/submitResponse": "allow anyone to submit response",
-  "/api/LikertSurvey/updateResponse": "allow anyone to update their response",
-
-  // FileUploading
-  // "/api/FileUploading/_getFilename": "need to grab filenames for previews"
-
   // UserAuthentication
   "/api/UserAuthentication/_getUserByUsername":
     "okay to lookup users by their username",
@@ -53,28 +43,10 @@ export const inclusions: Record<string, string> = {
  */
 
 export const exclusions: Array<string> = [
-  // Feel free to delete these example exclusions
-  "/api/LikertSurvey/createSurvey",
-  "/api/LikertSurvey/addQuestion",
-
-  // FileUploading
-  "/api/FileUploading/requestUploadURL",
-  "/api/FileUploading/confirmUpload",
-  "/api/FileUploading/_getFilesByOwner",
-  "/api/FileUploading/_getDownloadURL",
-  "/api/FileUploading/_getOwner",
-  "/api/FileUploading/delete",
-
   // Sessioning
   "/api/Sessioning/create",
   "/api/Sessioning/delete",
   "/api/Sessioning/_getUser",
-
-  // Sharing
-  "/api/Sharing/shareWithUser",
-  "/api/Sharing/revokeAccess",
-  "/api/Sharing/_isSharedWith",
-  "/api/Sharing/_getFilesSharedWithUser",
 
   // UserAuthentication
   "/api/UserAuthentication/register",
