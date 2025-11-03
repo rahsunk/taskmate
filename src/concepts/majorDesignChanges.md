@@ -8,7 +8,7 @@
 
 ## UserAuthentication
 
-- In the implementation, I added new queries _getUserByUsername, _checkUserExists, _getAllUsers, and _getUserById so that the API implementation in the frontend repository can acquire the state of the ScheduleGenerator concept easier.
+- In the implementation, I added new queries _getUserByUsername, _checkUserExists, _getAllUsers, and _getUsernameById so that the API implementation in the frontend repository can acquire the state of the ScheduleGenerator concept easier.
 
 
 ## ItemSharing => Messaging

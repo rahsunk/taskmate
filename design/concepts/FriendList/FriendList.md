@@ -25,7 +25,7 @@
 		* a `receiver` `User`
 *  **actions**
 	* `sendFriendRequest (sender: User, receiver: User): (request: FriendRequest)`
-		* **requires** `sender` is not equal to `receiver`, no `Friendship` exists between `sender` and `receiver, no `FriendRequest` exists from `sender` to `receiver`, no FriendRequest exists from receiver to sender
+		* **requires** `sender` is not equal to `receiver`, no `Friendship` exists between `sender` and `receiver`, no `FriendRequest` exists from `sender` to `receiver`, no `FriendRequest` exists from `receiver` to `sender`
 		* **effects** A new `FriendRequest` is created with the given `sender` and `receiver`.
 	* `acceptFriendRequest (receiver: User, sender: User)`
 		* **requires** A `FriendRequest` exists from `sender` to `receiver`, no `Friendship` exists between `sender` and `receiver`

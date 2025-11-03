@@ -231,28 +231,6 @@ export default class UserAuthenticationConcept {
   }
 
   /**
-   * _getUserById (user: User): (user: { _id: User, username: String, password: String })
-   *
-   * Effects: Returns a specific user document by its ID, if found.
-   *
-   * @param {User} user - The ID of the user to retrieve.
-   * @returns {Promise<UsersDocument[] | Empty>} - An array containing the UsersDocument if found, otherwise an empty array.
-   */
-  async _getUserById({
-    user,
-  }: {
-    user: User;
-  }): Promise<UsersDocument[] | Empty> {
-    const userDoc = await this.users.findOne({ _id: user });
-    if (userDoc) {
-      // Queries are expected to return an array of dictionaries for consistency
-      // Even if only one item is returned, wrap it in an array.
-      return [userDoc];
-    }
-    return []; // Return an empty array if not found, consistent with other queries.
-  }
-
-  /**
    * _getUsernameById (user: User): (username: String)
    *
    * Effects: Returns the username for a specific user ID, if found.

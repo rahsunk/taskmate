@@ -13,7 +13,7 @@
 ```typescript
 // # concept: UserAuthentication[User]
 
-  
+
 
 /**
 
@@ -29,11 +29,11 @@
 
 */
 
-  
+
 
 // # file: src/UserAuthentication/UserAuthenticationConcept.ts
 
-  
+
 
 import { Collection, Db } from "npm:mongodb";
 
@@ -41,19 +41,19 @@ import { Empty, ID } from "../../utils/types.ts"; // Adjust path as per your pro
 
 import { freshID } from "../../utils/database.ts"; // Adjust path as per your project structure
 
-  
+
 
 // Declare collection prefix, uses the concept name to avoid conflicts
 
 const PREFIX = "UserAuthentication" + ".";
 
-  
+
 
 // Generic types of this concept, defined as branded IDs
 
 type User = ID;
 
-  
+
 
 /**
 
@@ -83,13 +83,13 @@ password: string; // In a production system, this should be a hashed password, n
 
 }
 
-  
+
 
 export default class UserAuthenticationConcept {
 
 private users: Collection<UsersDocument>;
 
-  
+
 
 constructor(private readonly db: Db) {
 
@@ -97,7 +97,7 @@ this.users = this.db.collection(PREFIX + "users");
 
 }
 
-  
+
 
 /**
 
@@ -149,7 +149,7 @@ return { error: `User with username '${username}' already exists.` };
 
 }
 
-  
+
 
 // Effect: create and return a new User
 
@@ -169,7 +169,7 @@ return { user: newUser._id };
 
 }
 
-  
+
 
 /**
 
@@ -219,7 +219,7 @@ return { error: "Invalid username or password." };
 
 }
 
-  
+
 
 // Effect: grants access to the User
 
@@ -227,7 +227,7 @@ return { user: user._id };
 
 }
 
-  
+
 
 /**
 
@@ -303,7 +303,7 @@ return { error: "New password cannot be the same as the old password." };
 
 }
 
-  
+
 
 // Effect: `password` for `user` is changed to `newPassword`.
 
@@ -319,7 +319,7 @@ return {};
 
 }
 
-  
+
 
 /**
 
@@ -363,7 +363,7 @@ return { error: `User with ID '${user}' not found.` };
 
 }
 
-  
+
 
 // Effect: `user` is removed from the state
 
@@ -371,11 +371,11 @@ return {};
 
 }
 
-  
+
 
 // --- Queries ---
 
-  
+
 
 /**
 
@@ -415,7 +415,7 @@ return {};
 
 }
 
-  
+
 
 /**
 
@@ -449,7 +449,7 @@ return { exists: !!userDoc };
 
 }
 
-  
+
 
 /**
 
@@ -473,51 +473,7 @@ return allUsers;
 
 }
 
-  
 
-/**
-
-* _getUserById (user: User): (user: { _id: User, username: String, password: String })
-
-*
-
-* Effects: Returns a specific user document by its ID, if found.
-
-*
-
-* @param {User} user - The ID of the user to retrieve.
-
-* @returns {Promise<UsersDocument[] | Empty>} - An array containing the UsersDocument if found, otherwise an empty array.
-
-*/
-
-async _getUserById({
-
-user,
-
-}: {
-
-user: User;
-
-}): Promise<UsersDocument[] | Empty> {
-
-const userDoc = await this.users.findOne({ _id: user });
-
-if (userDoc) {
-
-// Queries are expected to return an array of dictionaries for consistency
-
-// Even if only one item is returned, wrap it in an array.
-
-return [userDoc];
-
-}
-
-return []; // Return an empty array if not found, consistent with other queries.
-
-}
-
-  
 
 /**
 

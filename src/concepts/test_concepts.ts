@@ -7,16 +7,12 @@ export const Engine = new SyncConcept();
 
 import { testDb } from "@utils/database.ts";
 
-import NotificationConcept from "./Notification/NotificationConcept.ts";
-import ItemSharingConcept from "./ItemSharing/ItemSharingConcept.ts";
 import ScheduleGeneratorConcept from "./ScheduleGenerator/ScheduleGeneratorConcept.ts";
 import FriendListConcept from "./FriendList/FriendListConcept.ts";
 import RequestingConcept from "./Requesting/RequestingConcept.ts";
 import UserAuthenticationConcept from "./UserAuthentication/UserAuthenticationConcept.ts";
 import MessagingConcept from "./Messaging/MessagingConcept.ts";
 
-export type { default as NotificationConcept } from "./Notification/NotificationConcept.ts";
-export type { default as ItemSharingConcept } from "./ItemSharing/ItemSharingConcept.ts";
 export type { default as ScheduleGeneratorConcept } from "./ScheduleGenerator/ScheduleGeneratorConcept.ts";
 export type { default as FriendListConcept } from "./FriendList/FriendListConcept.ts";
 export type { default as RequestingConcept } from "./Requesting/RequestingConcept.ts";
@@ -26,8 +22,6 @@ export type { default as MessagingConcept } from "./Messaging/MessagingConcept.t
 // Initialize the database connection
 export const [db, client] = await testDb();
 
-export const Notification = Engine.instrumentConcept(new NotificationConcept(db));
-export const ItemSharing = Engine.instrumentConcept(new ItemSharingConcept(db));
 export const ScheduleGenerator = Engine.instrumentConcept(new ScheduleGeneratorConcept(db));
 export const FriendList = Engine.instrumentConcept(new FriendListConcept(db));
 export const Requesting = Engine.instrumentConcept(new RequestingConcept(db));
