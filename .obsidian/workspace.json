@@ -241,6 +241,7 @@
   },
   "active": "37bad49a6515b46e",
   "lastOpenFiles": [
+    "frontEndCheckin",
     "design/concepts/Messaging/testing.md",
     "design/concepts/Messaging/syncs.md",
     "context/design/concepts/Messaging/syncs.md/20251103_151324.73c009d3.md",
@@ -267,7 +268,6 @@
     "context/design/concepts/Messaging/syncs.md/steps/response.9745f7fc.md",
     "context/design/concepts/Messaging/syncs.md/steps/implement.f7536c03.md",
     "context/design/concepts/Messaging/syncs.md/steps/_.3ae4d190.md",
-    "context/design/concepts/Messaging/syncs.md/steps/response.cb173ada.md",
     "context/design/concepts/Messaging/syncs.md/steps",
     "src/syncs/FriendList.sync.ts",
     "src/syncs/FriendList.syncs.ts",

@@ -2,8 +2,8 @@
 
 - Remove getUserById from UserAuthentication (duplicate action)
 - Need to update in design folder:
-  - API spec with _getUsernameById instead of _getUserById
-  - and corresponding newTesting, and testingOutput files
+  - Kept _getUsernameById but removed _getUserById
+  - for corresponding newTesting, and testingOutput files
 - Need to update in concept folder:
   - test file
 

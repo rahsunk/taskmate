@@ -13,7 +13,7 @@
 [@concept-specifications](../../background/concept-specifications.md)
 
 # ScheduleGenerator (new spec)
-- **concept** ScheduleGenerator[User, Date, Percent]
+- **concept** ScheduleGenerator[User, Date, Percent, RepeatConfig]
 - **purpose** manages events and tasks for users to automatically generate a schedule that meets their needs
 - **principle** Each user has exactly one schedule. Given a set of events and tasks, an optimal schedule for the user is created. When events and tasks are updated and removed, the schedule is regenerated. Events are allowed to overlap.
 - **state**
