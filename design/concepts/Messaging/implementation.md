@@ -13,6 +13,7 @@
 import { Collection, Db } from "npm:mongodb";
 import { ID } from "@utils/types.ts";
 import { freshID } from "@utils/database.ts";
+import { getCurrentETDate } from "@utils/timezone.ts";
 
 // Declare collection prefix, use concept name
 const PREFIX = "Messaging" + ".";
@@ -125,7 +126,7 @@ export default class MessagingConcept {
       conversationId,
       sender,
       content: content.trim(),
-      sentAt: new Date(),
+      sentAt: getCurrentETDate(), // Use ET timezone for message timestamp
     };
     await this.messages.insertOne(newMessage);
     return { message: newMessage };

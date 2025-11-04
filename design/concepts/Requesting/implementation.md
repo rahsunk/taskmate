@@ -1,9 +1,11 @@
+```typescript
 import { Hono } from "jsr:@hono/hono";
 import { cors } from "jsr:@hono/hono/cors";
 import { Collection, Db } from "npm:mongodb";
 import { freshID } from "@utils/database.ts";
 import { ID } from "@utils/types.ts";
 import { exclusions, inclusions } from "./passthrough.ts";
+import { getCurrentETDate } from "@utils/timezone.ts";
 import "jsr:@std/dotenv/load";
 
 /**
@@ -88,7 +90,7 @@ export default class RequestingConcept {
     const requestDoc: RequestDoc = {
       _id: requestId,
       input: inputs,
-      createdAt: new Date(),
+      createdAt: getCurrentETDate(), // Use ET timezone for request timestamp
     };
 
     // Persist the request for logging/auditing purposes.
@@ -299,3 +301,4 @@ export function startRequestingServer(
 
   Deno.serve({ port: PORT }, app.fetch);
 }
+```
