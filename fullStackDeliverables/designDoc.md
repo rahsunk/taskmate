@@ -1,5 +1,11 @@
 # Design Document
 
+## Implementing syncs
+- After reviewing all of the actions I implemented in Assignment 4b, I decided that nearly every action needed to first verify if the user was logged in. This could be accomplished by checking if there is a session for a user with the given `Sessioning` concept.
+- A sessioning should be created whenever the user registers an account or logs in with `UserAuthentication.register` or `UserAuthentication.authenticate`, respectively.
+- Then, for the other actions, check that `Sessioning._getUser` returns something before executing it.
+- The only action I decided that should be included in `Requesting`, so that it calls the concept action directly was `UserAuthentication/_getUserByUsername`, since I believe that it is fine to look up a user by their username.
+
 ## Differences from Concept Design in Assignment 2
 [Assignment 2 Concept Design](https://github.com/rahsunk/61040-portfolio/blob/main/assignments/assignment2/conceptDesign.md)
 
