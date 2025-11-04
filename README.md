@@ -5,7 +5,7 @@ Task-mate is an application that automatically generates schedules for students 
 ## Assignment 4c:
 **Deliverables**
 - [Design Document](fullStackDeliverables/designDoc.md)
-- [Demo Video]()
+- [Demo Video](https://www.youtube.com/watch?v=X0RPavya5zE)
 - [Video Trace](fullStackDeliverables/trace.md)
 - [Reflections](fullStackDeliverables/reflections.md)
 

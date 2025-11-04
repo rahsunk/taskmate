@@ -160,31 +160,23 @@ export const GetMessagesInConversationRequest: Sync = (
   }, { request }]),
   where: async (frames) => {
     const originalFrame = frames[0];
-    console.log(frames, "before Sessioning._getUser");
     frames = await frames.query(Sessioning._getUser, { session }, {
       user: activeUser,
     });
-    console.log(frames, "after Sessioning._getUser");
+
     if (frames.length === 0) return new Frames();
 
-    console.log(frames, "before Messaging._getConversation");
     frames = await frames.query(
       Messaging._getConversation,
       { conversationId },
       { conversation },
     );
-    console.log(frames, "after Messaging._getConversation");
 
-    console.log(frames, "before filter");
     frames = frames.filter(($) => {
       const conv = $[conversation] as ConversationDoc;
       const user = $[activeUser] as User;
-      console.log(conv); // is undefined
-      console.log(user);
       return conv && (conv.participant1 === user || conv.participant2 === user);
     });
-    console.log(frames, "after filter");
-    console.log("It seems frames.filter output is empty, forcing this return");
 
     if (frames.length === 0) return new Frames();
 
