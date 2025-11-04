@@ -1,4 +1,13 @@
-# Task-mate Backend
+# Task-mate (Backend)
+
+Task-mate is an application that automatically generates schedules for students that meet their needs and incentivizes them to keep following them.
+
+## Assignment 4c:
+**Deliverables**
+- [Design Document](fullStackDeliverables/designDoc.md)
+- [Demo Video]()
+- [Video Trace](fullStackDeliverables/trace.md)
+- [Reflections](fullStackDeliverables/reflections.md)
 
 ## Assignment 4b:
 
