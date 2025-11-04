@@ -1,6 +1,22 @@
 import { Collection, Db } from "npm:mongodb";
-import { Empty, ID } from "../../utils/types.ts";
-import { freshID } from "../../utils/database.ts";
+import { Empty, ID } from "@utils/types.ts";
+import { freshID } from "@utils/database.ts";
+import {
+  getCurrentETDate,
+  getETFullYear,
+  getETMonth,
+  getETDate,
+  getETDay,
+  getETHours,
+  getETMinutes,
+  getETSeconds,
+  setETHours,
+  setETDate,
+  isSameDayET,
+  startOfDayET,
+  endOfDayET,
+  createETDate,
+} from "@utils/timezone.ts";
 
 // Declare collection prefix for MongoDB, using the concept name
 const PREFIX = "ScheduleGenerator" + ".";
@@ -123,19 +139,13 @@ async function getNextSequence(
 }
 
 /**
- * Helper to check for date equality (ignoring time).
+ * Helper to check for date equality (ignoring time) in ET timezone.
  * @param d1
  * @param d2
  */
 function isSameDay(d1: Date, d2: Date): boolean {
-  // Ensure both parameters are proper Date objects
-  const date1 = new Date(d1);
-  const date2 = new Date(d2);
-  return (
-    date1.getFullYear() === date2.getFullYear() &&
-    date1.getMonth() === date2.getMonth() &&
-    date1.getDate() === date2.getDate()
-  );
+  // Use ET timezone-aware comparison
+  return isSameDayET(d1, d2);
 }
 
 /**
@@ -712,23 +722,21 @@ export default class ScheduleGeneratorConcept {
     const generatedPlan: GeneratedSchedulePlan = [];
     let freeTimeSlots: FreeTimeSlot[] = [];
 
-    // 1. Define the planning horizon
-    const today = new Date();
-    today.setHours(0, 0, 0, 0); // Start of today
-    const planningEndDate = new Date();
-    planningEndDate.setDate(today.getDate() + this.PLANNING_HORIZON_DAYS);
-    planningEndDate.setHours(23, 59, 59, 999); // End of planning horizon
+    // 1. Define the planning horizon (in ET timezone)
+    const today = startOfDayET(getCurrentETDate()); // Start of today in ET
+    const planningEndDate = endOfDayET(
+      setETDate(today, getETDate(today) + this.PLANNING_HORIZON_DAYS)
+    ); // End of planning horizon in ET
 
-    // 2. Instantiate repeating events and initialize free time slots for each day
+    // 2. Instantiate repeating events and initialize free time slots for each day (in ET)
     for (
       let d = new Date(today);
       d <= planningEndDate;
-      d.setDate(d.getDate() + 1)
+      d = setETDate(d, getETDate(d) + 1)
     ) {
-      const dayStart = new Date(d);
-      dayStart.setHours(this.DAILY_TASK_START_HOUR, 0, 0, 0);
-      const dayEnd = new Date(d);
-      dayEnd.setHours(this.DAILY_TASK_END_HOUR, 0, 0, 0);
+      // Set working hours in ET timezone
+      const dayStart = setETHours(d, this.DAILY_TASK_START_HOUR, 0, 0, 0);
+      const dayEnd = setETHours(d, this.DAILY_TASK_END_HOUR, 0, 0, 0);
 
       // Add full working day as an initial free slot if it's a valid time range
       if (dayStart < dayEnd) {
@@ -758,34 +766,34 @@ export default class ScheduleGeneratorConcept {
             shouldSchedule = true; // Every day within the horizon
             break;
           case RepeatFrequency.WEEKLY:
-            // Schedule if current day 'd' is one of the specified days of the week
-            if (event.repeat.daysOfWeek?.includes(d.getDay())) {
+            // Schedule if current day 'd' is one of the specified days of the week (in ET)
+            if (event.repeat.daysOfWeek?.includes(getETDay(d))) {
               shouldSchedule = true;
             }
             break;
         }
 
         if (shouldSchedule) {
-          // Create a concrete instance of the event for the current day 'd'
-          const scheduledEventStartTime = new Date(d);
-          scheduledEventStartTime.setHours(
-            eventStartTime.getHours(),
-            eventStartTime.getMinutes(),
-            eventStartTime.getSeconds(),
+          // Create a concrete instance of the event for the current day 'd' (in ET)
+          const scheduledEventStartTime = setETHours(
+            d,
+            getETHours(eventStartTime),
+            getETMinutes(eventStartTime),
+            getETSeconds(eventStartTime),
             eventStartTime.getMilliseconds(),
           );
-          const scheduledEventEndTime = new Date(d);
-          scheduledEventEndTime.setHours(
-            eventEndTime.getHours(),
-            eventEndTime.getMinutes(),
-            eventEndTime.getSeconds(),
+          const scheduledEventEndTime = setETHours(
+            d,
+            getETHours(eventEndTime),
+            getETMinutes(eventEndTime),
+            getETSeconds(eventEndTime),
             eventEndTime.getMilliseconds(),
           );
 
-          // Ensure scheduled event doesn't end before it starts or is in the past compared to now
+          // Ensure scheduled event doesn't end before it starts or is in the past compared to now (in ET)
           if (
             scheduledEventStartTime < scheduledEventEndTime &&
-            scheduledEventEndTime > new Date()
+            scheduledEventEndTime > getCurrentETDate()
           ) {
             generatedPlan.push({
               type: "event",
@@ -831,8 +839,8 @@ export default class ScheduleGeneratorConcept {
     }
     freeTimeSlots = mergedFreeTimeSlots; // Use merged slots for task scheduling
 
-    // Filter out free time slots that are entirely in the past
-    const now = new Date();
+    // Filter out free time slots that are entirely in the past (using ET current time)
+    const now = getCurrentETDate();
     freeTimeSlots = freeTimeSlots.filter((slot) => slot.end > now);
     // Adjust start of past-overlapping slots to now
     freeTimeSlots = freeTimeSlots.map((slot) => ({

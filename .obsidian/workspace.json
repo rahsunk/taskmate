@@ -239,8 +239,11 @@
       "bases:Create new base": false
     }
   },
-  "active": "37bad49a6515b46e",
+  "active": "9b42b4503c7d88ad",
   "lastOpenFiles": [
+    "TIMEZONE_CHANGES.md",
+    "test-timezone.ts",
+    "src/utils/timezone.ts",
     "frontEndCheckin",
     "design/concepts/Messaging/testing.md",
     "design/concepts/Messaging/syncs.md",
@@ -273,9 +276,6 @@
     "src/syncs/FriendList.syncs.ts",
     "context/design/concepts/FriendList/syncs.md/steps",
     "src/syncs/ScheduleGenerator.sync.ts",
-    "context/design/concepts/ScheduleGenerator/syncs.md/steps",
-    "src/syncs/UserAuthentication.sync.ts",
-    "src/syncs/user_auth_syncs.ts",
-    "design/concepts/Requesting"
+    "context/design/concepts/ScheduleGenerator/syncs.md/steps"
   ]
 }
