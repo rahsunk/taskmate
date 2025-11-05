@@ -1,211 +1,68 @@
+```
 Check file:///Users/rahsunkomatsuzaki-fields/Desktop/MIT/academic/Y3/Fall/6.1040/taskmate/src/concepts/UserAuthentication/UserAuthentication.test.ts
 running 1 test from ./src/concepts/UserAuthentication/UserAuthentication.test.ts
-UserAuthentication Concept Tests ...
-  Operational Principle: User Registration, Authentication, and Lookup ...
+UserAuthenticationConcept ...
+  Operational Principle: Register and Authenticate ...
 ------- output -------
-
---- Executing Operational Principle Scenario ---
---- Action: register ---
-Input: {"username":"alice","password":"password123"}
-Result: {"user":"019a3cd1-87f1-7edd-90a0-391135a2c88d"}
------------------------
-✅ Registered Alice with ID: 019a3cd1-87f1-7edd-90a0-391135a2c88d
---- Action: authenticate ---
-Input: {"username":"alice","password":"password123"}
-Result: {"user":"019a3cd1-87f1-7edd-90a0-391135a2c88d"}
------------------------
-✅ Authenticated Alice successfully.
---- Query: _getUserByUsername ---
-Input: {"username":"alice"}
-Result: {"user":"019a3cd1-87f1-7edd-90a0-391135a2c88d"}
------------------------
-✅ Found Alice by username: 019a3cd1-87f1-7edd-90a0-391135a2c88d
---- Query: _checkUserExists ---
-Input: {"user":"019a3cd1-87f1-7edd-90a0-391135a2c88d"}
-Result: {"exists":true}
------------------------
-✅ Confirmed Alice exists.
---- Query: _getAllUsers ---
-Input: {}
-Result: [{"_id":"019a3cd1-87f1-7edd-90a0-391135a2c88d","username":"alice","password":"password123"}]
------------------------
-✅ Confirmed Alice is present via _getAllUsers.
---- Query: _getUserById ---
-Input: {"user":"019a3cd1-87f1-7edd-90a0-391135a2c88d"}
-Result: [{"_id":"019a3cd1-87f1-7edd-90a0-391135a2c88d","username":"alice","password":"password123"}]
------------------------
-✅ Found Alice by ID.
---- Query: _getUsernameById ---
-Input: {"user":"019a3cd1-87f1-7edd-90a0-391135a2c88d"}
-Result: {"username":"alice"}
------------------------
-✅ Retrieved Alice's username by ID.
---- Operational Principle Scenario Complete ---
+--- Testing Operational Principle: Register and Authenticate ---
+Attempting to register user 'testuser_principle' with password 'password123'...
+Register result: { user: "019a51f1-4cf0-798f-a442-8e85239d5d89" }
+Attempting to authenticate user 'testuser_principle'...
+Authentication result: { user: "019a51f1-4cf0-798f-a442-8e85239d5d89" }
+Principle confirmed: User registered and authenticated successfully.
 ----- output end -----
-  Operational Principle: User Registration, Authentication, and Lookup ... ok (197ms)
-  Scenario 1: Registration and Authentication Failure Cases ...
+  Operational Principle: Register and Authenticate ... ok (231ms)
+  Scenario 1: Attempt to register a duplicate username ...
 ------- output -------
 
---- Executing Failure Cases Scenario ---
---- Action: register ---
-Input: {"username":"bob","password":"bob_password"}
-Result: {"user":"019a3cd1-88b6-7ea9-9c20-051c618ce23e"}
------------------------
-✅ Registered Bob with ID: 019a3cd1-88b6-7ea9-9c20-051c618ce23e
---- Action: register ---
-Input: {"username":"bob","password":"another_password"}
-Result: { error: "User with username 'bob' already exists." }
------------------------
-✅ Correctly prevented registration with duplicate username.
---- Action: authenticate ---
-Input: {"username":"bob","password":"wrong_password"}
+--- Testing Scenario 1: Duplicate Username Registration ---
+Registering 'duplicate_user' for the first time...
+First registration result: { user: "019a51f1-4d2e-73a6-a9a7-f4f355611eb6" }
+Attempting to register 'duplicate_user' again...
+Second registration result: { error: "User with username 'duplicate_user' already exists." }
+Scenario confirmed: Cannot register a duplicate username.
+----- output end -----
+  Scenario 1: Attempt to register a duplicate username ... ok (63ms)
+  Scenario 2: Failed authentication attempts ...
+------- output -------
+
+--- Testing Scenario 2: Failed Authentication ---
+Registering user 'auth_fail_user'...
+Attempting authentication with wrong password...
 Result: { error: "Invalid username or password." }
------------------------
-✅ Correctly failed authentication with wrong password.
---- Action: authenticate ---
-Input: {"username":"unknown","password":"any_password"}
+Attempting authentication with non-existent username...
 Result: { error: "Invalid username or password." }
------------------------
-✅ Correctly failed authentication for non-existent user.
---- Failure Cases Scenario Complete ---
+Scenario confirmed: Invalid credentials lead to authentication failure.
 ----- output end -----
-  Scenario 1: Registration and Authentication Failure Cases ... ok (128ms)
-  Scenario 2: Password Change Functionality ...
+  Scenario 2: Failed authentication attempts ... ok (79ms)
+  Scenario 3: Successfully change password and use new credentials ...
 ------- output -------
 
---- Executing Password Change Scenario ---
---- Action: register ---
-Input: {"username":"charlie","password":"charlie_old_pass"}
-Result: {"user":"019a3cd1-894a-75ad-b99b-2ccd92b6888f"}
------------------------
-✅ Registered Charlie with ID: 019a3cd1-894a-75ad-b99b-2ccd92b6888f
---- Action: authenticate ---
-Input: {"username":"charlie","password":"charlie_old_pass"}
-Result: {"user":"019a3cd1-894a-75ad-b99b-2ccd92b6888f"}
------------------------
-✅ Authenticated Charlie with old password.
---- Action: changePassword ---
-Input: {"user":"019a3cd1-894a-75ad-b99b-2ccd92b6888f","oldPassword":"wrong_old_pass","newPassword":"charlie_new_pass"}
-Result: { error: "Old password does not match." }
------------------------
-✅ Correctly failed to change password with wrong old password.
---- Action: changePassword ---
-Input: {"user":"019a3cd1-894a-75ad-b99b-2ccd92b6888f","oldPassword":"charlie_old_pass","newPassword":"charlie_old_pass"}
-Result: { error: "New password cannot be the same as the old password." }
------------------------
-✅ Correctly failed to change password to the same password.
---- Action: changePassword ---
-Input: {"user":"019a3cd1-894a-75ad-b99b-2ccd92b6888f","oldPassword":"charlie_old_pass","newPassword":"charlie_new_pass"}
-Result: {}
------------------------
-✅ Successfully changed Charlie's password.
---- Action: authenticate ---
-Input: {"username":"charlie","password":"charlie_old_pass"}
-Result: { error: "Invalid username or password." }
------------------------
-✅ Correctly failed authentication with old password.
---- Action: authenticate ---
-Input: {"username":"charlie","password":"charlie_new_pass"}
-Result: {"user":"019a3cd1-894a-75ad-b99b-2ccd92b6888f"}
------------------------
-✅ Authenticated Charlie with new password.
---- Password Change Scenario Complete ---
+--- Testing Scenario 3: Change Password ---
+Registering user 'changepass_user'...
+Attempting to change password...
+Change password result: {}
+Attempting to authenticate with OLD password...
+Old auth result: { error: "Invalid username or password." }
+Attempting to authenticate with NEW password...
+New auth result: { user: "019a51f1-4dbe-79fa-8e21-ce8dfcdf90a7" }
+Scenario confirmed: Password changed and new credentials work.
 ----- output end -----
-  Scenario 2: Password Change Functionality ... ok (231ms)
-  Scenario 3: Account Deletion ...
+  Scenario 3: Successfully change password and use new credentials ... ok (125ms)
+  Scenario 4: Delete an account ...
 ------- output -------
 
---- Executing Account Deletion Scenario ---
---- Action: register ---
-Input: {"username":"david","password":"david_password"}
-Result: {"user":"019a3cd1-8a1f-7120-8217-73f70afa5eba"}
------------------------
-✅ Registered David with ID: 019a3cd1-8a1f-7120-8217-73f70afa5eba
---- Action: authenticate ---
-Input: {"username":"david","password":"david_password"}
-Result: {"user":"019a3cd1-8a1f-7120-8217-73f70afa5eba"}
------------------------
-✅ Authenticated David.
---- Action: deleteAccount ---
-Input: {"user":"019a3cd1-8a1f-7120-8217-73f70afa5eba"}
-Result: {}
------------------------
-✅ Deleted David's account.
---- Action: authenticate ---
-Input: {"username":"david","password":"david_password"}
-Result: { error: "Invalid username or password." }
------------------------
-✅ Correctly failed to authenticate deleted user.
---- Action: deleteAccount ---
-Input: {"user":"019a3cd1-8a1f-7120-8217-73f70afa5eba"}
-Result: { error: "User with ID '019a3cd1-8a1f-7120-8217-73f70afa5eba' not found." }
------------------------
-✅ Correctly failed to delete non-existent user.
---- Query: _checkUserExists ---
-Input: {"user":"019a3cd1-8a1f-7120-8217-73f70afa5eba"}
-Result: {"exists":false}
------------------------
-✅ Confirmed David no longer exists.
---- Query: _getAllUsers ---
-Input: {}
-Result: [{"_id":"019a3cd1-87f1-7edd-90a0-391135a2c88d","username":"alice","password":"password123"},{"_id":"019a3cd1-88b6-7ea9-9c20-051c618ce23e","username":"bob","password":"bob_password"},{"_id":"019a3cd1-894a-75ad-b99b-2ccd92b6888f","username":"charlie","password":"charlie_new_pass"}]
------------------------
-✅ Confirmed David is gone via _getAllUsers.
---- Account Deletion Scenario Complete ---
+--- Testing Scenario 4: Delete Account ---
+Registering user 'delete_user' to be deleted...
+Deleting account for user ID '019a51f1-4e3c-7a71-b4ca-bff0c6f15c6c'...
+Delete result: {}
+Verifying user no longer exists...
+Attempting to authenticate deleted user...
+Auth result: { error: "Invalid username or password." }
+Scenario confirmed: Account deleted and can no longer be used.
 ----- output end -----
-  Scenario 3: Account Deletion ... ok (203ms)
-  Scenario 4: Multiple Users and Comprehensive Querying ...
-------- output -------
-
---- Executing Multiple Users Querying Scenario ---
---- Action: register ---
-Input: {"username":"eve","password":"eve_pass"}
-Result: {"user":"019a3cd1-8ae9-7fd3-9dfb-762633bc5350"}
------------------------
-✅ Registered Eve with ID: 019a3cd1-8ae9-7fd3-9dfb-762633bc5350
---- Action: register ---
-Input: {"username":"frank","password":"frank_pass"}
-Result: {"user":"019a3cd1-8b11-70df-82c0-715b76956d03"}
------------------------
-✅ Registered Frank with ID: 019a3cd1-8b11-70df-82c0-715b76956d03
---- Query: _getAllUsers ---
-Input: {}
-Result: [{"_id":"019a3cd1-87f1-7edd-90a0-391135a2c88d","username":"alice","password":"password123"},{"_id":"019a3cd1-88b6-7ea9-9c20-051c618ce23e","username":"bob","password":"bob_password"},{"_id":"019a3cd1-894a-75ad-b99b-2ccd92b6888f","username":"charlie","password":"charlie_new_pass"},{"_id":"019a3cd1-8ae9-7fd3-9dfb-762633bc5350","username":"eve","password":"eve_pass"},{"_id":"019a3cd1-8b11-70df-82c0-715b76956d03","username":"frank","password":"frank_pass"}]
------------------------
-✅ Confirmed all 5 users are present via _getAllUsers.
---- Query: _getUserByUsername ---
-Input: {"username":"eve"}
-Result: {"user":"019a3cd1-8ae9-7fd3-9dfb-762633bc5350"}
------------------------
-✅ Found Eve by username.
---- Query: _getUserByUsername ---
-Input: {"username":"frank"}
-Result: {"user":"019a3cd1-8b11-70df-82c0-715b76956d03"}
------------------------
-✅ Found Frank by username.
---- Query: _getUserById ---
-Input: {"user":"019a3cd1-8ae9-7fd3-9dfb-762633bc5350"}
-Result: [{"_id":"019a3cd1-8ae9-7fd3-9dfb-762633bc5350","username":"eve","password":"eve_pass"}]
------------------------
-✅ Found Eve by ID.
---- Query: _getUserById ---
-Input: {"user":"019a3cd1-8b11-70df-82c0-715b76956d03"}
-Result: [{"_id":"019a3cd1-8b11-70df-82c0-715b76956d03","username":"frank","password":"frank_pass"}]
------------------------
-✅ Found Frank by ID.
---- Query: _getUserById ---
-Input: {"user":"nonexistent:user"}
-Result: []
------------------------
-✅ Correctly returned empty for non-existent user ID.
---- Query: _getUserByUsername ---
-Input: {"username":"unknown"}
-Result: {}
------------------------
-✅ Correctly returned empty for non-existent username.
---- Multiple Users Querying Scenario Complete ---
------ output end -----
-  Scenario 4: Multiple Users and Comprehensive Querying ... ok (212ms)
-UserAuthentication Concept Tests ... ok (1s)
+  Scenario 4: Delete an account ... ok (103ms)
+UserAuthenticationConcept ... ok (1s)
 
 ok | 1 passed (5 steps) | 0 failed (1s)
+```
