@@ -1,15 +1,12 @@
-[@newImplementation](newImplementation.md)
-
-[@testing-concepts](../../background/testing-concepts.md)
-
-[@testing-concepts-rubric](../../background/testing-concepts-rubric.md)
-
-# prompt: Test ScheduleGenerator; be careful to assert types of variables of union types, otherwise the Typescript test file will not compile and do not edit the implementation
-# response:
+---
+timestamp: 'Tue Nov 04 2025 21:58:46 GMT-0500 (Eastern Standard Time)'
+parent: '[[../20251104_215846.0f654b0c.md]]'
+content_id: 36b3fac1097f1c34015dc02c27d7713bcb86af4b986cccf1dad5706573c1f684
+---
 
 # file: src/ScheduleGenerator/ScheduleGeneratorConcept.test.ts
 
-```typescript
+````typescript
 import { assertEquals, assert, assertNotEquals } from "jsr:@std/assert";
 import { testDb } from "@utils/database.ts";
 import ScheduleGeneratorConcept from "./ScheduleGeneratorConcept.ts";
@@ -321,4 +318,4 @@ The following trace demonstrates the operational principle test case:
     *   It finds each of the 3 items (1 event, 2 tasks) in the plan.
     *   It confirms that the tasks do not overlap with the event's scheduled time.
 9.  **END TEST**: The operational principle is confirmed to work as expected.
-```
+````
