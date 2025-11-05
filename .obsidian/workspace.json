@@ -34,9 +34,23 @@
               "icon": "lucide-file",
               "title": "newTesting"
             }
+          },
+          {
+            "id": "7440785d7b86262f",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "design/concepts/Messaging/testing.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "testing"
+            }
           }
         ],
-        "currentTab": 1
+        "currentTab": 2
       }
     ],
     "direction": "vertical"
@@ -183,14 +197,25 @@
       "bases:Create new base": false
     }
   },
-  "active": "9b42b4503c7d88ad",
+  "active": "7440785d7b86262f",
   "lastOpenFiles": [
+    "context/design/concepts/Messaging/testing.md/20251104_220853.23563592.md",
+    "context/design/concepts/Messaging/testing.md/steps/file.5d6566ac.md",
+    "context/design/concepts/Messaging/testing.md/steps/response.37fb3281.md",
+    "context/design/concepts/Messaging/testing.md/20251104_220742.bf78ae5d.md",
+    "context/design/concepts/Messaging/testing.md/steps/prompt.18d34735.md",
+    "context/design/concepts/Messaging/testing.md/steps/trace.28106d69.md",
+    "context/design/concepts/Messaging/testing.md/20251104_220302.b60b9d15.md",
+    "context/design/concepts/Messaging/testing.md/steps/trace.0cea4444.md",
+    "context/design/concepts/Messaging/testing.md/steps/file.f281d067.md",
+    "context/design/concepts/Messaging/testing.md/steps/response.6d76b65d.md",
+    "context/design/concepts/Messaging/testing.md/steps/response.521b4f30.md",
+    "design/concepts/ScheduleGenerator/newTesting.md",
     "context/design/concepts/ScheduleGenerator/newTesting.md/20251104_215846.0f654b0c.md",
     "context/design/concepts/ScheduleGenerator/newTesting.md/steps/file.36b3fac1.md",
     "context/design/concepts/ScheduleGenerator/newTesting.md/steps/prompt.157e493d.md",
     "context/design/concepts/ScheduleGenerator/newTesting.md/steps/_.214b364d.md",
     "design/concepts/UserAuthentication/newTesting.md",
-    "design/concepts/ScheduleGenerator/newTesting.md",
     "context/design/concepts/UserAuthentication/newTesting.md/20251104_215055.8679bfee.md",
     "context/design/concepts/UserAuthentication/newTesting.md/steps/trace.b9d95308.md",
     "context/design/concepts/UserAuthentication/newTesting.md/steps/file.24d0f990.md",
@@ -200,20 +225,9 @@
     "design/concepts/Messaging/testing.md",
     "design/background/implementing-synchronizations.md",
     "design/concepts/UserAuthentication/syncs.md",
-    "design/concepts/ScheduleGenerator/syncs.md",
-    "design/concepts/FriendList/syncs.md",
-    "fullStackDeliverables/rubric.md",
-    "design/concepts/Messaging/syncs.md",
-    "TIMEZONE_CHANGES.md",
     "test-timezone.ts",
     "src/utils/timezone.ts",
     "frontEndCheckin",
-    "context/design/concepts/Messaging/syncs.md/20251103_151324.73c009d3.md",
-    "context/design/concepts/Messaging/syncs.md/steps/file.0fbdb248.md",
-    "context/design/concepts/Messaging/syncs.md/steps/file.5c95c624.md",
-    "context/design/concepts/Messaging/syncs.md/steps/solution.9c8b3fbd.md",
-    "context/design/concepts/Messaging/syncs.md/steps/response.8a9c241d.md",
-    "context/design/concepts/Messaging/syncs.md/20251103_151219.5e49917e.md",
     "src/syncs/Messaging.sync.ts",
     "context/design/concepts/Messaging/syncs.md/steps",
     "src/syncs/FriendList.sync.ts",
